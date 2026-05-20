@@ -1,0 +1,50 @@
+name: General issue
+description: Report other issues not covered by other templates
+labels: []
+title: "[Issue]: "
+body:
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity
+      description: Choose the complexity level for this issue.
+      options:
+        - level:beginner
+        - level:intermediate
+        - level:advanced
+        - level:critical
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: Choose the issue type.
+      options:
+        - type:bug
+        - type:feature
+        - type:docs
+        - type:testing
+        - type:security
+        - type:performance
+        - type:design
+        - type:refactor
+        - type:devops
+        - type:accessibility
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is this issue about?
+      placeholder: A clear and concise summary.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Add any relevant details, steps, or context.
+    validations:
+      required: false

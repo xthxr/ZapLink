@@ -1,0 +1,65 @@
+name: Feature request
+description: Suggest an idea or enhancement
+labels: []
+title: "[Feature]: "
+body:
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity
+      description: Choose the complexity level for this issue.
+      options:
+        - level:beginner
+        - level:intermediate
+        - level:advanced
+        - level:critical
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: Choose the issue type.
+      options:
+        - type:bug
+        - type:feature
+        - type:docs
+        - type:testing
+        - type:security
+        - type:performance
+        - type:design
+        - type:refactor
+        - type:devops
+        - type:accessibility
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem are you trying to solve?
+      placeholder: A clear and concise description of the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What would you like to happen?
+      placeholder: A clear and concise description of your proposed solution.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any alternative approaches you've considered.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other context or screenshots.
+    validations:
+      required: false
