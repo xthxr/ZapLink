@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Close mobile menu first
             const mobileMenu = document.getElementById('mobileMenu');
             if (mobileMenu) {
-                mobileMenu.classList.add('translate-x-full');
+                mobileMenu.classList.remove('open');
             }
             // Then handle sign in
             handleSmartSignIn();
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Close mobile menu first
             const mobileMenu = document.getElementById('mobileMenu');
             if (mobileMenu) {
-                mobileMenu.classList.add('translate-x-full');
+                mobileMenu.classList.remove('open');
             }
             // Then handle sign in
             handleSmartSignIn();

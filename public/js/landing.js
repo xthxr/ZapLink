@@ -53,7 +53,7 @@ function initMobileMenu() {
     const toggle = document.getElementById('mobileMenuToggle');
     const menu = document.getElementById('mobileMenu');
     const closeButton = document.getElementById('mobileMenuClose');
-    const links = document.querySelectorAll('.mobile-link');
+    const links = document.querySelectorAll('.landing-mobile-link');
     
     if (!toggle || !menu) return;
 
@@ -70,7 +70,7 @@ function initMobileMenu() {
         if (!isOpen) return;
 
         isOpen = false;
-        menu.classList.add('translate-x-full');
+        menu.classList.remove('open');
         document.body.style.overflow = '';
         syncMenuState(false);
 
@@ -85,10 +85,10 @@ function initMobileMenu() {
         if (!isOpen) {
             previousFocus = document.activeElement;
             isOpen = true;
-            menu.classList.remove('translate-x-full');
+            menu.classList.add('open');
             document.body.style.overflow = 'hidden';
             syncMenuState(true);
-            const firstFocusable = menu.querySelector('.mobile-link, button, [href], [tabindex]:not([tabindex="-1"])');
+            const firstFocusable = menu.querySelector('a, button, [href], [tabindex]:not([tabindex="-1"])');
             if (firstFocusable) {
                 firstFocusable.focus();
             }

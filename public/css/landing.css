@@ -502,9 +502,23 @@ body {
 }
 
 .landing-mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.95);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
     padding: max(5rem, env(safe-area-inset-top)) 1.5rem max(2rem, env(safe-area-inset-bottom));
     align-items: stretch;
     gap: 1.75rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.landing-mobile-menu.open {
+    transform: translateX(0);
 }
 
 .landing-mobile-menu-header {
@@ -537,6 +551,14 @@ body {
     font-size: clamp(1.375rem, 4vw, 1.75rem);
     line-height: 1.2;
     letter-spacing: -0.02em;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.landing-mobile-link:hover,
+.landing-mobile-link:focus {
+    color: #ffffff;
 }
 
 .landing-mobile-menu-actions {
