@@ -152,7 +152,7 @@ function getBaseUrl(req) {
 
 // Create short link (requires authentication)
 app.post('/api/shorten', verifyToken, async (req, res) => {
-  const { url, utmParams, customShortCode, username } = req.body;
+  const { url, utmParams, customShortCode, username, expiresAt, maxClicks } = req.body;
   const userId = req.user.uid;
 
   if (!url) {
@@ -239,7 +239,10 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     utmParams: parseUTMParams(finalUrl) || utmParams || {},
     isCustom: !!customShortCode,
-    isActive: true
+    isActive: true,
+    expiresAt: expiresAt ? admin.firestore.Timestamp.fromDate(new Date(expiresAt)) : null,
+    maxClicks: maxClicks ? parseInt(maxClicks, 10) : null,
+    clickCount: 0
   };
 
   const analyticsData = {
@@ -553,6 +556,24 @@ app.get('/api/user/links', verifyToken, async (req, res) => {
           .delete()
           .catch(() => { });
         continue;
+      }
+
+      // Auto-deactivate expired links (date-based or click-limit)
+      let expired = false;
+      if (linkData.expiresAt && linkData.expiresAt.toMillis() <= now.toMillis()) {
+        expired = true;
+      }
+      if (linkData.maxClicks && linkData.clickCount >= linkData.maxClicks) {
+        expired = true;
+      }
+
+      if (expired && linkData.isActive !== false) {
+        await db
+          .collection(COLLECTIONS.LINKS)
+          .doc(doc.id)
+          .update({ isActive: false })
+          .catch(() => { });
+        linkData.isActive = false;
       }
 
 
@@ -907,6 +928,18 @@ app.get('/:username/:slug', async (req, res) => {
     return res.status(404).send('Link not found');
   }
 
+  // Check expiry
+  if (link.expiresAt) {
+    const now = admin.firestore.Timestamp.now();
+    if (link.expiresAt.toMillis() <= now.toMillis()) {
+      return res.status(410).send('Link expired');
+    }
+  }
+
+  if (link.maxClicks && link.clickCount >= link.maxClicks) {
+    return res.status(410).send('Link click limit reached');
+  }
+
   // Extract request data before redirecting
   const userAgent = req.headers['user-agent'] || 'Unknown';
   const httpReferrer = req.headers['referer'] || req.headers['referrer'] || '';
@@ -1023,9 +1056,19 @@ app.get('/:username/:slug', async (req, res) => {
       location: locationData
     };
 
-    // Update analytics
+    // Update analytics and click count
     try {
       const firestoreId = toFirestoreId(shortCode);
+      const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
+      const linkDoc = await linkRef.get();
+
+      if (linkDoc.exists) {
+        // Increment click count
+        await linkRef.update({
+          clickCount: admin.firestore.FieldValue.increment(1)
+        });
+      }
+
       const analyticsRef = db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId);
       const analyticsDoc = await analyticsRef.get();
 
@@ -1119,6 +1162,18 @@ app.get('/:shortCode', async (req, res) => {
 
   if (!link) {
     return res.status(404).send('Link not found');
+  }
+
+  // Check expiry
+  if (link.expiresAt) {
+    const now = admin.firestore.Timestamp.now();
+    if (link.expiresAt.toMillis() <= now.toMillis()) {
+      return res.status(410).send('Link expired');
+    }
+  }
+
+  if (link.maxClicks && link.clickCount >= link.maxClicks) {
+    return res.status(410).send('Link click limit reached');
   }
 
   // Extract request data before redirecting
@@ -1243,6 +1298,16 @@ app.get('/:shortCode', async (req, res) => {
     try {
       // Update Firestore
       const firestoreId = toFirestoreId(shortCode);
+      const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
+      const linkDoc = await linkRef.get();
+
+      if (linkDoc.exists) {
+        // Increment click count
+        await linkRef.update({
+          clickCount: admin.firestore.FieldValue.increment(1)
+        });
+      }
+
       const analyticsRef = db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId);
       const doc = await analyticsRef.get();
       
