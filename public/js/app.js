@@ -1091,6 +1091,30 @@ async function handleCreateLink() {
     }
 }
 
+function showLinksSkeleton() {
+    const skeletonHTML = Array(3).fill(`
+        <div class="skeleton-card">
+            <div class="skeleton skeleton-icon"></div>
+            <div class="skeleton-content">
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-line medium"></div>
+                <div class="skeleton skeleton-line long"></div>
+            </div>
+            <div class="skeleton-stats">
+                <div class="skeleton skeleton-stat"></div>
+            </div>
+            <div class="skeleton-actions">
+                <div class="skeleton skeleton-action"></div>
+                <div class="skeleton skeleton-action"></div>
+                <div class="skeleton skeleton-action"></div>
+            </div>
+        </div>
+    `).join('');
+    linksContainer.innerHTML = skeletonHTML;
+    linksContainer.style.display = 'grid';
+    emptyState.style.display = 'none';
+}
+
 async function loadLinks() {
     try {
         if (!currentUser) {
@@ -1098,6 +1122,8 @@ async function loadLinks() {
             linksContainer.style.display = 'none';
             return;
         }
+        
+        showLinksSkeleton();
         
         console.log('Loading links for user:', currentUser.uid);
         

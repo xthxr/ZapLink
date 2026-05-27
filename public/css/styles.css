@@ -4283,3 +4283,116 @@ html[data-theme="dark"] .analytics-card #globeViz {
         flex-wrap: wrap;
     }
 }
+
+/* ================================
+   LOADING SKELETONS
+   ================================ */
+
+.skeleton {
+    background: linear-gradient(90deg, var(--glass-border) 25%, rgba(255,255,255,0.08) 50%, var(--glass-border) 75%);
+    background-size: 200% 100%;
+    border-radius: var(--radius-sm);
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+}
+
+.skeleton-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-line {
+    height: 14px;
+    border-radius: var(--radius-sm);
+}
+
+.skeleton-line.short {
+    width: 40%;
+}
+
+.skeleton-line.medium {
+    width: 60%;
+}
+
+.skeleton-line.long {
+    width: 80%;
+}
+
+.skeleton-stats {
+    display: flex;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.skeleton-stat {
+    width: 60px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+}
+
+.skeleton-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.skeleton-action {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+}
+
+/* Stats grid skeleton */
+.skeleton-stat-card {
+    padding: 24px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.skeleton-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.skeleton-stat-value {
+    width: 60px;
+    height: 28px;
+    margin-bottom: 8px;
+    border-radius: var(--radius-sm);
+}
+
+.skeleton-stat-label {
+    width: 80px;
+    height: 16px;
+    border-radius: var(--radius-sm);
+}
