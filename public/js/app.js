@@ -1080,11 +1080,22 @@ async function handleCreateLink() {
             setTimeout(() => loadLinks(), 1500);
             setTimeout(() => loadLinks(), 3000);
         } else {
-            showToast(data.error || 'Failed to create link', 'error');
+            // Handle specific HTTP status codes for better UX
+            let errorMessage = data.error || 'Failed to create link';
+            if (response.status === 400) {
+                errorMessage = data.error || 'Invalid URL format. Please enter a valid URL.';
+            } else if (response.status === 401) {
+                errorMessage = 'Session expired. Please sign in again.';
+            } else if (response.status === 409) {
+                errorMessage = data.error || 'This custom short code is already taken.';
+            } else if (response.status >= 500) {
+                errorMessage = 'Something went wrong. Please try again.';
+            }
+            showToast(errorMessage, 'error');
         }
     } catch (error) {
         console.error('Error:', error);
-        showToast('Failed to create link. Please try again.', 'error');
+        showToast('Failed to create link. Please check your connection and try again.', 'error');
     } finally {
         createLinkSubmit.disabled = false;
         createLinkSubmit.innerHTML = '<i class="fas fa-plus"></i> Create Link';
