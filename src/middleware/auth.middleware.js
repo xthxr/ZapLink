@@ -1,4 +1,5 @@
 const { getAuth } = require('../../config/firebase.config');
+const rateLimit = require('express-rate-limit');
 
 /**
  * Middleware to verify Firebase authentication token
@@ -62,4 +63,34 @@ async function verifyToken(req, res, next) {
   }
 }
 
-module.exports = { verifyToken };
+/**
+ * General API rate limiter
+ * Limits each IP to 100 requests per 15 minutes
+ */
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many requests, please try again later.'
+  }
+});
+
+/**
+ * Strict rate limiter for sensitive endpoints
+ * Limits each IP to 10 requests per 15 minutes
+ */
+const strictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many requests, please try again later.'
+  }
+});
+
+module.exports = { verifyToken, apiLimiter, strictLimiter };

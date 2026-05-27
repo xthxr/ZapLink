@@ -8,6 +8,7 @@ const admin = require('firebase-admin');
 const redisUtils = require('./src/utils/redis.utils');
 require('dotenv').config();
 const fetch = require('node-fetch');
+const rateLimit = require('express-rate-limit');
 // Initialize Firebase Admin
 // Initialize Firebase Admin
 let db = null;
@@ -93,6 +94,26 @@ async function verifyToken(req, res, next) {
     return res.status(401).json({ error: 'Invalid token' });
   }
 }
+
+// Rate limiters
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+const strictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+// Apply general rate limiting to all API routes
+app.use('/api/', apiLimiter);
 
 // In-memory database (fallback if Firebase not configured)
 const links = new Map();
@@ -591,7 +612,7 @@ app.get('/api/user/links', verifyToken, async (req, res) => {
 });
 
 // Delete a user account (requires authentication)
-app.delete('/api/user', verifyToken, async (req, res) => {
+app.delete('/api/user', strictLimiter, verifyToken, async (req, res) => {
   const userId = req.user.uid;
 
   try {
@@ -718,7 +739,7 @@ app.post('/api/track/share/:shortCode', async (req, res) => {
 });
 
 // Create GitHub Issue for Bug Report
-app.post('/api/bug-report', async (req, res) => {
+app.post('/api/bug-report', strictLimiter, async (req, res) => {
   try {
     const { title, description, steps, email, userId, userEmail } = req.body;
 
