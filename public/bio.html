@@ -1,973 +1,1411 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bio Link</title>
-    
+
     <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:type" content="profile">
-    <meta property="og:title" content="">
-    <meta property="og:description" content="">
-    <meta property="og:image" content="">
-    
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="" />
+    <meta property="og:description" content="" />
+    <meta property="og:image" content="" />
+
     <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="">
-    <meta name="twitter:description" content="">
-    <meta name="twitter:image" content="">
-    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="" />
+    <meta name="twitter:description" content="" />
+    <meta name="twitter:image" content="" />
+
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
-    <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg">
-    
+    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-    
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Encode Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: #000000;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Animated Mesh Gradient Background */
+      @keyframes hero-gradient-animation {
+        0% {
+          --y-0: 63%;
+          --x-0: 93%;
+          --c-0: hsla(217.59493670886076, 100%, 30%, 1);
+          --s-start-0: 8.392121895570533%;
+          --s-end-0: 38.584065253664996%;
+          --y-1: -7%;
+          --c-1: hsla(0, 0%, 0%, 1);
+          --s-start-1: 8.392121895570533%;
+          --s-end-1: 22.10878124098502%;
+          --x-1: 33%;
+          --c-2: hsla(0, 0%, 0%, 1);
+          --y-2: 7%;
+          --x-2: 84%;
+          --s-start-2: 8.392121895570533%;
+          --s-end-2: 22.558651527792346%;
+          --y-3: 5%;
+          --s-start-3: 8.392121895570533%;
+          --s-end-3: 22.558651527792346%;
+          --c-3: hsla(0, 0%, 0%, 1);
+          --x-3: 14%;
+          --x-4: 7%;
+          --y-4: 96%;
+          --c-4: hsla(0, 0%, 0%, 1);
+          --s-start-4: 8.392121895570533%;
+          --s-end-4: 22.558651527792346%;
+          --y-5: 90%;
+          --s-start-5: 8.392121895570533%;
+          --s-end-5: 22.558651527792346%;
+          --c-5: hsla(0, 0%, 0%, 1);
+          --x-5: 93%;
+          --x-6: 3%;
+          --y-6: 61%;
+          --s-start-6: 8.392121895570533%;
+          --s-end-6: 39.67138181429644%;
+          --c-6: hsla(279.7894736842105, 67%, 27%, 1);
+          --c-7: hsla(279.7894736842105, 67%, 27%, 1);
+          --x-7: 94%;
+          --s-start-7: 8.392121895570533%;
+          --s-end-7: 49.58090142552271%;
+          --y-7: 59%;
+          --s-start-8: 8.392121895570533%;
+          --s-end-8: 34.815367581495366%;
+          --y-8: 63%;
+          --x-8: 48%;
+          --c-8: hsla(217.68844221105527, 100%, 39%, 1);
+          --c-9: hsla(217.59493670886076, 100%, 30%, 1);
+          --s-start-9: 8.392121895570533%;
+          --s-end-9: 31.77166380372925%;
+          --y-9: 78%;
+          --x-9: 96%;
         }
-
-        body {
-            font-family: 'Encode Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: #000000;
-            position: relative;
-            overflow-x: hidden;
+        50% {
+          --y-0: 59%;
+          --x-0: 2%;
+          --c-0: hsla(217.59493670886076, 100%, 30%, 1);
+          --s-start-0: 12.892043731642234%;
+          --s-end-0: 42.94837818044209%;
+          --y-1: 10%;
+          --c-1: hsla(0, 0%, 0%, 1);
+          --s-start-1: 8.392121895570533%;
+          --s-end-1: 41.69445156991687%;
+          --x-1: 42%;
+          --c-2: hsla(0, 0%, 0%, 1);
+          --y-2: 29%;
+          --x-2: 75%;
+          --s-start-2: 8.392121895570533%;
+          --s-end-2: 20.488815899465003%;
+          --y-3: 16%;
+          --s-start-3: 8.392121895570533%;
+          --s-end-3: 30.099844327777923%;
+          --c-3: hsla(0, 0%, 0%, 1);
+          --x-3: 5%;
+          --x-4: 36%;
+          --y-4: 91%;
+          --c-4: hsla(0, 0%, 0%, 1);
+          --s-start-4: 8.392121895570533%;
+          --s-end-4: 24.59566937006635%;
+          --y-5: 91%;
+          --s-start-5: 8.392121895570533%;
+          --s-end-5: 24.59566937006635%;
+          --c-5: hsla(0, 0%, 0%, 1);
+          --x-5: 70%;
+          --x-6: 54%;
+          --y-6: 73%;
+          --s-start-6: 9%;
+          --s-end-6: 26.825849058644888%;
+          --c-6: hsla(279.7894736842105, 67%, 27%, 1);
+          --c-7: hsla(279.7894736842105, 67%, 27%, 1);
+          --x-7: 57%;
+          --s-start-7: 9%;
+          --s-end-7: 49.05074977970796%;
+          --y-7: 76%;
+          --s-start-8: 9;
+          --s-end-8: 26.166345747226664%;
+          --y-8: 53%;
+          --x-8: 11%;
+          --c-8: hsla(217.68844221105527, 100%, 39%, 1);
+          --c-9: hsla(217.59493670886076, 100%, 30%, 1);
+          --s-start-9: 9;
+          --s-end-9: 22.152460022684956%;
+          --y-9: 70%;
+          --x-9: 70%;
         }
-
-        /* Animated Mesh Gradient Background */
-        @keyframes hero-gradient-animation {
-            0% {
-                --y-0:63%; --x-0:93%; --c-0:hsla(217.59493670886076,100%,30%,1); --s-start-0:8.392121895570533%; --s-end-0:38.584065253664996%; 
-                --y-1:-7%; --c-1:hsla(0,0%,0%,1); --s-start-1:8.392121895570533%; --s-end-1:22.10878124098502%; --x-1:33%; 
-                --c-2:hsla(0,0%,0%,1); --y-2:7%; --x-2:84%; --s-start-2:8.392121895570533%; --s-end-2:22.558651527792346%; 
-                --y-3:5%; --s-start-3:8.392121895570533%; --s-end-3:22.558651527792346%; --c-3:hsla(0,0%,0%,1); --x-3:14%; 
-                --x-4:7%; --y-4:96%; --c-4:hsla(0,0%,0%,1); --s-start-4:8.392121895570533%; --s-end-4:22.558651527792346%; 
-                --y-5:90%; --s-start-5:8.392121895570533%; --s-end-5:22.558651527792346%; --c-5:hsla(0,0%,0%,1); --x-5:93%; 
-                --x-6:3%; --y-6:61%; --s-start-6:8.392121895570533%; --s-end-6:39.67138181429644%; --c-6:hsla(279.7894736842105,67%,27%,1); 
-                --c-7:hsla(279.7894736842105,67%,27%,1); --x-7:94%; --s-start-7:8.392121895570533%; --s-end-7:49.58090142552271%; --y-7:59%; 
-                --s-start-8:8.392121895570533%; --s-end-8:34.815367581495366%; --y-8:63%; --x-8:48%; --c-8:hsla(217.68844221105527,100%,39%,1); 
-                --c-9:hsla(217.59493670886076,100%,30%,1); --s-start-9:8.392121895570533%; --s-end-9:31.77166380372925%; --y-9:78%; --x-9:96%;
-            }
-            50% {
-                --y-0:59%; --x-0:2%; --c-0:hsla(217.59493670886076,100%,30%,1); --s-start-0:12.892043731642234%; --s-end-0:42.94837818044209%; 
-                --y-1:10%; --c-1:hsla(0,0%,0%,1); --s-start-1:8.392121895570533%; --s-end-1:41.69445156991687%; --x-1:42%; 
-                --c-2:hsla(0,0%,0%,1); --y-2:29%; --x-2:75%; --s-start-2:8.392121895570533%; --s-end-2:20.488815899465003%; 
-                --y-3:16%; --s-start-3:8.392121895570533%; --s-end-3:30.099844327777923%; --c-3:hsla(0,0%,0%,1); --x-3:5%; 
-                --x-4:36%; --y-4:91%; --c-4:hsla(0,0%,0%,1); --s-start-4:8.392121895570533%; --s-end-4:24.59566937006635%; 
-                --y-5:91%; --s-start-5:8.392121895570533%; --s-end-5:24.59566937006635%; --c-5:hsla(0,0%,0%,1); --x-5:70%; 
-                --x-6:54%; --y-6:73%; --s-start-6:9%; --s-end-6:26.825849058644888%; --c-6:hsla(279.7894736842105,67%,27%,1); 
-                --c-7:hsla(279.7894736842105,67%,27%,1); --x-7:57%; --s-start-7:9%; --s-end-7:49.05074977970796%; --y-7:76%; 
-                --s-start-8:9; --s-end-8:26.166345747226664%; --y-8:53%; --x-8:11%; --c-8:hsla(217.68844221105527,100%,39%,1); 
-                --c-9:hsla(217.59493670886076,100%,30%,1); --s-start-9:9; --s-end-9:22.152460022684956%; --y-9:70%; --x-9:70%;
-            }
-            100% {
-                --y-1:-3%; --c-1:hsla(0,0%,0%,1); --s-start-1:8.392121895570533%; --s-end-1:59.32232816638693%; --x-1:76%; 
-                --c-2:hsla(0,0%,0%,1); --y-2:18%; --x-2:97%; --s-start-2:8.392121895570533%; --s-end-2:28.52989037790774%; 
-                --y-3:18%; --s-start-3:8.392121895570533%; --s-end-3:28.52989037790774%; --c-3:hsla(0,0%,0%,1); --x-3:42%; 
-                --x-4:66%; --y-4:95%; --c-4:hsla(0,0%,0%,1); --s-start-4:8.392121895570533%; --s-end-4:28.52989037790774%; 
-                --y-5:92%; --s-start-5:8.392121895570533%; --s-end-5:28.52989037790774%; --c-5:hsla(0,0%,0%,1); --x-5:46%; 
-                --x-6:102%; --y-6:16%; --s-start-6:24.72064437400016%; --s-end-6:47.490620328604024%; --c-6:hsla(279.7894736842105,67%,27%,1); 
-                --c-7:hsla(279.7894736842105,67%,27%,1); --x-7:22%; --s-start-7:10.200720718860145%; --s-end-7:50.46456494288142%; --y-7:52%; 
-                --c-9:hsla(217.5,100%,31%,1); --s-start-9:6.294132688184733%; --s-end-9:20.79106730744014%; --y-9:51%; --x-9:97%;
-            }
+        100% {
+          --y-1: -3%;
+          --c-1: hsla(0, 0%, 0%, 1);
+          --s-start-1: 8.392121895570533%;
+          --s-end-1: 59.32232816638693%;
+          --x-1: 76%;
+          --c-2: hsla(0, 0%, 0%, 1);
+          --y-2: 18%;
+          --x-2: 97%;
+          --s-start-2: 8.392121895570533%;
+          --s-end-2: 28.52989037790774%;
+          --y-3: 18%;
+          --s-start-3: 8.392121895570533%;
+          --s-end-3: 28.52989037790774%;
+          --c-3: hsla(0, 0%, 0%, 1);
+          --x-3: 42%;
+          --x-4: 66%;
+          --y-4: 95%;
+          --c-4: hsla(0, 0%, 0%, 1);
+          --s-start-4: 8.392121895570533%;
+          --s-end-4: 28.52989037790774%;
+          --y-5: 92%;
+          --s-start-5: 8.392121895570533%;
+          --s-end-5: 28.52989037790774%;
+          --c-5: hsla(0, 0%, 0%, 1);
+          --x-5: 46%;
+          --x-6: 102%;
+          --y-6: 16%;
+          --s-start-6: 24.72064437400016%;
+          --s-end-6: 47.490620328604024%;
+          --c-6: hsla(279.7894736842105, 67%, 27%, 1);
+          --c-7: hsla(279.7894736842105, 67%, 27%, 1);
+          --x-7: 22%;
+          --s-start-7: 10.200720718860145%;
+          --s-end-7: 50.46456494288142%;
+          --y-7: 52%;
+          --c-9: hsla(217.5, 100%, 31%, 1);
+          --s-start-9: 6.294132688184733%;
+          --s-end-9: 20.79106730744014%;
+          --y-9: 51%;
+          --x-9: 97%;
         }
+      }
 
-        @property --y-0 { syntax:'<percentage>'; inherits:false; initial-value:63%; }
-        @property --x-0 { syntax:'<percentage>'; inherits:false; initial-value:93%; }
-        @property --c-0 { syntax:'<color>'; inherits:false; initial-value:hsla(217.59493670886076,100%,30%,1); }
-        @property --s-start-0 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-0 { syntax:'<percentage>'; inherits:false; initial-value:38.584065253664996%; }
-        @property --y-1 { syntax:'<percentage>'; inherits:false; initial-value:-7%; }
-        @property --c-1 { syntax:'<color>'; inherits:false; initial-value:hsla(0,0%,0%,1); }
-        @property --s-start-1 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-1 { syntax:'<percentage>'; inherits:false; initial-value:22.10878124098502%; }
-        @property --x-1 { syntax:'<percentage>'; inherits:false; initial-value:33%; }
-        @property --c-2 { syntax:'<color>'; inherits:false; initial-value:hsla(0,0%,0%,1); }
-        @property --y-2 { syntax:'<percentage>'; inherits:false; initial-value:7%; }
-        @property --x-2 { syntax:'<percentage>'; inherits:false; initial-value:84%; }
-        @property --s-start-2 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-2 { syntax:'<percentage>'; inherits:false; initial-value:22.558651527792346%; }
-        @property --y-3 { syntax:'<percentage>'; inherits:false; initial-value:5%; }
-        @property --s-start-3 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-3 { syntax:'<percentage>'; inherits:false; initial-value:22.558651527792346%; }
-        @property --c-3 { syntax:'<color>'; inherits:false; initial-value:hsla(0,0%,0%,1); }
-        @property --x-3 { syntax:'<percentage>'; inherits:false; initial-value:14%; }
-        @property --x-4 { syntax:'<percentage>'; inherits:false; initial-value:7%; }
-        @property --y-4 { syntax:'<percentage>'; inherits:false; initial-value:96%; }
-        @property --c-4 { syntax:'<color>'; inherits:false; initial-value:hsla(0,0%,0%,1); }
-        @property --s-start-4 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-4 { syntax:'<percentage>'; inherits:false; initial-value:22.558651527792346%; }
-        @property --y-5 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
-        @property --s-start-5 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-5 { syntax:'<percentage>'; inherits:false; initial-value:22.558651527792346%; }
-        @property --c-5 { syntax:'<color>'; inherits:false; initial-value:hsla(0,0%,0%,1); }
-        @property --x-5 { syntax:'<percentage>'; inherits:false; initial-value:93%; }
-        @property --x-6 { syntax:'<percentage>'; inherits:false; initial-value:3%; }
-        @property --y-6 { syntax:'<percentage>'; inherits:false; initial-value:61%; }
-        @property --s-start-6 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-6 { syntax:'<percentage>'; inherits:false; initial-value:39.67138181429644%; }
-        @property --c-6 { syntax:'<color>'; inherits:false; initial-value:hsla(279.7894736842105,67%,27%,1); }
-        @property --c-7 { syntax:'<color>'; inherits:false; initial-value:hsla(279.7894736842105,67%,27%,1); }
-        @property --x-7 { syntax:'<percentage>'; inherits:false; initial-value:94%; }
-        @property --s-start-7 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-7 { syntax:'<percentage>'; inherits:false; initial-value:49.58090142552271%; }
-        @property --y-7 { syntax:'<percentage>'; inherits:false; initial-value:59%; }
-        @property --s-start-8 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-8 { syntax:'<percentage>'; inherits:false; initial-value:34.815367581495366%; }
-        @property --y-8 { syntax:'<percentage>'; inherits:false; initial-value:63%; }
-        @property --x-8 { syntax:'<percentage>'; inherits:false; initial-value:48%; }
-        @property --c-8 { syntax:'<color>'; inherits:false; initial-value:hsla(217.68844221105527,100%,39%,1); }
-        @property --c-9 { syntax:'<color>'; inherits:false; initial-value:hsla(217.59493670886076,100%,30%,1); }
-        @property --s-start-9 { syntax:'<percentage>'; inherits:false; initial-value:8.392121895570533%; }
-        @property --s-end-9 { syntax:'<percentage>'; inherits:false; initial-value:31.77166380372925%; }
-        @property --y-9 { syntax:'<percentage>'; inherits:false; initial-value:78%; }
-        @property --x-9 { syntax:'<percentage>'; inherits:false; initial-value:96%; }
+      @property --y-0 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 63%;
+      }
+      @property --x-0 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 93%;
+      }
+      @property --c-0 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(217.59493670886076, 100%, 30%, 1);
+      }
+      @property --s-start-0 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-0 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 38.584065253664996%;
+      }
+      @property --y-1 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: -7%;
+      }
+      @property --c-1 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(0, 0%, 0%, 1);
+      }
+      @property --s-start-1 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-1 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 22.10878124098502%;
+      }
+      @property --x-1 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 33%;
+      }
+      @property --c-2 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(0, 0%, 0%, 1);
+      }
+      @property --y-2 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 7%;
+      }
+      @property --x-2 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 84%;
+      }
+      @property --s-start-2 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-2 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 22.558651527792346%;
+      }
+      @property --y-3 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 5%;
+      }
+      @property --s-start-3 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-3 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 22.558651527792346%;
+      }
+      @property --c-3 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(0, 0%, 0%, 1);
+      }
+      @property --x-3 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 14%;
+      }
+      @property --x-4 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 7%;
+      }
+      @property --y-4 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 96%;
+      }
+      @property --c-4 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(0, 0%, 0%, 1);
+      }
+      @property --s-start-4 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-4 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 22.558651527792346%;
+      }
+      @property --y-5 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 90%;
+      }
+      @property --s-start-5 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-5 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 22.558651527792346%;
+      }
+      @property --c-5 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(0, 0%, 0%, 1);
+      }
+      @property --x-5 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 93%;
+      }
+      @property --x-6 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 3%;
+      }
+      @property --y-6 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 61%;
+      }
+      @property --s-start-6 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-6 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 39.67138181429644%;
+      }
+      @property --c-6 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(279.7894736842105, 67%, 27%, 1);
+      }
+      @property --c-7 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(279.7894736842105, 67%, 27%, 1);
+      }
+      @property --x-7 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 94%;
+      }
+      @property --s-start-7 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-7 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 49.58090142552271%;
+      }
+      @property --y-7 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 59%;
+      }
+      @property --s-start-8 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-8 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 34.815367581495366%;
+      }
+      @property --y-8 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 63%;
+      }
+      @property --x-8 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 48%;
+      }
+      @property --c-8 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(217.68844221105527, 100%, 39%, 1);
+      }
+      @property --c-9 {
+        syntax: "<color>";
+        inherits: false;
+        initial-value: hsla(217.59493670886076, 100%, 30%, 1);
+      }
+      @property --s-start-9 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 8.392121895570533%;
+      }
+      @property --s-end-9 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 31.77166380372925%;
+      }
+      @property --y-9 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 78%;
+      }
+      @property --x-9 {
+        syntax: "<percentage>";
+        inherits: false;
+        initial-value: 96%;
+      }
 
-        .mesh-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background-color: hsla(262,82%,3%,1);
-            background-image: 
-                radial-gradient(circle at var(--x-0) var(--y-0), var(--c-0) var(--s-start-0), transparent var(--s-end-0)),
-                radial-gradient(circle at var(--x-1) var(--y-1), var(--c-1) var(--s-start-1), transparent var(--s-end-1)),
-                radial-gradient(circle at var(--x-2) var(--y-2), var(--c-2) var(--s-start-2), transparent var(--s-end-2)),
-                radial-gradient(circle at var(--x-3) var(--y-3), var(--c-3) var(--s-start-3), transparent var(--s-end-3)),
-                radial-gradient(circle at var(--x-4) var(--y-4), var(--c-4) var(--s-start-4), transparent var(--s-end-4)),
-                radial-gradient(circle at var(--x-5) var(--y-5), var(--c-5) var(--s-start-5), transparent var(--s-end-5)),
-                radial-gradient(circle at var(--x-6) var(--y-6), var(--c-6) var(--s-start-6), transparent var(--s-end-6)),
-                radial-gradient(circle at var(--x-7) var(--y-7), var(--c-7) var(--s-start-7), transparent var(--s-end-7)),
-                radial-gradient(circle at var(--x-8) var(--y-8), var(--c-8) var(--s-start-8), transparent var(--s-end-8)),
-                radial-gradient(circle at var(--x-9) var(--y-9), var(--c-9) var(--s-start-9), transparent var(--s-end-9));
-            animation: hero-gradient-animation 15s linear infinite alternate-reverse;
-            background-blend-mode: normal, normal, normal, normal, normal, normal, normal, normal, normal, normal;
+      .mesh-gradient {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        background-color: hsla(262, 82%, 3%, 1);
+        background-image:
+          radial-gradient(
+            circle at var(--x-0) var(--y-0),
+            var(--c-0) var(--s-start-0),
+            transparent var(--s-end-0)
+          ),
+          radial-gradient(
+            circle at var(--x-1) var(--y-1),
+            var(--c-1) var(--s-start-1),
+            transparent var(--s-end-1)
+          ),
+          radial-gradient(
+            circle at var(--x-2) var(--y-2),
+            var(--c-2) var(--s-start-2),
+            transparent var(--s-end-2)
+          ),
+          radial-gradient(
+            circle at var(--x-3) var(--y-3),
+            var(--c-3) var(--s-start-3),
+            transparent var(--s-end-3)
+          ),
+          radial-gradient(
+            circle at var(--x-4) var(--y-4),
+            var(--c-4) var(--s-start-4),
+            transparent var(--s-end-4)
+          ),
+          radial-gradient(
+            circle at var(--x-5) var(--y-5),
+            var(--c-5) var(--s-start-5),
+            transparent var(--s-end-5)
+          ),
+          radial-gradient(
+            circle at var(--x-6) var(--y-6),
+            var(--c-6) var(--s-start-6),
+            transparent var(--s-end-6)
+          ),
+          radial-gradient(
+            circle at var(--x-7) var(--y-7),
+            var(--c-7) var(--s-start-7),
+            transparent var(--s-end-7)
+          ),
+          radial-gradient(
+            circle at var(--x-8) var(--y-8),
+            var(--c-8) var(--s-start-8),
+            transparent var(--s-end-8)
+          ),
+          radial-gradient(
+            circle at var(--x-9) var(--y-9),
+            var(--c-9) var(--s-start-9),
+            transparent var(--s-end-9)
+          );
+        animation: hero-gradient-animation 15s linear infinite alternate-reverse;
+        background-blend-mode:
+          normal, normal, normal, normal, normal, normal, normal, normal,
+          normal, normal;
+      }
+
+      /* Animated particles */
+      .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      .particle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        animation: particleFloat 15s linear infinite;
+      }
+
+      @keyframes particleFloat {
+        0% {
+          transform: translateY(100vh) translateX(0);
+          opacity: 0;
         }
-
-        /* Animated particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
+        10% {
+          opacity: 1;
         }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            animation: particleFloat 15s linear infinite;
+        90% {
+          opacity: 1;
         }
-
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% {
-                transform: translateY(-100px) translateX(100px);
-                opacity: 0;
-            }
+        100% {
+          transform: translateY(-100px) translateX(100px);
+          opacity: 0;
         }
+      }
 
-        .background-blur {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            filter: blur(100px) brightness(0.3);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.8s ease;
+      .background-blur {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        filter: blur(100px) brightness(0.3);
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.8s ease;
+      }
+
+      .background-blur.active {
+        opacity: 1;
+      }
+
+      .bio-slug {
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        z-index: 1000;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        letter-spacing: 0.5px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* 3D Parallax Tilt Container */
+      .bio-container {
+        max-width: 580px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(20px) saturate(180%);
+        border-radius: 32px;
+        padding: 48px 36px;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow:
+          0 8px 32px 0 rgba(0, 0, 0, 0.37),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+          0 0 80px rgba(102, 126, 234, 0.15);
+        animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        margin: 20px auto;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px) scale(0.95);
         }
-
-        .background-blur.active {
-            opacity: 1;
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
         }
+      }
 
-        .bio-slug {
-            position: fixed;
-            top: 24px;
-            left: 24px;
-            z-index: 1000;
-            font-size: 13px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
-            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-            letter-spacing: 0.5px;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+      .bio-header {
+        text-align: center;
+        margin-bottom: 28px;
+        position: relative;
+      }
+
+      .bio-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        box-shadow:
+          0 0 0 4px rgba(102, 126, 234, 0.1),
+          0 20px 40px rgba(0, 0, 0, 0.3),
+          0 0 60px rgba(102, 126, 234, 0.2);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+      }
+
+      .bio-avatar:hover {
+        transform: scale(1.05) translateY(-5px);
+      }
+
+      .bio-avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        box-shadow:
+          0 0 0 4px rgba(102, 126, 234, 0.1),
+          0 20px 40px rgba(0, 0, 0, 0.3),
+          0 0 60px rgba(102, 126, 234, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        color: white;
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.8),
+          rgba(118, 75, 162, 0.8)
+        );
+      }
+
+      .bio-name {
+        font-size: 26px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 10px;
+        text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+        letter-spacing: -0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        background: linear-gradient(135deg, #1d9bf0, #0c7abf);
+        border-radius: 50%;
+        color: white;
+        font-size: 13px;
+        box-shadow: 0 0 20px rgba(29, 155, 240, 0.5);
+      }
+
+      .under-review-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 12px;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+      }
+
+      .bio-description {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        max-width: 480px;
+        margin: 0 auto 24px auto;
+      }
+
+      /* Social Links - Holographic Style */
+      .bio-social {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+
+      .social-link {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .social-link::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transform: rotate(45deg);
+        transition: all 0.6s ease;
+      }
+
+      .social-link:hover::before {
+        left: 100%;
+      }
+
+      .social-link:hover {
+        transform: translateY(-4px) scale(1.1);
+        box-shadow:
+          0 10px 30px rgba(0, 0, 0, 0.3),
+          0 0 20px rgba(102, 126, 234, 0.4);
+        border-color: rgba(102, 126, 234, 0.5);
+      }
+
+      /* Bento Grid Layout for Links */
+      .bio-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 0;
+      }
+
+      .bio-links .bio-link-item:first-child {
+        grid-column: 1 / -1;
+      }
+
+      .bio-link-item {
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        padding: 16px 20px;
+        text-align: left;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .link-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 16px;
+      }
+
+      .link-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .link-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .link-url {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.5);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .bio-link-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+        transition: left 0.6s ease;
+      }
+
+      .bio-link-item::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
+        padding: 2px;
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.4),
+          rgba(118, 75, 162, 0.4)
+        );
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .bio-link-item:hover::before {
+        left: 100%;
+      }
+
+      .bio-link-item:hover::after {
+        opacity: 1;
+      }
+
+      .bio-link-item:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.4),
+          0 0 40px rgba(102, 126, 234, 0.3),
+          inset 0 0 20px rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .bio-link-item:active {
+        transform: translateY(-2px) scale(0.98);
+      }
+
+      .bio-footer {
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .powered-by {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .powered-by a {
+        color: rgba(102, 126, 234, 0.9);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .powered-by a:hover {
+        color: rgba(102, 126, 234, 1);
+        filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
+      }
+
+      .error-container {
+        text-align: center;
+        padding: 64px 32px;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
+      .error-404 {
+        font-size: 120px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #06b6d4, #22d3ee);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 16px;
+        animation: glitch 3s ease-in-out infinite;
+        letter-spacing: -0.05em;
+      }
 
+      @keyframes glitch {
+        0%,
+        100% {
+          transform: translate(0);
+        }
+        20% {
+          transform: translate(-2px, 2px);
+        }
+        40% {
+          transform: translate(-2px, -2px);
+        }
+        60% {
+          transform: translate(2px, 2px);
+        }
+        80% {
+          transform: translate(2px, -2px);
+        }
+      }
 
-        /* 3D Parallax Tilt Container */
+      .error-icon {
+        font-size: 80px;
+        margin-bottom: 24px;
+        display: inline-block;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .error-icon i {
+        background: linear-gradient(135deg, #06b6d4, #22d3ee);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.4));
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      .error-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 20px;
+        line-height: 1.3;
+      }
+
+      .error-message {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 40px;
+        line-height: 1.6;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .error-button {
+        display: inline-block;
+        padding: 16px 40px;
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+      }
+
+      .error-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5);
+      }
+
+      .loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #0a0a0f;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        z-index: 9999;
+      }
+
+      .loading-slug {
+        font-size: 2.5rem;
+        font-weight: 500;
+        color: #a0a0a0;
+        letter-spacing: 0.05em;
+      }
+
+      .loader-spanne-20 {
+        position: relative;
+        width: 100px;
+        height: 30px;
+        padding: 0;
+      }
+      .loader-spanne-20 > span {
+        position: absolute;
+        right: 0;
+        width: 3px;
+        height: 30px;
+        background-color: #06b6d4;
+        display: block;
+        border-radius: 3px;
+        transform-origin: 50% 100%;
+        animation: move 2.8s linear infinite;
+      }
+      .loader-spanne-20 > span:nth-child(1) {
+        animation-delay: -0.4s;
+      }
+      .loader-spanne-20 > span:nth-child(2) {
+        animation-delay: -0.8s;
+      }
+      .loader-spanne-20 > span:nth-child(3) {
+        animation-delay: -1.2s;
+      }
+      .loader-spanne-20 > span:nth-child(4) {
+        animation-delay: -1.6s;
+      }
+      .loader-spanne-20 > span:nth-child(5) {
+        animation-delay: -2s;
+      }
+      .loader-spanne-20 > span:nth-child(6) {
+        animation-delay: -2.4s;
+      }
+      .loader-spanne-20 > span:nth-child(7) {
+        animation-delay: -2.8s;
+      }
+      @keyframes move {
+        0% {
+          opacity: 0;
+          transform: translateX(0px) rotate(0deg);
+        }
+        20% {
+          opacity: 1;
+        }
+        40% {
+          transform: translateX(-40px) rotate(0deg);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(-50px) rotate(22deg);
+        }
+        85% {
+          opacity: 1;
+          transform: translateX(-85px) rotate(60deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(-100px) rotate(65deg);
+        }
+      }
+
+      @media (max-width: 768px) {
         .bio-container {
-            max-width: 580px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 32px;
-            padding: 48px 36px;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 
-                0 8px 32px 0 rgba(0, 0, 0, 0.37),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-                0 0 80px rgba(102, 126, 234, 0.15);
-            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            margin: 20px auto;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .bio-header {
-            text-align: center;
-            margin-bottom: 28px;
-            position: relative;
-        }
-
-        .bio-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 
-                0 0 0 4px rgba(102, 126, 234, 0.1),
-                0 20px 40px rgba(0, 0, 0, 0.3),
-                0 0 60px rgba(102, 126, 234, 0.2);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-        }
-
-        .bio-avatar:hover {
-            transform: scale(1.05) translateY(-5px);
-        }
-
-        .bio-avatar-placeholder {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 
-                0 0 0 4px rgba(102, 126, 234, 0.1),
-                0 20px 40px rgba(0, 0, 0, 0.3),
-                0 0 60px rgba(102, 126, 234, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 42px;
-            color: white;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+          padding: 32px 24px;
+          margin: 10px;
         }
 
         .bio-name {
-            font-size: 26px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 10px;
-            text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .verified-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            background: linear-gradient(135deg, #1d9bf0, #0c7abf);
-            border-radius: 50%;
-            color: white;
-            font-size: 13px;
-            box-shadow: 0 0 20px rgba(29, 155, 240, 0.5);
-        }
-
-        .under-review-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4px 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 12px;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
+          font-size: 22px;
         }
 
         .bio-description {
-            font-size: 15px;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-            max-width: 480px;
-            margin: 0 auto 24px auto;
+          font-size: 13px;
         }
 
-        /* Social Links - Holographic Style */
-        .bio-social {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 28px;
-        }
-
-        .social-link {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .social-link::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: rotate(45deg);
-            transition: all 0.6s ease;
-        }
-
-        .social-link:hover::before {
-            left: 100%;
-        }
-
-        .social-link:hover {
-            transform: translateY(-4px) scale(1.1);
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(102, 126, 234, 0.4);
-            border-color: rgba(102, 126, 234, 0.5);
-        }
-
-        /* Bento Grid Layout for Links */
         .bio-links {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 0;
+          grid-template-columns: 1fr;
         }
 
         .bio-links .bio-link-item:first-child {
-            grid-column: 1 / -1;
+          grid-column: 1;
         }
 
-        .bio-link-item {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 18px;
-            padding: 16px 20px;
-            text-align: left;
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.95);
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .bio-avatar,
+        .bio-avatar-placeholder {
+          width: 80px;
+          height: 80px;
+          font-size: 32px;
         }
-
-        .link-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 16px;
-        }
-
-        .link-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .link-title {
-            font-weight: 600;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .link-url {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .bio-link-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.15), 
-                transparent);
-            transition: left 0.6s ease;
-        }
-
-        .bio-link-item::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 20px;
-            padding: 2px;
-            background: linear-gradient(135deg, 
-                rgba(102, 126, 234, 0.4), 
-                rgba(118, 75, 162, 0.4));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
-                          linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, 
-                  linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .bio-link-item:hover::before {
-            left: 100%;
-        }
-
-        .bio-link-item:hover::after {
-            opacity: 1;
-        }
-
-        .bio-link-item:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.4),
-                0 0 40px rgba(102, 126, 234, 0.3),
-                inset 0 0 20px rgba(255, 255, 255, 0.05);
-            background: rgba(255, 255, 255, 0.12);
-        }
-
-        .bio-link-item:active {
-            transform: translateY(-2px) scale(0.98);
-        }
-
-        .bio-footer {
-            text-align: center;
-            margin-top: 32px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .powered-by {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .powered-by a {
-            color: rgba(102, 126, 234, 0.9);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .powered-by a:hover {
-            color: rgba(102, 126, 234, 1);
-            filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
-        }
-
-        .error-container {
-            text-align: center;
-            padding: 64px 32px;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .error-404 {
-            font-size: 120px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #06b6d4, #22d3ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 16px;
-            animation: glitch 3s ease-in-out infinite;
-            letter-spacing: -0.05em;
-        }
-
-        @keyframes glitch {
-            0%, 100% {
-                transform: translate(0);
-            }
-            20% {
-                transform: translate(-2px, 2px);
-            }
-            40% {
-                transform: translate(-2px, -2px);
-            }
-            60% {
-                transform: translate(2px, 2px);
-            }
-            80% {
-                transform: translate(2px, -2px);
-            }
-        }
-
-        .error-icon {
-            font-size: 80px;
-            margin-bottom: 24px;
-            display: inline-block;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .error-icon i {
-            background: linear-gradient(135deg, #06b6d4, #22d3ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.4));
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-        }
-
-        .error-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 20px;
-            line-height: 1.3;
-        }
-
-        .error-message {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 40px;
-            line-height: 1.6;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .error-button {
-            display: inline-block;
-            padding: 16px 40px;
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
-        }
-
-        .error-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5);
-        }
-
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #0a0a0f;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            z-index: 9999;
-        }
-
-        .loading-slug {
-            font-size: 2.5rem;
-            font-weight: 500;
-            color: #a0a0a0;
-            letter-spacing: 0.05em;
-        }
-
-        .loader-spanne-20 {
-            position: relative;
-            width: 100px;
-            height: 30px;
-            padding: 0;
-        }
-        .loader-spanne-20 > span {
-            position: absolute;
-            right: 0;
-            width: 3px;
-            height: 30px;
-            background-color: #06b6d4;
-            display: block;
-            border-radius: 3px;
-            transform-origin: 50% 100%;
-            animation: move 2.8s linear infinite;
-        }
-        .loader-spanne-20 > span:nth-child(1) {
-            animation-delay: -0.4s;
-        }
-        .loader-spanne-20 > span:nth-child(2) {
-            animation-delay: -0.8s;
-        }
-        .loader-spanne-20 > span:nth-child(3) {
-            animation-delay: -1.2s;
-        }
-        .loader-spanne-20 > span:nth-child(4) {
-            animation-delay: -1.6s;
-        }
-        .loader-spanne-20 > span:nth-child(5) {
-            animation-delay: -2s;
-        }
-        .loader-spanne-20 > span:nth-child(6) {
-            animation-delay: -2.4s;
-        }
-        .loader-spanne-20 > span:nth-child(7) {
-            animation-delay: -2.8s;
-        }
-        @keyframes move {
-            0% {
-                opacity: 0;
-                transform: translateX(0px) rotate(0deg);
-            }
-            20% {
-                opacity: 1;
-            }
-            40% {
-                transform: translateX(-40px) rotate(0deg);
-            }
-            50% {
-                opacity: 1;
-                transform: translateX(-50px) rotate(22deg);
-            }
-            85% {
-                opacity: 1;
-                transform: translateX(-85px) rotate(60deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(-100px) rotate(65deg);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .bio-container {
-                padding: 32px 24px;
-                margin: 10px;
-            }
-
-            .bio-name {
-                font-size: 22px;
-            }
-
-            .bio-description {
-                font-size: 13px;
-            }
-
-            .bio-links {
-                grid-template-columns: 1fr;
-            }
-
-            .bio-links .bio-link-item:first-child {
-                grid-column: 1;
-            }
-
-            .bio-avatar,
-            .bio-avatar-placeholder {
-                width: 80px;
-                height: 80px;
-                font-size: 32px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Mesh Gradient Background -->
     <div class="mesh-gradient"></div>
-    
+
     <!-- Animated Particles -->
     <div class="particles" id="particles"></div>
-    
+
     <span class="bio-slug" id="bioSlugDisplay"></span>
     <div class="background-blur" id="backgroundBlur"></div>
     <div class="loading" id="loading">
-        <div class="loader-spanne-20">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <div class="loading-slug" id="loadingSlug"></div>
+      <div class="loader-spanne-20">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="loading-slug" id="loadingSlug"></div>
     </div>
     <div class="bio-container">
+      <div id="bioContent" style="display: none">
+        <!-- Content will be injected here -->
+      </div>
 
-        <div id="bioContent" style="display: none;">
-            <!-- Content will be injected here -->
+      <div id="errorContent" style="display: none">
+        <div class="error-container">
+          <div class="error-404">404</div>
+          <div class="error-icon">
+            <i class="fas fa-unlink"></i>
+          </div>
+          <h1 class="error-title">
+            We manage every link on earth<br />but you managed to type a broken
+            one, LOL
+          </h1>
+          <p class="error-message">
+            The link you're looking for doesn't exist or has been removed
+          </p>
+          <a href="/" class="error-button">
+            <i class="fas fa-home"></i> Take me Home
+          </a>
         </div>
-
-        <div id="errorContent" style="display: none;">
-            <div class="error-container">
-                <div class="error-404">404</div>
-                <div class="error-icon">
-                    <i class="fas fa-unlink"></i>
-                </div>
-                <h1 class="error-title">We manage every link on earth<br>but you managed to type a broken one, LOL</h1>
-                <p class="error-message">The link you're looking for doesn't exist or has been removed</p>
-                <a href="/" class="error-button">
-                    <i class="fas fa-home"></i> Take me Home
-                </a>
-            </div>
-        </div>
+      </div>
     </div>
 
     <script src="/js/firebase-config.js"></script>
     <script>
-        // Get slug from URL
-        const pathParts = window.location.pathname.split('/');
-        const slug = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
+      // Get slug from URL
+      const pathParts = window.location.pathname.split("/");
+      const slug =
+        pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
 
-        // Display slug in loading screen
-        const loadingSlug = document.getElementById('loadingSlug');
-        if (loadingSlug && slug) {
-            loadingSlug.textContent = `piik.me/${slug}`;
+      // Display slug in loading screen
+      const loadingSlug = document.getElementById("loadingSlug");
+      if (loadingSlug && slug) {
+        loadingSlug.textContent = `piik.me/${slug}`;
+      }
+
+      async function loadBioLink() {
+        try {
+          if (!slug) {
+            console.error("No slug found in URL");
+            showError();
+            return;
+          }
+
+          console.log("Loading bio link for slug:", slug);
+          const db = firebase.firestore();
+          const bioLinksSnapshot = await db
+            .collection("bioLinks")
+            .where("slug", "==", slug)
+            .limit(1)
+            .get();
+
+          console.log(
+            "Query results:",
+            bioLinksSnapshot.empty
+              ? "empty"
+              : bioLinksSnapshot.docs.length + " docs found",
+          );
+
+          if (bioLinksSnapshot.empty) {
+            console.error("No bio link found with slug:", slug);
+            showError();
+            return;
+          }
+
+          const bioLinkDoc = bioLinksSnapshot.docs[0];
+          const bioLink = bioLinkDoc.data();
+
+          // Track view (ignore permission errors for public viewing)
+          try {
+            await db
+              .collection("bioLinks")
+              .doc(bioLinkDoc.id)
+              .update({
+                views: firebase.firestore.FieldValue.increment(1),
+              });
+          } catch (viewError) {
+            console.log(
+              "Could not track view (permissions):",
+              viewError.message,
+            );
+          }
+
+          // Update meta tags
+          document.title = bioLink.name;
+          document.querySelector('meta[property="og:title"]').content =
+            bioLink.name;
+          document.querySelector('meta[name="twitter:title"]').content =
+            bioLink.name;
+
+          if (bioLink.description) {
+            document.querySelector('meta[property="og:description"]').content =
+              bioLink.description;
+            document.querySelector('meta[name="twitter:description"]').content =
+              bioLink.description;
+          }
+
+          if (bioLink.profilePicture) {
+            document.querySelector('meta[property="og:image"]').content =
+              bioLink.profilePicture;
+            document.querySelector('meta[name="twitter:image"]').content =
+              bioLink.profilePicture;
+          }
+
+          // Set background style
+          const backgroundStyle = bioLink.backgroundStyle || "gradient";
+          const themeColor = bioLink.themeColor || "#06b6d4";
+
+          if (backgroundStyle === "gradient") {
+            // Gradient background
+            const rgb = hexToRgb(themeColor);
+            document.body.style.background = `linear-gradient(135deg, ${themeColor} 0%, rgb(${Math.floor(rgb.r * 0.7)}, ${Math.floor(rgb.g * 0.7)}, ${Math.floor(rgb.b * 0.7)}) 100%)`;
+          } else if (backgroundStyle === "solid") {
+            // Solid color background
+            document.body.style.background = themeColor;
+          } else if (backgroundStyle === "image" && bioLink.profilePicture) {
+            // Background image with blur effect
+            const backgroundBlur = document.getElementById("backgroundBlur");
+            backgroundBlur.style.backgroundImage = `url(${bioLink.profilePicture})`;
+            setTimeout(() => {
+              backgroundBlur.classList.add("active");
+            }, 100);
+          }
+
+          // Display slug
+          document.getElementById("bioSlugDisplay").textContent =
+            `piik.me/${bioLink.slug}`;
+
+          // Render bio link
+          renderBioLink(bioLink);
+        } catch (error) {
+          console.error("Error loading bio link:", error);
+          showError();
         }
+      }
 
-        async function loadBioLink() {
-            try {
-                if (!slug) {
-                    console.error('No slug found in URL');
-                    showError();
-                    return;
-                }
+      function renderBioLink(bioLink) {
+        const bioContent = document.getElementById("bioContent");
+        const themeColor = bioLink.themeColor || "#06b6d4";
 
-                console.log('Loading bio link for slug:', slug);
-                const db = firebase.firestore();
-                const bioLinksSnapshot = await db.collection('bioLinks')
-                    .where('slug', '==', slug)
-                    .limit(1)
-                    .get();
+        let html = '<div class="bio-header">';
 
-                console.log('Query results:', bioLinksSnapshot.empty ? 'empty' : bioLinksSnapshot.docs.length + ' docs found');
-
-                if (bioLinksSnapshot.empty) {
-                    console.error('No bio link found with slug:', slug);
-                    showError();
-                    return;
-                }
-
-                const bioLinkDoc = bioLinksSnapshot.docs[0];
-                const bioLink = bioLinkDoc.data();
-
-                // Track view (ignore permission errors for public viewing)
-                try {
-                    await db.collection('bioLinks').doc(bioLinkDoc.id).update({
-                        views: firebase.firestore.FieldValue.increment(1)
-                    });
-                } catch (viewError) {
-                    console.log('Could not track view (permissions):', viewError.message);
-                }
-
-                // Update meta tags
-                document.title = bioLink.name;
-                document.querySelector('meta[property="og:title"]').content = bioLink.name;
-                document.querySelector('meta[name="twitter:title"]').content = bioLink.name;
-                
-                if (bioLink.description) {
-                    document.querySelector('meta[property="og:description"]').content = bioLink.description;
-                    document.querySelector('meta[name="twitter:description"]').content = bioLink.description;
-                }
-                
-                if (bioLink.profilePicture) {
-                    document.querySelector('meta[property="og:image"]').content = bioLink.profilePicture;
-                    document.querySelector('meta[name="twitter:image"]').content = bioLink.profilePicture;
-                }
-
-                // Set background style
-                const backgroundStyle = bioLink.backgroundStyle || 'gradient';
-                const themeColor = bioLink.themeColor || '#06b6d4';
-                
-                if (backgroundStyle === 'gradient') {
-                    // Gradient background
-                    const rgb = hexToRgb(themeColor);
-                    document.body.style.background = `linear-gradient(135deg, ${themeColor} 0%, rgb(${Math.floor(rgb.r * 0.7)}, ${Math.floor(rgb.g * 0.7)}, ${Math.floor(rgb.b * 0.7)}) 100%)`;
-                } else if (backgroundStyle === 'solid') {
-                    // Solid color background
-                    document.body.style.background = themeColor;
-                } else if (backgroundStyle === 'image' && bioLink.profilePicture) {
-                    // Background image with blur effect
-                    const backgroundBlur = document.getElementById('backgroundBlur');
-                    backgroundBlur.style.backgroundImage = `url(${bioLink.profilePicture})`;
-                    setTimeout(() => {
-                        backgroundBlur.classList.add('active');
-                    }, 100);
-                }
-
-                // Display slug
-                document.getElementById('bioSlugDisplay').textContent = `piik.me/${bioLink.slug}`;
-
-                // Render bio link
-                renderBioLink(bioLink);
-
-            } catch (error) {
-                console.error('Error loading bio link:', error);
-                showError();
-            }
-        }
-
-        function renderBioLink(bioLink) {
-            const bioContent = document.getElementById('bioContent');
-            const themeColor = bioLink.themeColor || '#06b6d4';
-
-            let html = '<div class="bio-header">';
-
-            // Profile picture
-            if (bioLink.profilePicture) {
-                html += `<img src="${bioLink.profilePicture}" alt="${bioLink.name}" class="bio-avatar">`;
-            } else {
-                html += `<div class="bio-avatar-placeholder" style="background: ${themeColor};">
+        // Profile picture
+        if (bioLink.profilePicture) {
+          html += `<img src="${bioLink.profilePicture}" alt="${bioLink.name}" class="bio-avatar">`;
+        } else {
+          html += `<div class="bio-avatar-placeholder" style="background: ${themeColor};">
                     <i class="fas fa-user"></i>
                 </div>`;
-            }
+        }
 
-            // Name and description with verified badge
-            const verifiedBadge = bioLink.verified 
-                ? '<span class="verified-badge"><i class="fas fa-check"></i></span>' 
-                : '<span class="under-review-badge">Under Review</span>';
-            html += `<h1 class="bio-name">${bioLink.name}${verifiedBadge}</h1>`;
-            if (bioLink.description) {
-                html += `<p class="bio-description">${bioLink.description}</p>`;
-            }
+        // Name and description with verified badge
+        const verifiedBadge = bioLink.verified
+          ? '<span class="verified-badge"><i class="fas fa-check"></i></span>'
+          : '<span class="under-review-badge">Under Review</span>';
+        html += `<h1 class="bio-name">${bioLink.name}${verifiedBadge}</h1>`;
+        if (bioLink.description) {
+          html += `<p class="bio-description">${bioLink.description}</p>`;
+        }
 
-            // Social links
-            const social = bioLink.social || {};
-            const socialLinks = [];
-            
-            if (social.instagram) socialLinks.push({ icon: 'fab fa-instagram', url: `https://instagram.com/${social.instagram}` });
-            if (social.twitter) socialLinks.push({ icon: 'fab fa-twitter', url: `https://x.com/${social.x}` });
-            if (social.linkedin) socialLinks.push({ icon: 'fab fa-linkedin', url: social.linkedin.startsWith('http') ? social.linkedin : `https://linkedin.com/in/${social.linkedin}` });
-            if (social.github) socialLinks.push({ icon: 'fab fa-github', url: `https://github.com/${social.github}` });
-            if (social.youtube) socialLinks.push({ icon: 'fab fa-youtube', url: social.youtube.startsWith('http') ? social.youtube : `https://youtube.com/@${social.youtube}` });
-            if (social.website) socialLinks.push({ icon: 'fas fa-globe', url: social.website.startsWith('http') ? social.website : `https://${social.website}` });
+        // Social links
+        const social = bioLink.social || {};
+        const socialLinks = [];
 
-            if (socialLinks.length > 0) {
-                html += '<div class="bio-social">';
-                socialLinks.forEach(link => {
-                    html += `<a href="${link.url}" class="social-link" target="_blank" rel="noopener noreferrer">
+        if (social.instagram)
+          socialLinks.push({
+            icon: "fab fa-instagram",
+            url: `https://instagram.com/${social.instagram}`,
+          });
+        if (social.twitter)
+          socialLinks.push({
+            icon: "fab fa-twitter",
+            url: `https://x.com/${social.x}`,
+          });
+        if (social.linkedin)
+          socialLinks.push({
+            icon: "fab fa-linkedin",
+            url: social.linkedin.startsWith("http")
+              ? social.linkedin
+              : `https://linkedin.com/in/${social.linkedin}`,
+          });
+        if (social.github)
+          socialLinks.push({
+            icon: "fab fa-github",
+            url: `https://github.com/${social.github}`,
+          });
+        if (social.youtube)
+          socialLinks.push({
+            icon: "fab fa-youtube",
+            url: social.youtube.startsWith("http")
+              ? social.youtube
+              : `https://youtube.com/@${social.youtube}`,
+          });
+        if (social.website)
+          socialLinks.push({
+            icon: "fas fa-globe",
+            url: social.website.startsWith("http")
+              ? social.website
+              : `https://${social.website}`,
+          });
+
+        if (socialLinks.length > 0) {
+          html += '<div class="bio-social">';
+          socialLinks.forEach((link) => {
+            html += `<a href="${link.url}" class="social-link" target="_blank" rel="noopener noreferrer">
                         <i class="${link.icon}" style="color: rgba(255, 255, 255, 0.8);"></i>
                     </a>`;
-                });
-                html += '</div>';
-            }
+          });
+          html += "</div>";
+        }
 
-            html += '</div>';
+        html += "</div>";
 
-            // Links
-            if (bioLink.links && bioLink.links.length > 0) {
-                html += '<div class="bio-links">';
-                bioLink.links.forEach((link, index) => {
-                    const domain = extractDomain(link.url);
-                    const icon = getLinkIcon(link.url);
-                    html += `<a href="${link.url}" class="bio-link-item" target="_blank" rel="noopener noreferrer"
+        // Links
+        if (bioLink.links && bioLink.links.length > 0) {
+          html += '<div class="bio-links">';
+          bioLink.links.forEach((link, index) => {
+            const domain = extractDomain(link.url);
+            const icon = getLinkIcon(link.url);
+            html += `<a href="${link.url}" class="bio-link-item" target="_blank" rel="noopener noreferrer"
                              onclick="trackClick('${bioLink.slug}', ${index})">
                         <div class="link-icon">
                             <i class="${icon}"></i>
@@ -977,12 +1415,12 @@
                             <div class="link-url">${domain}</div>
                         </div>
                     </a>`;
-                });
-                html += '</div>';
-            }
+          });
+          html += "</div>";
+        }
 
-            // Footer
-            html += `
+        // Footer
+        html += `
                 <div class="bio-footer">
                     <div class="powered-by">
                         <span>100% free, try</span>
@@ -993,132 +1431,146 @@
                 </div>
             `;
 
-            bioContent.innerHTML = html;
-            document.getElementById('loading').style.display = 'none';
-            bioContent.style.display = 'block';
-            
-            // Initialize magnetic interactions after content is loaded
-            setTimeout(() => {
-                initMagneticLinks();
-            }, 100);
-        }
+        bioContent.innerHTML = html;
+        document.getElementById("loading").style.display = "none";
+        bioContent.style.display = "block";
 
-        function extractDomain(url) {
-            try {
-                const urlObj = new URL(url);
-                return urlObj.hostname.replace('www.', '');
-            } catch {
-                return url;
-            }
-        }
-
-        function getLinkIcon(url) {
-            const urlLower = url.toLowerCase();
-            
-            if (urlLower.includes('youtube.com') || urlLower.includes('youtu.be')) return 'fab fa-youtube';
-            if (urlLower.includes('twitter.com') || urlLower.includes('x.com')) return 'fab fa-twitter';
-            if (urlLower.includes('instagram.com')) return 'fab fa-instagram';
-            if (urlLower.includes('facebook.com')) return 'fab fa-facebook';
-            if (urlLower.includes('linkedin.com')) return 'fab fa-linkedin';
-            if (urlLower.includes('github.com')) return 'fab fa-github';
-            if (urlLower.includes('tiktok.com')) return 'fab fa-tiktok';
-            if (urlLower.includes('spotify.com')) return 'fab fa-spotify';
-            if (urlLower.includes('discord.')) return 'fab fa-discord';
-            if (urlLower.includes('twitch.tv')) return 'fab fa-twitch';
-            if (urlLower.includes('medium.com')) return 'fab fa-medium';
-            if (urlLower.includes('reddit.com')) return 'fab fa-reddit';
-            if (urlLower.includes('dribbble.com')) return 'fab fa-dribbble';
-            if (urlLower.includes('behance.net')) return 'fab fa-behance';
-            if (urlLower.includes('telegram.')) return 'fab fa-telegram';
-            if (urlLower.includes('whatsapp.')) return 'fab fa-whatsapp';
-            
-            return 'fas fa-link';
-        }
-
-        async function trackClick(slug, linkIndex) {
-            try {
-                const db = firebase.firestore();
-                const bioLinksSnapshot = await db.collection('bioLinks')
-                    .where('slug', '==', slug)
-                    .limit(1)
-                    .get();
-
-                if (!bioLinksSnapshot.empty) {
-                    const bioLinkDoc = bioLinksSnapshot.docs[0];
-                    await db.collection('bioLinks').doc(bioLinkDoc.id).update({
-                        clicks: firebase.firestore.FieldValue.increment(1)
-                    });
-                }
-            } catch (error) {
-                console.error('Error tracking click:', error);
-            }
-        }
-
-        function showError() {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('errorContent').style.display = 'block';
-        }
-
-        function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : { r: 6, g: 182, b: 212 };
-        }
-
-        // Load bio link on page load
-        loadBioLink();
-
-        // Create particles
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 30;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 15 + 's';
-                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-                particlesContainer.appendChild(particle);
-            }
-        }
-
-        // Magnetic interaction for links
-        function initMagneticLinks() {
-            const links = document.querySelectorAll('.bio-link-item, .social-link');
-            
-            links.forEach(link => {
-                link.addEventListener('mouseenter', (e) => {
-                    e.stopPropagation();
-                });
-
-                link.addEventListener('mousemove', (e) => {
-                    e.stopPropagation();
-                    
-                    requestAnimationFrame(() => {
-                        const rect = link.getBoundingClientRect();
-                        const x = e.clientX - rect.left - rect.width / 2;
-                        const y = e.clientY - rect.top - rect.height / 2;
-                        
-                        link.style.transform = `translate(${(x * 0.15).toFixed(2)}px, ${(y * 0.15).toFixed(2)}px) translateY(-6px) scale(1.02)`;
-                    });
-                });
-                
-                link.addEventListener('mouseleave', (e) => {
-                    e.stopPropagation();
-                    link.style.transform = '';
-                });
-            });
-        }
-
-        // Initialize effects after content loads
+        // Initialize magnetic interactions after content is loaded
         setTimeout(() => {
-            createParticles();
-            initMagneticLinks();
+          initMagneticLinks();
         }, 100);
+      }
+
+      function extractDomain(url) {
+        try {
+          const urlObj = new URL(url);
+          return urlObj.hostname.replace("www.", "");
+        } catch {
+          return url;
+        }
+      }
+
+      function getLinkIcon(url) {
+        const urlLower = url.toLowerCase();
+
+        if (urlLower.includes("youtube.com") || urlLower.includes("youtu.be"))
+          return "fab fa-youtube";
+        if (urlLower.includes("twitter.com") || urlLower.includes("x.com"))
+          return "fab fa-twitter";
+        if (urlLower.includes("instagram.com")) return "fab fa-instagram";
+        if (urlLower.includes("facebook.com")) return "fab fa-facebook";
+        if (urlLower.includes("linkedin.com")) return "fab fa-linkedin";
+        if (urlLower.includes("github.com")) return "fab fa-github";
+        if (urlLower.includes("tiktok.com")) return "fab fa-tiktok";
+        if (urlLower.includes("spotify.com")) return "fab fa-spotify";
+        if (urlLower.includes("discord.")) return "fab fa-discord";
+        if (urlLower.includes("twitch.tv")) return "fab fa-twitch";
+        if (urlLower.includes("medium.com")) return "fab fa-medium";
+        if (urlLower.includes("reddit.com")) return "fab fa-reddit";
+        if (urlLower.includes("dribbble.com")) return "fab fa-dribbble";
+        if (urlLower.includes("behance.net")) return "fab fa-behance";
+        if (urlLower.includes("telegram.")) return "fab fa-telegram";
+        if (urlLower.includes("whatsapp.")) return "fab fa-whatsapp";
+
+        return "fas fa-link";
+      }
+
+      async function trackClick(slug, linkIndex) {
+        try {
+          const db = firebase.firestore();
+          const bioLinksSnapshot = await db
+            .collection("bioLinks")
+            .where("slug", "==", slug)
+            .limit(1)
+            .get();
+
+          if (!bioLinksSnapshot.empty) {
+            const bioLinkDoc = bioLinksSnapshot.docs[0];
+            await db
+              .collection("bioLinks")
+              .doc(bioLinkDoc.id)
+              .update({
+                clicks: firebase.firestore.FieldValue.increment(1),
+              });
+          }
+        } catch (error) {
+          console.error("Error tracking click:", error);
+        }
+      }
+
+      function showError() {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("errorContent").style.display = "block";
+      }
+
+      function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+          ? {
+              r: parseInt(result[1], 16),
+              g: parseInt(result[2], 16),
+              b: parseInt(result[3], 16),
+            }
+          : { r: 6, g: 182, b: 212 };
+      }
+
+      // Load bio link on page load
+      loadBioLink();
+
+      // Create particles
+      function createParticles() {
+        const particlesContainer = document.getElementById("particles");
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.animationDelay = Math.random() * 15 + "s";
+          particle.style.animationDuration = 15 + Math.random() * 10 + "s";
+          particlesContainer.appendChild(particle);
+        }
+      }
+
+      // Magnetic interaction for links
+      function initMagneticLinks() {
+        const links = document.querySelectorAll(".bio-link-item, .social-link");
+
+        links.forEach((link) => {
+          link.addEventListener("mouseenter", (e) => {
+            e.stopPropagation();
+          });
+
+          link.addEventListener("mousemove", (e) => {
+            e.stopPropagation();
+
+            requestAnimationFrame(() => {
+              const rect = link.getBoundingClientRect();
+              const x = e.clientX - rect.left - rect.width / 2;
+              const y = e.clientY - rect.top - rect.height / 2;
+
+              link.style.transform = `translate(${(x * 0.15).toFixed(2)}px, ${(y * 0.15).toFixed(2)}px) translateY(-6px) scale(1.02)`;
+            });
+          });
+
+          link.addEventListener("mouseleave", (e) => {
+            e.stopPropagation();
+            link.style.transform = "";
+          });
+        });
+      }
+
+      // Initialize effects after content loads
+      setTimeout(() => {
+        createParticles();
+        initMagneticLinks();
+      }, 100);
     </script>
-</body>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" aria-label="Back to top" title="Back to top">
+      <i class="fas fa-chevron-up icon" aria-hidden="true"></i>
+    </button>
+    <script src="/js/back-to-top.js"></script>
+  </body>
 </html>

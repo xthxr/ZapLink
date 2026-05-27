@@ -1,824 +1,760 @@
 <!doctype html>
 <html lang="en" class="scroll-smooth">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>piik.me | The Intelligent Link Infrastructure</title>
-        <meta
-            name="description"
-            content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management infrastructure."
-        />
-        <meta
-            name="keywords"
-            content="link shortener, bio link, qr code generator, link analytics, marketing tools"
-        />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>piik.me | The Intelligent Link Infrastructure</title>
+    <meta
+      name="description"
+      content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management infrastructure."
+    />
+    <meta
+      name="keywords"
+      content="link shortener, bio link, qr code generator, link analytics, marketing tools"
+    />
 
-        <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://piik.me/" />
-        <meta
-            property="og:title"
-            content="piik.me | The Intelligent Link Infrastructure"
-        />
-        <meta
-            property="og:description"
-            content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management."
-        />
-        <meta property="og:image" content="assets/images/favicon.png" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://piik.me/" />
+    <meta
+      property="og:title"
+      content="piik.me | The Intelligent Link Infrastructure"
+    />
+    <meta
+      property="og:description"
+      content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management."
+    />
+    <meta property="og:image" content="assets/images/favicon.png" />
 
-        <!-- Twitter -->
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://piik.me/" />
-        <meta
-            property="twitter:title"
-            content="piik.me | The Intelligent Link Infrastructure"
-        />
-        <meta
-            property="twitter:description"
-            content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management."
-        />
-        <meta
-            property="twitter:image"
-            content="https://piik.me/assets/images/og-image.png"
-        />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://piik.me/" />
+    <meta
+      property="twitter:title"
+      content="piik.me | The Intelligent Link Infrastructure"
+    />
+    <meta
+      property="twitter:description"
+      content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management."
+    />
+    <meta
+      property="twitter:image"
+      content="https://piik.me/assets/images/og-image.png"
+    />
 
-        <!-- Favicon -->
-        <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.png" />
 
-        <!-- Fonts: Inter -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-            media="print"
-            onload="this.media = 'all'"
-        />
-        <noscript>
-            <link
-                rel="stylesheet"
-                href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-            />
-        </noscript>
+    <!-- Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      />
+    </noscript>
 
-        <!-- Icons -->
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
 
-        <!-- Styles -->
-        <link rel="stylesheet" href="css/landing.css" />
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/landing.css" />
 
-        <!-- Dynamic Favicon for /user page -->
-        <script src="js/user-favicon.js" defer></script>
-    </head>
-    <body
-        class="bg-black text-white overflow-x-hidden antialiased selection:bg-accent selection:text-white"
+    <!-- Dynamic Favicon for /user page -->
+    <script src="js/user-favicon.js" defer></script>
+  </head>
+  <body
+    class="bg-black text-white overflow-x-hidden antialiased selection:bg-accent selection:text-white"
+  >
+    <!-- Ambient Background -->
+    <div class="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
+      <div
+        class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent/10 blur-[120px] rounded-full mix-blend-screen opacity-50"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-violet-600/10 blur-[120px] rounded-full mix-blend-screen opacity-50"
+      ></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav
+      class="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10 transition-all duration-300"
+      id="navbar"
+      aria-label="Main navigation"
     >
-        <!-- Ambient Background -->
-        <div class="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
-            <div
-                class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent/10 blur-[120px] rounded-full mix-blend-screen opacity-50"
-            ></div>
-            <div
-                class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-violet-600/10 blur-[120px] rounded-full mix-blend-screen opacity-50"
-            ></div>
+      <div
+        class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
+      >
+        <!-- Logo -->
+        <a href="/" class="group landing-nav-brand">
+          <span class="text-white font-semibold text-lg tracking-tight"
+            >PIIK.ME</span
+          >
+        </a>
+        <!-- Give the logo a unique class to exclude from GSAP -->
+        <a href="/" class="group navbar-logo" style="display: none"></a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8">
+          <a
+            href="#features"
+            class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors"
+            >PLATFORM</a
+          >
+          <a
+            href="#analytics"
+            class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors"
+            >FEATURES</a
+          >
+          <a
+            href="#pricing"
+            class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors"
+            >PRICING</a
+          >
+          <a
+            href="https://github.com/xthxr/piik.me"
+            target="_blank"
+            rel="noopener"
+            class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors flex items-center gap-2"
+          >
+            <i class="fab fa-github"></i>
+            GITHUB
+          </a>
         </div>
 
-        <!-- Navigation -->
-        <nav
-            class="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10 transition-all duration-300"
-            id="navbar"
-            aria-label="Main navigation"
+        <!-- Right Side Actions -->
+        <div class="hidden md:flex items-center gap-3">
+          <button id="loginBtn" class="simple-btn-secondary">LOG IN</button>
+          <button id="getStartedBtn" class="simple-btn-primary">
+            GET STARTED
+          </button>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button
+          class="md:hidden text-white/70 hover:text-white transition-colors p-2"
+          id="mobileMenuToggle"
+          aria-label="Open mobile menu"
         >
-            <div
-                class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
+          <i class="fas fa-bars text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div
+      class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 md:hidden"
+      id="mobileMenu"
+    >
+      <div class="flex flex-col items-center justify-center h-full gap-8">
+        <a
+          href="#features"
+          class="text-2xl font-medium text-gray-400 hover:text-white transition-colors"
+          >Platform</a
+        >
+        <a
+          href="#analytics"
+          class="text-2xl font-medium text-gray-400 hover:text-white transition-colors"
+          >Analytics</a
+        >
+        <a
+          href="#pricing"
+          class="text-2xl font-medium text-gray-400 hover:text-white transition-colors"
+          >Pricing</a
+        >
+        <div class="flex flex-col gap-4 mt-12 mb-12 w-64">
+          <button
+            id="mobileLoginBtn"
+            class="simple-btn-secondary w-full text-center"
+            style="padding: 0.875rem"
+          >
+            Log in
+          </button>
+          <button
+            id="mobileGetStartedBtn"
+            class="simple-btn-primary w-full text-center"
+            style="padding: 0.875rem"
+          >
+            Get Started
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section
+      class="relative min-h-screen flex flex-col justify-center pt-32 pb-32 overflow-hidden"
+      style="background: black"
+    >
+      <canvas
+        id="globeViz"
+        style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+          pointer-events: none;
+        "
+      ></canvas>
+
+      <div
+        class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none"
+        style="z-index: 2"
+      ></div>
+
+      <div
+        class="relative w-full max-w-7xl mx-auto px-6 text-center mt-10"
+        style="z-index: 10"
+      >
+        <div class="flex justify-center">
+          <div
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in-up w-fit mx-auto backdrop-blur-md"
+          >
+            <span
+              class="w-2 h-2 rounded-full bg-green-500 animate-pulse"
+            ></span>
+            <span class="text-sm text-gray-200 font-medium"
+              >Beta v0.2 is Now Live -</span
             >
-                <!-- Logo -->
-                <a href="/" class="group landing-nav-brand">
-                    <span
-                        class="text-white font-semibold text-lg tracking-tight"
-                        >PIIK.ME</span
-                    >
-                </a>
-                <!-- Give the logo a unique class to exclude from GSAP -->
-                <a href="/" class="group navbar-logo" style="display: none"></a>
+            <a
+              href="https://github.com/xthxr/piik.me/releases"
+              target="_blank"
+              rel="noopener"
+              class="ml-1 font-semibold text-white bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 bg-[length:200%_auto] bg-clip-text text-transparent shine-effect hover:opacity-80 transition-opacity"
+              style="text-decoration: none"
+            >
+              <span class="shine-text">What's Newww?</span>
+            </a>
+          </div>
+          <style>
+            .shine-effect .shine-text {
+              background: linear-gradient(
+                90deg,
+                #fff 0%,
+                #ffe066 40%,
+                #fff 60%,
+                #ffe066 100%
+              );
+              background-size: 200% auto;
+              color: #fff;
+              background-clip: text;
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              animation: shine-move 2s linear infinite;
+            }
+            @keyframes shine-move {
+              0% {
+                background-position: 200% center;
+              }
+              100% {
+                background-position: 0% center;
+              }
+            }
+          </style>
+        </div>
 
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center gap-8">
-                    <a
-                        href="#features"
-                        class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors"
-                        >PLATFORM</a
-                    >
-                    <a
-                        href="#analytics"
-                        class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors"
-                        >FEATURES</a
-                    >
-                    <a
-                        href="#pricing"
-                        class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors"
-                        >PRICING</a
-                    >
-                    <a
-                        href="https://github.com/xthxr/piik.me"
-                        target="_blank"
-                        rel="noopener"
-                        class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors flex items-center gap-2"
-                    >
-                        <i class="fab fa-github"></i>
-                        GITHUB
-                    </a>
-                </div>
+        <h1
+          class="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight animate-fade-in-up"
+          style="animation-delay: 0.1s"
+        >
+          Links turned into <br />
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500"
+            >intelligent assets.</span
+          >
+        </h1>
 
-                <!-- Right Side Actions -->
-                <div class="hidden md:flex items-center gap-3">
-                    <button id="loginBtn" class="simple-btn-secondary">
-                        LOG IN
-                    </button>
-                    <button id="getStartedBtn" class="simple-btn-primary">
-                        GET STARTED
-                    </button>
-                </div>
+        <p
+          class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up"
+          style="animation-delay: 0.2s"
+        >
+          The open-source link infrastructure for modern businesses.
+          <br class="hidden md:block" />Real-time analytics, custom domains, and
+          zero latency redirects.
+        </p>
 
-                <!-- Mobile Toggle -->
-                <button
-                    class="md:hidden text-white/70 hover:text-white transition-colors p-2"
-                    id="mobileMenuToggle"
-                    aria-label="Open mobile menu"
-                >
-                    <i class="fas fa-bars text-xl" aria-hidden="true"></i>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Mobile Menu Overlay -->
         <div
-            class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 md:hidden"
-            id="mobileMenu"
+          class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up"
+          style="animation-delay: 0.3s"
         >
-            <div class="flex flex-col items-center justify-center h-full gap-8">
-                <a
-                    href="#features"
-                    class="text-2xl font-medium text-gray-400 hover:text-white transition-colors"
-                    >Platform</a
-                >
-                <a
-                    href="#analytics"
-                    class="text-2xl font-medium text-gray-400 hover:text-white transition-colors"
-                    >Analytics</a
-                >
-                <a
-                    href="#pricing"
-                    class="text-2xl font-medium text-gray-400 hover:text-white transition-colors"
-                    >Pricing</a
-                >
-                <div class="flex flex-col gap-4 mt-12 mb-12 w-64">
-                    <button
-                        id="mobileLoginBtn"
-                        class="simple-btn-secondary w-full text-center"
-                        style="padding: 0.875rem"
-                    >
-                        Log in
-                    </button>
-                    <button
-                        id="mobileGetStartedBtn"
-                        class="simple-btn-primary w-full text-center"
-                        style="padding: 0.875rem"
-                    >
-                        Get Started
-                    </button>
-                </div>
-            </div>
+          <button
+            id="heroStartBtn"
+            class="simple-btn-primary w-full sm:w-auto"
+            style="padding: 1rem 2rem; font-size: 0.875rem"
+          >
+            Start for free
+          </button>
+          <a
+            href="#features"
+            class="simple-btn-secondary w-full sm:w-auto"
+            style="
+              padding: 1rem 2rem;
+              font-size: 0.875rem;
+              background: rgba(255, 255, 255, 0.05);
+              backdrop-filter: blur(4px);
+            "
+          >
+            View features
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="py-24 relative z-20 bg-black" id="features">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-24" id="analytics">
+          <h2 class="text-3xl md:text-5xl font-bold mb-6">
+            Everything you need to <br />
+            manage your links.
+          </h2>
+          <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+            Stop using multiple tools. Piik.me gives you a complete suite of
+            link management tools in one powerful dashboard.
+          </p>
         </div>
 
-        <!-- Hero Section -->
-        <section
-            class="relative min-h-screen flex flex-col justify-center pt-32 pb-32 overflow-hidden"
-            style="background: black"
-        >
-            <canvas
-                id="globeViz"
-                style="
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 1;
-                    pointer-events: none;
-                "
-            ></canvas>
-
+        <!-- Bento Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Large Card: Analytics -->
+          <div
+            class="md:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group overflow-hidden relative"
+          >
             <div
-                class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none"
-                style="z-index: 2"
-            ></div>
-
-            <div
-                class="relative w-full max-w-7xl mx-auto px-6 text-center mt-10"
-                style="z-index: 10"
+              class="absolute top-0 right-0 p-8 opacity-20 group-hover:opacity-40 transition-opacity"
             >
-                <div class="flex justify-center">
-                    <div
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in-up w-fit mx-auto backdrop-blur-md"
-                    >
-                        <span
-                            class="w-2 h-2 rounded-full bg-green-500 animate-pulse"
-                        ></span>
-                        <span class="text-sm text-gray-200 font-medium"
-                            >Beta v0.2 is Now Live -</span
-                        >
-                        <a
-                            href="https://github.com/xthxr/piik.me/releases"
-                            target="_blank"
-                            rel="noopener"
-                            class="ml-1 font-semibold text-white bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 bg-[length:200%_auto] bg-clip-text text-transparent shine-effect hover:opacity-80 transition-opacity"
-                            style="text-decoration: none"
-                        >
-                            <span class="shine-text">What's Newww?</span>
-                        </a>
-                    </div>
-                    <style>
-                        .shine-effect .shine-text {
-                            background: linear-gradient(
-                                90deg,
-                                #fff 0%,
-                                #ffe066 40%,
-                                #fff 60%,
-                                #ffe066 100%
-                            );
-                            background-size: 200% auto;
-                            color: #fff;
-                            background-clip: text;
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                            animation: shine-move 2s linear infinite;
-                        }
-                        @keyframes shine-move {
-                            0% {
-                                background-position: 200% center;
-                            }
-                            100% {
-                                background-position: 0% center;
-                            }
-                        }
-                    </style>
+              <i
+                class="fas fa-chart-line text-9xl text-accent transform rotate-[-15deg] translate-x-8 translate-y-[-8]"
+                aria-hidden="true"
+              ></i>
+            </div>
+            <div class="relative z-10">
+              <div
+                class="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-6"
+              >
+                <i
+                  class="fas fa-chart-bar text-accent text-xl"
+                  aria-hidden="true"
+                ></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-3">Real-time Analytics</h3>
+              <p class="text-gray-400 mb-8 max-w-md">
+                Get deep insights into your audience. Track clicks, geographic
+                locations, devices, and referrers in real-time without
+                compromising privacy.
+              </p>
+
+              <!-- Mockup Graph -->
+              <div
+                class="w-full h-48 bg-black/40 rounded-xl border border-white/5 p-4 flex items-end justify-between gap-2 overflow-hidden"
+              >
+                <div
+                  class="w-full bg-accent/20 h-[30%] rounded-t-sm group-hover:h-[60%] transition-all duration-500"
+                ></div>
+                <div
+                  class="w-full bg-accent/30 h-[50%] rounded-t-sm group-hover:h-[80%] transition-all duration-500 delay-75"
+                ></div>
+                <div
+                  class="w-full bg-accent/40 h-[40%] rounded-t-sm group-hover:h-[50%] transition-all duration-500 delay-100"
+                ></div>
+                <div
+                  class="w-full bg-accent/50 h-[70%] rounded-t-sm group-hover:h-[90%] transition-all duration-500 delay-150"
+                ></div>
+                <div
+                  class="w-full bg-accent/60 h-[55%] rounded-t-sm group-hover:h-[75%] transition-all duration-500 delay-200"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: QR Codes -->
+          <div
+            class="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group relative overflow-hidden"
+          >
+            <div
+              class="absolute -bottom-10 -right-10 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl group-hover:bg-pink-500/30 transition-colors"
+            ></div>
+            <div class="relative z-10">
+              <div
+                class="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center mb-6"
+              >
+                <i class="fas fa-qrcode text-pink-500 text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-3">Custom QR Codes</h3>
+              <p class="text-gray-400 mb-6">
+                Generate beautiful, scannable QR codes that match your brand
+                identity.
+              </p>
+              <div class="flex justify-center">
+                <div
+                  class="w-32 h-32 bg-white rounded-lg p-2 group-hover:scale-110 transition-transform duration-300"
+                >
+                  <div
+                    class="w-full h-full bg-black flex items-center justify-center"
+                  >
+                    <i class="fas fa-qrcode text-white text-4xl"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: UTM Builder -->
+          <div
+            class="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group relative overflow-hidden"
+          >
+            <div
+              class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl group-hover:bg-blue-500/30 transition-colors"
+            ></div>
+            <div class="relative z-10">
+              <div
+                class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6"
+              >
+                <i class="fas fa-tags text-blue-500 text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-3">UTM Builder</h3>
+              <p class="text-gray-400">
+                Standardize your campaign tracking with our built-in UTM
+                parameters builder.
+              </p>
+            </div>
+            <div class="mt-6 space-y-2 font-mono text-xs text-blue-400/80">
+              <div class="p-2 bg-black/40 rounded border border-white/5">
+                ?utm_source=twitter
+              </div>
+              <div class="p-2 bg-black/40 rounded border border-white/5">
+                ?utm_medium=social
+              </div>
+              <div class="p-2 bg-black/40 rounded border border-white/5">
+                ?utm_campaign=launch
+              </div>
+            </div>
+          </div>
+
+          <!-- Large Card: Bio Pages -->
+          <div
+            class="md:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group relative overflow-hidden flex flex-col md:flex-row items-center gap-8"
+          >
+            <div class="flex-1 relative z-10 order-2 md:order-1">
+              <div
+                class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6"
+              >
+                <i class="fas fa-mobile-alt text-purple-500 text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-3">Link-in-Bio Pages</h3>
+              <p class="text-gray-400 mb-6">
+                Create a stunning, mobile-optimized landing page for all your
+                social links. No coding required.
+              </p>
+              <ul class="space-y-3">
+                <li class="flex items-center gap-3 text-sm text-gray-300">
+                  <i class="fas fa-check-circle text-purple-500"></i>
+                  Customizable Themes
+                </li>
+                <li class="flex items-center gap-3 text-sm text-gray-300">
+                  <i class="fas fa-check-circle text-purple-500"></i>
+                  Social Integrations
+                </li>
+                <li class="flex items-center gap-3 text-sm text-gray-300">
+                  <i class="fas fa-check-circle text-purple-500"></i>
+                  Fast Loading
+                </li>
+              </ul>
+            </div>
+            <div class="flex-1 order-1 md:order-2 flex justify-center w-full">
+              <div
+                class="relative w-48 h-80 bg-black border-[6px] border-gray-800 rounded-[2rem] overflow-hidden shadow-2xl transform group-hover:-translate-y-2 transition-transform duration-500"
+              >
+                <div
+                  class="absolute top-0 w-full h-6 bg-gray-800 rounded-b-lg z-20"
+                ></div>
+                <div
+                  class="p-4 pt-10 flex flex-col items-center gap-3 bg-gradient-to-br from-gray-900 to-black h-full"
+                >
+                  <div
+                    class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500"
+                  ></div>
+                  <div class="w-20 h-2 bg-gray-800 rounded-full"></div>
+                  <div class="w-full h-10 bg-gray-800/50 rounded-lg mt-2"></div>
+                  <div class="w-full h-10 bg-gray-800/50 rounded-lg"></div>
+                  <div class="w-full h-10 bg-gray-800/50 rounded-lg"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 relative z-10" id="pricing">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-5xl font-bold mb-4">
+            Transparent Pricing
+          </h2>
+
+          <p class="text-gray-400 text-lg">
+            Open source and free for the community.
+          </p>
+        </div>
+
+        <div class="max-w-md mx-auto">
+          <div
+            class="group relative bg-gradient-to-b from-white/10 to-white/5 p-[1px] rounded-3xl transition-all duration-500 hover:scale-[1.03]"
+          >
+            <div
+              class="relative bg-black/80 backdrop-blur-2xl rounded-3xl p-8 border border-white/10 overflow-hidden transition-all duration-500 ease-out group-hover:-translate-y-3 group-hover:shadow-[0_20px_60px_rgba(255,255,255,0.08)] group-hover:border-white/20"
+            >
+              <div
+                class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-white/5 via-transparent to-accent/10"
+              ></div>
+
+              <div class="absolute top-0 right-0 p-4 z-10">
+                <span
+                  class="bg-accent/20 text-accent text-xs font-bold p-2 rounded-full uppercase tracking-wider border border-accent/20"
+                >
+                  Open Source
+                </span>
+              </div>
+
+              <div class="relative z-10">
+                <div class="flex items-end gap-2 mb-3">
+                  <span class="text-4xl font-bold text-white"> ₹0 </span>
+
+                  <span class="text-gray-400 text-lg mb-2"> /forever </span>
                 </div>
 
-                <h1
-                    class="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight animate-fade-in-up"
-                    style="animation-delay: 0.1s"
-                >
-                    Links turned into <br />
-                    <span
-                        class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500"
-                        >intelligent assets.</span
-                    >
-                </h1>
-
-                <p
-                    class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up"
-                    style="animation-delay: 0.2s"
-                >
-                    The open-source link infrastructure for modern businesses.
-                    <br class="hidden md:block" />Real-time analytics, custom
-                    domains, and zero latency redirects.
+                <p class="text-gray-400 mb-8 leading-relaxed text-sm">
+                  Access to all premium features for everyone, forever. No
+                  hidden charges.
                 </p>
 
-                <div
-                    class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up"
-                    style="animation-delay: 0.3s"
+                <button
+                  id="pricingGetStartedBtn"
+                  class="w-full rounded-2xl border border-white/10 bg-white py-4 font-semibold text-black transition-all duration-300 hover:shadow-[0_10px_30px_rgba(255,255,255,0.25)] mb-8"
                 >
-                    <button
-                        id="heroStartBtn"
-                        class="simple-btn-primary w-full sm:w-auto"
-                        style="padding: 1rem 2rem; font-size: 0.875rem"
+                  <span
+                    class="flex items-center justify-center gap-2 tracking-wide"
+                  >
+                    GET STARTED
+                    <i class="fas fa-arrow-right text-xs"></i>
+                  </span>
+                </button>
+
+                <div class="space-y-5">
+                  <div
+                    class="flex items-center gap-3 text-sm text-gray-300 mb-3"
+                  >
+                    <div
+                      class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0"
                     >
-                        Start for free
-                    </button>
-                    <a
-                        href="#features"
-                        class="simple-btn-secondary w-full sm:w-auto"
-                        style="
-                            padding: 1rem 2rem;
-                            font-size: 0.875rem;
-                            background: rgba(255, 255, 255, 0.05);
-                            backdrop-filter: blur(4px);
-                        "
+                      <i class="fas fa-check text-green-500 text-xs"></i>
+                    </div>
+
+                    <span>Unlimited Short Links</span>
+                  </div>
+
+                  <div
+                    class="flex items-center gap-3 text-sm text-gray-300 mb-3"
+                  >
+                    <div
+                      class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0"
                     >
-                        View features
-                    </a>
+                      <i class="fas fa-check text-green-500 text-xs"></i>
+                    </div>
+
+                    <span>Advanced Analytics Dashboard</span>
+                  </div>
+
+                  <div
+                    class="flex items-center gap-3 text-sm text-gray-300 mb-3"
+                  >
+                    <div
+                      class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0"
+                    >
+                      <i class="fas fa-check text-green-500 text-xs"></i>
+                    </div>
+
+                    <span>
+                      Custom Bio Pages (Verified Mark for first 100 users)
+                    </span>
+                  </div>
+
+                  <div
+                    class="flex items-center gap-3 text-sm text-gray-300 mb-3"
+                  >
+                    <div
+                      class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0"
+                    >
+                      <i class="fas fa-check text-green-500 text-xs"></i>
+                    </div>
+
+                    <span>QR Code Generation</span>
+                  </div>
                 </div>
+              </div>
             </div>
-        </section>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <!-- Features Grid -->
-        <section class="py-24 relative z-20 bg-black" id="features">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center mb-24" id="analytics">
-                    <h2 class="text-3xl md:text-5xl font-bold mb-6">
-                        Everything you need to <br />
-                        manage your links.
-                    </h2>
-                    <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Stop using multiple tools. Piik.me gives you a complete
-                        suite of link management tools in one powerful
-                        dashboard.
-                    </p>
-                </div>
-
-                <!-- Bento Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Large Card: Analytics -->
-                    <div
-                        class="md:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group overflow-hidden relative"
-                    >
-                        <div
-                            class="absolute top-0 right-0 p-8 opacity-20 group-hover:opacity-40 transition-opacity"
-                        >
-                            <i
-                                class="fas fa-chart-line text-9xl text-accent transform rotate-[-15deg] translate-x-8 translate-y-[-8]"
-                                aria-hidden="true"
-                            ></i>
-                        </div>
-                        <div class="relative z-10">
-                            <div
-                                class="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-6"
-                            >
-                                <i
-                                    class="fas fa-chart-bar text-accent text-xl"
-                                    aria-hidden="true"
-                                ></i>
-                            </div>
-                            <h3 class="text-2xl font-bold mb-3">
-                                Real-time Analytics
-                            </h3>
-                            <p class="text-gray-400 mb-8 max-w-md">
-                                Get deep insights into your audience. Track
-                                clicks, geographic locations, devices, and
-                                referrers in real-time without compromising
-                                privacy.
-                            </p>
-
-                            <!-- Mockup Graph -->
-                            <div
-                                class="w-full h-48 bg-black/40 rounded-xl border border-white/5 p-4 flex items-end justify-between gap-2 overflow-hidden"
-                            >
-                                <div
-                                    class="w-full bg-accent/20 h-[30%] rounded-t-sm group-hover:h-[60%] transition-all duration-500"
-                                ></div>
-                                <div
-                                    class="w-full bg-accent/30 h-[50%] rounded-t-sm group-hover:h-[80%] transition-all duration-500 delay-75"
-                                ></div>
-                                <div
-                                    class="w-full bg-accent/40 h-[40%] rounded-t-sm group-hover:h-[50%] transition-all duration-500 delay-100"
-                                ></div>
-                                <div
-                                    class="w-full bg-accent/50 h-[70%] rounded-t-sm group-hover:h-[90%] transition-all duration-500 delay-150"
-                                ></div>
-                                <div
-                                    class="w-full bg-accent/60 h-[55%] rounded-t-sm group-hover:h-[75%] transition-all duration-500 delay-200"
-                                ></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card: QR Codes -->
-                    <div
-                        class="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group relative overflow-hidden"
-                    >
-                        <div
-                            class="absolute -bottom-10 -right-10 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl group-hover:bg-pink-500/30 transition-colors"
-                        ></div>
-                        <div class="relative z-10">
-                            <div
-                                class="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center mb-6"
-                            >
-                                <i
-                                    class="fas fa-qrcode text-pink-500 text-xl"
-                                ></i>
-                            </div>
-                            <h3 class="text-2xl font-bold mb-3">
-                                Custom QR Codes
-                            </h3>
-                            <p class="text-gray-400 mb-6">
-                                Generate beautiful, scannable QR codes that
-                                match your brand identity.
-                            </p>
-                            <div class="flex justify-center">
-                                <div
-                                    class="w-32 h-32 bg-white rounded-lg p-2 group-hover:scale-110 transition-transform duration-300"
-                                >
-                                    <div
-                                        class="w-full h-full bg-black flex items-center justify-center"
-                                    >
-                                        <i
-                                            class="fas fa-qrcode text-white text-4xl"
-                                        ></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card: UTM Builder -->
-                    <div
-                        class="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group relative overflow-hidden"
-                    >
-                        <div
-                            class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl group-hover:bg-blue-500/30 transition-colors"
-                        ></div>
-                        <div class="relative z-10">
-                            <div
-                                class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6"
-                            >
-                                <i
-                                    class="fas fa-tags text-blue-500 text-xl"
-                                ></i>
-                            </div>
-                            <h3 class="text-2xl font-bold mb-3">UTM Builder</h3>
-                            <p class="text-gray-400">
-                                Standardize your campaign tracking with our
-                                built-in UTM parameters builder.
-                            </p>
-                        </div>
-                        <div
-                            class="mt-6 space-y-2 font-mono text-xs text-blue-400/80"
-                        >
-                            <div
-                                class="p-2 bg-black/40 rounded border border-white/5"
-                            >
-                                ?utm_source=twitter
-                            </div>
-                            <div
-                                class="p-2 bg-black/40 rounded border border-white/5"
-                            >
-                                ?utm_medium=social
-                            </div>
-                            <div
-                                class="p-2 bg-black/40 rounded border border-white/5"
-                            >
-                                ?utm_campaign=launch
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Large Card: Bio Pages -->
-                    <div
-                        class="md:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all group relative overflow-hidden flex flex-col md:flex-row items-center gap-8"
-                    >
-                        <div class="flex-1 relative z-10 order-2 md:order-1">
-                            <div
-                                class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6"
-                            >
-                                <i
-                                    class="fas fa-mobile-alt text-purple-500 text-xl"
-                                ></i>
-                            </div>
-                            <h3 class="text-2xl font-bold mb-3">
-                                Link-in-Bio Pages
-                            </h3>
-                            <p class="text-gray-400 mb-6">
-                                Create a stunning, mobile-optimized landing page
-                                for all your social links. No coding required.
-                            </p>
-                            <ul class="space-y-3">
-                                <li
-                                    class="flex items-center gap-3 text-sm text-gray-300"
-                                >
-                                    <i
-                                        class="fas fa-check-circle text-purple-500"
-                                    ></i>
-                                    Customizable Themes
-                                </li>
-                                <li
-                                    class="flex items-center gap-3 text-sm text-gray-300"
-                                >
-                                    <i
-                                        class="fas fa-check-circle text-purple-500"
-                                    ></i>
-                                    Social Integrations
-                                </li>
-                                <li
-                                    class="flex items-center gap-3 text-sm text-gray-300"
-                                >
-                                    <i
-                                        class="fas fa-check-circle text-purple-500"
-                                    ></i>
-                                    Fast Loading
-                                </li>
-                            </ul>
-                        </div>
-                        <div
-                            class="flex-1 order-1 md:order-2 flex justify-center w-full"
-                        >
-                            <div
-                                class="relative w-48 h-80 bg-black border-[6px] border-gray-800 rounded-[2rem] overflow-hidden shadow-2xl transform group-hover:-translate-y-2 transition-transform duration-500"
-                            >
-                                <div
-                                    class="absolute top-0 w-full h-6 bg-gray-800 rounded-b-lg z-20"
-                                ></div>
-                                <div
-                                    class="p-4 pt-10 flex flex-col items-center gap-3 bg-gradient-to-br from-gray-900 to-black h-full"
-                                >
-                                    <div
-                                        class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500"
-                                    ></div>
-                                    <div
-                                        class="w-20 h-2 bg-gray-800 rounded-full"
-                                    ></div>
-                                    <div
-                                        class="w-full h-10 bg-gray-800/50 rounded-lg mt-2"
-                                    ></div>
-                                    <div
-                                        class="w-full h-10 bg-gray-800/50 rounded-lg"
-                                    ></div>
-                                    <div
-                                        class="w-full h-10 bg-gray-800/50 rounded-lg"
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-24 relative z-10" id="pricing">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl md:text-5xl font-bold mb-4">
-                        Transparent Pricing
-                    </h2>
-
-                    <p class="text-gray-400 text-lg">
-                        Open source and free for the community.
-                    </p>
-                </div>
-
-                <div class="max-w-md mx-auto">
-                    <div
-                        class="group relative bg-gradient-to-b from-white/10 to-white/5 p-[1px] rounded-3xl transition-all duration-500 hover:scale-[1.03]"
-                    >
-                        <div
-                            class="relative bg-black/80 backdrop-blur-2xl rounded-3xl p-8 border border-white/10 overflow-hidden transition-all duration-500 ease-out group-hover:-translate-y-3 group-hover:shadow-[0_20px_60px_rgba(255,255,255,0.08)] group-hover:border-white/20"
-                        >
-                            <div
-                                class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-white/5 via-transparent to-accent/10"
-                            ></div>
-
-                            <div class="absolute top-0 right-0 p-4 z-10">
-                                <span
-                                    class="bg-accent/20 text-accent text-xs font-bold p-2 rounded-full uppercase tracking-wider border border-accent/20"
-                                >
-                                    Open Source
-                                </span>
-                            </div>
-
-                            <div class="relative z-10">
-                                <div class="flex items-end gap-2 mb-3">
-                                    <span class="text-4xl font-bold text-white">
-                                        ₹0
-                                    </span>
-
-                                    <span class="text-gray-400 text-lg mb-2">
-                                        /forever
-                                    </span>
-                                </div>
-
-                                <p
-                                    class="text-gray-400 mb-8 leading-relaxed text-sm"
-                                >
-                                    Access to all premium features for everyone,
-                                    forever. No hidden charges.
-                                </p>
-
-                                <button
-                                    id="pricingGetStartedBtn"
-                                    class="w-full rounded-2xl border border-white/10 bg-white py-4 font-semibold text-black transition-all duration-300 hover:shadow-[0_10px_30px_rgba(255,255,255,0.25)] mb-8"
-                                >
-                                    <span
-                                        class="flex items-center justify-center gap-2 tracking-wide"
-                                    >
-                                        GET STARTED
-                                        <i
-                                            class="fas fa-arrow-right text-xs"
-                                        ></i>
-                                    </span>
-                                </button>
-
-                                <div class="space-y-5">
-                                    <div
-                                        class="flex items-center gap-3 text-sm text-gray-300 mb-3"
-                                    >
-                                        <div
-                                            class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0"
-                                        >
-                                            <i
-                                                class="fas fa-check text-green-500 text-xs"
-                                            ></i>
-                                        </div>
-
-                                        <span>Unlimited Short Links</span>
-                                    </div>
-
-                                    <div
-                                        class="flex items-center gap-3 text-sm text-gray-300 mb-3"
-                                    >
-                                        <div
-                                            class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0"
-                                        >
-                                            <i
-                                                class="fas fa-check text-green-500 text-xs"
-                                            ></i>
-                                        </div>
-
-                                        <span
-                                            >Advanced Analytics Dashboard</span
-                                        >
-                                    </div>
-
-                                    <div
-                                        class="flex items-center gap-3 text-sm text-gray-300 mb-3"
-                                    >
-                                        <div
-                                            class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0"
-                                        >
-                                            <i
-                                                class="fas fa-check text-green-500 text-xs"
-                                            ></i>
-                                        </div>
-
-                                        <span>
-                                            Custom Bio Pages (Verified Mark for
-                                            first 100 users)
-                                        </span>
-                                    </div>
-
-                                    <div
-                                        class="flex items-center gap-3 text-sm text-gray-300 mb-3"
-                                    >
-                                        <div
-                                            class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0"
-                                        >
-                                            <i
-                                                class="fas fa-check text-green-500 text-xs"
-                                            ></i>
-                                        </div>
-
-                                        <span>QR Code Generation</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="border-t border-white/10 pt-16 pb-8 bg-black">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                    <div class="col-span-1 md:col-span-2">
-                        <a href="/" class="mb-4">
-                            <span class="font-bold text-lg text-white"
-                                >PIIK.ME</span
-                            >
-                        </a>
-                        <p class="text-gray-400 max-w-sm">
-                            The open-source intelligent link infrastructure for
-                            modern creators and businesses.
-                        </p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-4 text-white">Product</h4>
-                        <ul class="space-y-2">
-                            <li>
-                                <a
-                                    href="#features"
-                                    class="text-gray-400 hover:text-white transition-colors"
-                                    >Features</a
-                                >
-                            </li>
-                            <li>
-                                <a
-                                    href="#analytics"
-                                    class="text-gray-400 hover:text-white transition-colors"
-                                    >Analytics</a
-                                >
-                            </li>
-                            <li>
-                                <a
-                                    href="/home"
-                                    class="text-gray-400 hover:text-white transition-colors"
-                                    >Dashboard</a
-                                >
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-4 text-white">Community</h4>
-                        <ul class="space-y-2">
-                            <li>
-                                <a
-                                    href="https://github.com/xthxr/piik.me"
-                                    class="text-gray-400 hover:text-white transition-colors"
-                                    >GitHub</a
-                                >
-                            </li>
-                            <li>
-                                <a
-                                    href="https://x.com/xthxr__"
-                                    class="text-gray-400 hover:text-white transition-colors"
-                                    >X</a
-                                >
-                            </li>
-                            <li>
-                                <a
-                                    href="https://discord.gg/Sr8KnpWx9u"
-                                    class="text-gray-400 hover:text-white transition-colors"
-                                    >Discord</a
-                                >
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-4 text-white">Contact</h4>
-                        <ul class="space-y-2">
-                            <li>
-                                <a>Email: </a
-                                ><a
-                                    href="mailto:contact@piik.me"
-                                    class="text-gray-400 hover:text-white transition-colors"
-                                    >contact@piik.me</a
-                                >
-                            </li>
-                            <li>
-                                <a
-                                    href="https://github.com/xthxr/piik.me/discussions"
-                                    class="text-gray-400 hover:text-white transition-colors"
-                                    target="_blank"
-                                    rel="noopener"
-                                    >GitHub Discussions</a
-                                >
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div
-                    class="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/5"
+    <!-- Footer -->
+    <footer class="border-t border-white/10 pt-16 pb-8 bg-black">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div class="col-span-1 md:col-span-2">
+            <a href="/" class="mb-4">
+              <span class="font-bold text-lg text-white">PIIK.ME</span>
+            </a>
+            <p class="text-gray-400 max-w-sm">
+              The open-source intelligent link infrastructure for modern
+              creators and businesses.
+            </p>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-4 text-white">Product</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#features"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >Features</a
                 >
-                    <p class="text-gray-400 text-sm">
-                        © 2025 Piik.me. GNU General Public License.
-                    </p>
-                    <p class="text-gray-400 text-sm flex items-center gap-1">
-                        Created with <i class="fas fa-heart text-red-500/50"></i
-                        ><span>by</span
-                        ><a
-                            href="https://piik.me/xthxr"
-                            class="text-white hover:text-accent transition-colors"
-                            >XTHXR</a
-                        >
-                    </p>
-                </div>
-            </div>
-        </footer>
+              </li>
+              <li>
+                <a
+                  href="#analytics"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >Analytics</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/home"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >Dashboard</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-4 text-white">Community</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="https://github.com/xthxr/piik.me"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >GitHub</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://x.com/xthxr__"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >X</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://discord.gg/Sr8KnpWx9u"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >Discord</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-4 text-white">Contact</h4>
+            <ul class="space-y-2">
+              <li>
+                <a>Email: </a
+                ><a
+                  href="mailto:contact@piik.me"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >contact@piik.me</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/xthxr/piik.me/discussions"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  target="_blank"
+                  rel="noopener"
+                  >GitHub Discussions</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/5"
+        >
+          <p class="text-gray-400 text-sm">
+            © 2025 Piik.me. GNU General Public License.
+          </p>
+          <p class="text-gray-400 text-sm flex items-center gap-1">
+            Created with <i class="fas fa-heart text-red-500/50"></i
+            ><span>by</span
+            ><a
+              href="https://piik.me/xthxr"
+              class="text-white hover:text-accent transition-colors"
+              >XTHXR</a
+            >
+          </p>
+        </div>
+      </div>
+    </footer>
 
-        <!-- Firebase SDK -->
-        <script
-            src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"
-            defer
-        ></script>
-        <script
-            src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"
-            defer
-        ></script>
-        <script
-            src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"
-            defer
-        ></script>
-        <script
-            src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"
-            defer
-        ></script>
-        <script src="js/firebase-config.js" defer></script>
-        <script src="js/github-stars.js" defer></script>
-        <script src="js/landing.js" defer></script>
-        <script src="js/landing-auth.js" defer></script>
+    <!-- Back to Top -->
+    <button class="back-to-top" aria-label="Back to top" title="Back to top">
+      <i class="fas fa-chevron-up icon" aria-hidden="true"></i>
+    </button>
 
-        <!-- Vercel Analytics -->
-        <script type="module">
-            window.addEventListener("load", () => {
-                import("https://cdn.jsdelivr.net/npm/@vercel/analytics@1.6.1/+esm")
-                    .then(({ inject }) => inject())
-                    .catch(err => console.warn("Analytics failed to load", err))
-            })
-        </script>
-    </body>
+    <!-- Firebase SDK -->
+    <script
+      src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"
+      defer
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"
+      defer
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"
+      defer
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"
+      defer
+    ></script>
+    <script src="js/firebase-config.js" defer></script>
+    <script src="js/github-stars.js" defer></script>
+    <script src="js/landing.js" defer></script>
+    <script src="js/landing-auth.js" defer></script>
+    <script src="js/back-to-top.js" defer></script>
+
+    <!-- Vercel Analytics -->
+    <script type="module">
+      window.addEventListener("load", () => {
+        import("https://cdn.jsdelivr.net/npm/@vercel/analytics@1.6.1/+esm")
+          .then(({ inject }) => inject())
+          .catch((err) => console.warn("Analytics failed to load", err));
+      });
+    </script>
+  </body>
 </html>

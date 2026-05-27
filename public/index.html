@@ -1,1478 +1,2369 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>piik.me - Link Management & Analytics</title>
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/bio-preview.css">
-    <link rel="stylesheet" href="css/version-banner.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/bio-preview.css" />
+    <link rel="stylesheet" href="css/version-banner.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="/home" class="logo" id="logoLink">
-                <img src="assets/images/logo.png" alt="piik.me Logo" class="logo-image">
-            </a>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
+      <div class="sidebar-header">
+        <a href="/home" class="logo" id="logoLink">
+          <img
+            src="assets/images/logo.png"
+            alt="piik.me Logo"
+            class="logo-image"
+          />
+        </a>
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
 
-        <nav class="sidebar-nav">
-            <a href="/home" class="nav-item active" data-page="home">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="/bio-link" class="nav-item" data-page="bio-link">
-                <i class="fas fa-link"></i>
-                <span>Bio Link</span>
-            </a>
-            <a href="/qr-generator" class="nav-item" data-page="qr-generator">
-                <i class="fas fa-qrcode"></i>
-                <span>QR Generator</span>
-            </a>
-            <a href="/analytics" class="nav-item" data-page="analytics">
-                <i class="fas fa-chart-line"></i>
-                <span>Analytics</span>
-            </a>
-            <a href="/profile" class="nav-item" data-page="profile">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
-            <a href="#" class="nav-item report-bug-btn" id="reportBugBtn">
-                <i class="fas fa-bug"></i>
-                <span>Report Bug</span>
-            </a>
-        </nav>
+      <nav class="sidebar-nav">
+        <a href="/home" class="nav-item active" data-page="home">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="/bio-link" class="nav-item" data-page="bio-link">
+          <i class="fas fa-link"></i>
+          <span>Bio Link</span>
+        </a>
+        <a href="/qr-generator" class="nav-item" data-page="qr-generator">
+          <i class="fas fa-qrcode"></i>
+          <span>QR Generator</span>
+        </a>
+        <a href="/analytics" class="nav-item" data-page="analytics">
+          <i class="fas fa-chart-line"></i>
+          <span>Analytics</span>
+        </a>
+        <a href="/profile" class="nav-item" data-page="profile">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </a>
+        <a href="#" class="nav-item report-bug-btn" id="reportBugBtn">
+          <i class="fas fa-bug"></i>
+          <span>Report Bug</span>
+        </a>
+      </nav>
 
-        <div class="sidebar-footer">
-            <!-- User Info -->
-            <div class="sidebar-user" id="sidebarUser" style="display: none;">
-                <img src="" alt="User" class="user-avatar" id="sidebarUserPhoto">
-                <div class="user-info">
-                    <span class="user-name" id="sidebarUserName"></span>
-                    <span class="user-email" id="sidebarUserEmail"></span>
-                </div>
-            </div>
+      <div class="sidebar-footer">
+        <!-- User Info -->
+        <div class="sidebar-user" id="sidebarUser" style="display: none">
+          <img src="" alt="User" class="user-avatar" id="sidebarUserPhoto" />
+          <div class="user-info">
+            <span class="user-name" id="sidebarUserName"></span>
+            <span class="user-email" id="sidebarUserEmail"></span>
+          </div>
         </div>
+      </div>
     </aside>
 
     <!-- Main Content Area -->
     <main class="main-content" id="app">
-        <!-- Animated Background Orbs -->
-        <div class="app-bg">
-            <div class="app-orb app-orb-1"></div>
-            <div class="app-orb app-orb-2"></div>
-            <div class="app-orb app-orb-3"></div>
-        </div>
-        
-        <!-- Page Container -->
-        <div class="page-container">
-            <!-- Home Page -->
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
+      <!-- Animated Background Orbs -->
+      <div class="app-bg">
+        <div class="app-orb app-orb-1"></div>
+        <div class="app-orb app-orb-2"></div>
+        <div class="app-orb app-orb-3"></div>
+      </div>
+
+      <!-- Page Container -->
+      <div class="page-container">
+        <!-- Home Page -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar">
+          <div class="topbar-left">
+            <h1 class="page-title" id="pageTitle">Home</h1>
+          </div>
+          <div class="topbar-right">
+            <div class="search-container">
+              <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input
+                  type="text"
+                  placeholder="Search links, features, or anything..."
+                  id="searchInput"
+                  autocomplete="off"
+                />
+                <button
+                  class="search-clear"
+                  id="searchClear"
+                  style="display: none"
+                >
+                  <i class="fas fa-times"></i>
                 </button>
-            <div class="topbar">
-                <div class="topbar-left">
-                <h1 class="page-title" id="pageTitle">Home</h1>
-                </div>
-                <div class="topbar-right">
-                <div class="search-container">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search links, features, or anything..." id="searchInput" autocomplete="off">
-                        <button class="search-clear" id="searchClear" style="display: none;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="search-suggestions" id="searchSuggestions" style="display: none;">
-                        <!-- Suggestions will be populated here -->
-                    </div>
-                </div>
-                <a href="https://github.com/xthxr/piik.me" target="_blank" rel="noopener noreferrer" 
-                   class="icon-btn github-btn" title="Star on GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-        
-                <div class="user-menu">
-                    <button class="user-menu-btn" id="userMenuBtn">
-                        <img src="" alt="User" class="user-avatar" id="topbarUserPhoto">
-                    </button>
-                    <div class="dropdown-menu" id="userDropdown">
-                        <a href="#profile" class="dropdown-item">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
-                        <a href="#settings" class="dropdown-item">
-                            <i class="fas fa-cog"></i> Settings
-                        </a>
-                        <hr class="dropdown-divider">
-                        <a href="#logout" class="dropdown-item" id="logoutBtn">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
-                </div>
-                </div>
+              </div>
+              <div
+                class="search-suggestions"
+                id="searchSuggestions"
+                style="display: none"
+              >
+                <!-- Suggestions will be populated here -->
+              </div>
             </div>
-            <section class="page" id="homePage">
-                <div class="page-header">
-                    <div class="header-content">
-                        <h2>Your Links</h2>
-                        <p class="header-subtitle">Manage and track all your short links</p>
-                    </div>
-                    <button class="btn btn-primary" id="createLinkBtn">
-                        <i class="fas fa-plus"></i> Create New Link
-                    </button>
-                </div>
+            <a
+              href="https://github.com/xthxr/piik.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="icon-btn github-btn"
+              title="Star on GitHub"
+            >
+              <i class="fab fa-github"></i>
+            </a>
 
-                <!-- Stats Cards -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon purple">
-                            <i class="fas fa-link"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalLinks">0</span>
-                            <span class="stat-label">Total Links</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalClicks">0</span>
-                            <span class="stat-label">Total Clicks</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="activeLinks">0</span>
-                            <span class="stat-label">Active Links</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon orange">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="avgClickRate">0</span>
-                            <span class="stat-label">Avg Click Rate</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Filters -->
-                <div class="filters-bar">
-                    <div class="filter-tabs">
-                        <button class="filter-tab active" data-filter="all">All Links</button>
-                        <button class="filter-tab" data-filter="active">Active</button>
-                        <button class="filter-tab" data-filter="inactive">Inactive</button>
-                    </div>
-                    <div class="filter-actions">
-                        <select class="filter-select" id="sortSelect">
-                            <option value="recent">Most Recent</option>
-                            <option value="clicks">Most Clicks</option>
-                            <option value="oldest">Oldest First</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Links Grid -->
-                <div class="links-container" id="linksContainer">
-                    <!-- Links will be populated here -->
-                </div>
-
-                <!-- Empty State -->
-                <div class="empty-state" id="emptyState" style="display: none;">
-                    <div class="empty-state-icon">
-                        <i class="fas fa-link"></i>
-                    </div>
-                    <h3>No links yet</h3>
-                    <p>Create your first piik to start tracking analytics</p>
-                    <button class="btn btn-primary" id="createFirstBtn">
-                        <i class="fas fa-plus"></i> Create Your First Link
-                    </button>
-                </div>
-            </section>
-
-            <!-- Analytics Page -->
-            <section class="page" id="analyticsPage" style="display: none;">
-                <div class="page-header">
-                    <div class="header-content">
-                        <h2>Analytics Dashboard</h2>
-                        <p class="header-subtitle">Detailed insights into your link performance</p>
-                    </div>
-                    <div class="header-actions">
-                        <select class="filter-select" id="analyticsLinkSelect">
-                            <option value="all">All Links</option>
-                        </select>
-                        <select class="filter-select" id="analyticsTimeRange">
-                            <option value="7d">Last 7 Days</option>
-                            <option value="30d">Last 30 Days</option>
-                            <option value="90d">Last 90 Days</option>
-                            <option value="all">All Time</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Analytics Stats -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="analyticsImpressions">0</span>
-                            <span class="stat-label">Impressions</span>
-                            <span class="stat-change" id="impressionsChange" style="display: none;"></span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon blue-light">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="analyticsClicks">0</span>
-                            <span class="stat-label">Total Clicks</span>
-                            <span class="stat-change" id="clicksChange" style="display: none;"></span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon purple">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="analyticsCTR">0%</span>
-                            <span class="stat-label">Click-Through Rate</span>
-                            <span class="stat-change" id="ctrChange" style="display: none;"></span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="analyticsVisitors">0</span>
-                            <span class="stat-label">Unique Visitors</span>
-                            <span class="stat-change" id="visitorsChange" style="display: none;"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts -->
-                <div class="charts-grid">
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3>Clicks Over Time</h3>
-                            <div class="chart-actions">
-                                <button class="btn-icon"><i class="fas fa-download"></i></button>
-                            </div>
-                        </div>
-                        <div class="chart-body">
-                            <canvas id="clicksChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3>Top Referrers</h3>
-                        </div>
-                        <div class="chart-body">
-                            <canvas id="referrersChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detailed Tables -->
-                <div class="analytics-grid">
-                    <div class="analytics-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-globe"></i> Geographic Data</h3>
-                            <button class="btn btn-sm btn-secondary" id="seeMoreGeoBtn" onclick="openDetailedGeographicView()">
-                                <i class="fas fa-expand-alt"></i> See More
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div class="analytics-list" id="geographicList">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="analytics-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-mobile-alt"></i> Devices</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="analytics-list" id="devicesList">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="analytics-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-browser"></i> Browsers</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="analytics-list" id="browsersList">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="analytics-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-share-alt"></i> Referrers</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="analytics-list" id="referrersList">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- QR Generator Page -->
-            <section class="page" id="qr-generatorPage" style="display: none;">
-                <div class="page-header">
-                    <div class="header-content">
-                        <h2>QR Code Generator</h2>
-                        <p class="header-subtitle">Create custom branded QR codes in seconds</p>
-                    </div>
-                </div>
-
-                <div class="qr-generator-container">
-                    <!-- QR Input Section -->
-                    <div class="qr-input-section">
-                        <div class="qr-card">
-                            <h3><i class="fas fa-link"></i> Enter Your Link</h3>
-                            <div class="form-group">
-                                <label>Link or Text</label>
-                                <input type="text" class="form-input" id="qrLinkInput" placeholder="https://example.com or paste any text">
-                            </div>
-                            <button class="btn btn-primary" id="generateQRBtn">
-                                <i class="fas fa-bolt"></i> Generate QR Code
-                            </button>
-                        </div>
-
-                        <!-- Quick Select Links -->
-                        <div class="qr-card">
-                            <h3><i class="fas fa-zap"></i> Quick Generate from Your Links</h3>
-                            <div class="quick-links-grid" id="quickLinksGrid">
-                                <p class="text-muted">Your recent links will appear here</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- QR Customization Section -->
-                    <div class="qr-customization-section">
-                        <!-- QR Preview -->
-                        <div class="qr-card qr-preview-card">
-                            <h3><i class="fas fa-eye"></i> Preview</h3>
-                            <div class="qr-preview-container" id="qrPreviewContainer">
-                                <div class="qr-canvas-wrapper">
-                                    <canvas id="qrCanvas" width="400" height="400"></canvas>
-                                    <div class="qr-brand-overlay" id="qrBrandOverlay" style="display: none;">
-                                        <span id="qrBrandText"></span>
-                                    </div>
-                                </div>
-                                <p class="text-muted" id="qrPlaceholder">Enter a link to generate QR code</p>
-                            </div>
-                        </div>
-
-                        <!-- Pattern Selection -->
-                        <div class="qr-card">
-                            <h3><i class="fas fa-shapes"></i> QR Pattern Style</h3>
-                            <div class="qr-pattern-grid">
-                                <div class="pattern-option active" data-pattern="square">
-                                    <div class="pattern-preview pattern-square"></div>
-                                    <span>Square</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="dots">
-                                    <div class="pattern-preview pattern-dots"></div>
-                                    <span>Dots</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="rounded">
-                                    <div class="pattern-preview pattern-rounded"></div>
-                                    <span>Rounded</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="extra-rounded">
-                                    <div class="pattern-preview pattern-extra-rounded"></div>
-                                    <span>Extra Rounded</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="classy">
-                                    <div class="pattern-preview pattern-classy"></div>
-                                    <span>Classy</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="classy-rounded">
-                                    <div class="pattern-preview pattern-classy-rounded"></div>
-                                    <span>Classy Round</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="circular">
-                                    <div class="pattern-preview pattern-circular"></div>
-                                    <span>Circular</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="diamond">
-                                    <div class="pattern-preview pattern-diamond"></div>
-                                    <span>Diamond</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="star">
-                                    <div class="pattern-preview pattern-star"></div>
-                                    <span>Star</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="bars">
-                                    <div class="pattern-preview pattern-bars"></div>
-                                    <span>Bars</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="thick">
-                                    <div class="pattern-preview pattern-thick"></div>
-                                    <span>Thick</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="thin">
-                                    <div class="pattern-preview pattern-thin"></div>
-                                    <span>Thin</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="fluid">
-                                    <div class="pattern-preview pattern-fluid"></div>
-                                    <span>Fluid</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="mosaic">
-                                    <div class="pattern-preview pattern-mosaic"></div>
-                                    <span>Mosaic</span>
-                                </div>
-                                <div class="pattern-option" data-pattern="leaf">
-                                    <div class="pattern-preview pattern-leaf"></div>
-                                    <span>Leaf</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Brand Name -->
-                        <div class="qr-card">
-                            <h3><i class="fas fa-tag"></i> Brand Name (Optional)</h3>
-                            <div class="form-group">
-                                <input type="text" class="form-input" id="qrBrandInput" placeholder="Enter your brand name" maxlength="20">
-                                <small class="form-hint">Appears in the center of QR code</small>
-                            </div>
-                        </div>
-
-                        <!-- Event Frames -->
-                        <div class="qr-card">
-                            <h3><i class="fas fa-frame"></i> Event Frames</h3>
-                            <div class="frame-grid">
-                                <div class="frame-option active" data-frame="none">
-                                    <div class="frame-preview frame-none"></div>
-                                    <span>No Frame</span>
-                                </div>
-                                <div class="frame-option" data-frame="business">
-                                    <div class="frame-preview frame-business"></div>
-                                    <span>Business</span>
-                                </div>
-                                <div class="frame-option" data-frame="wedding">
-                                    <div class="frame-preview frame-wedding"></div>
-                                    <span>Wedding</span>
-                                </div>
-                                <div class="frame-option" data-frame="birthday">
-                                    <div class="frame-preview frame-birthday"></div>
-                                    <span>Birthday</span>
-                                </div>
-                                <div class="frame-option" data-frame="party">
-                                    <div class="frame-preview frame-party"></div>
-                                    <span>Party</span>
-                                </div>
-                                <div class="frame-option" data-frame="concert">
-                                    <div class="frame-preview frame-concert"></div>
-                                    <span>Concert</span>
-                                </div>
-                                <div class="frame-option" data-frame="conference">
-                                    <div class="frame-preview frame-conference"></div>
-                                    <span>Conference</span>
-                                </div>
-                                <div class="frame-option" data-frame="restaurant">
-                                    <div class="frame-preview frame-restaurant"></div>
-                                    <span>Restaurant</span>
-                                </div>
-                                <div class="frame-option" data-frame="retail">
-                                    <div class="frame-preview frame-retail"></div>
-                                    <span>Retail</span>
-                                </div>
-                                <div class="frame-option" data-frame="social">
-                                    <div class="frame-preview frame-social"></div>
-                                    <span>Social Media</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Color Picker -->
-                        <div class="qr-card">
-                            <h3><i class="fas fa-palette"></i> QR Color</h3>
-                            <div class="color-picker-container">
-                                <div class="color-slider">
-                                    <label>Foreground Color</label>
-                                    <div class="color-input-group">
-                                        <input type="color" id="qrColorPicker" value="#000000">
-                                        <input type="text" class="form-input color-hex" id="qrColorHex" value="#000000">
-                                    </div>
-                                </div>
-                                <div class="color-presets">
-                                    <button class="color-preset" data-color="#000000" style="background: #000000;"></button>
-                                    <button class="color-preset" data-color="#06b6d4" style="background: #06b6d4;"></button>
-                                    <button class="color-preset" data-color="#3B82F6" style="background: #3B82F6;"></button>
-                                    <button class="color-preset" data-color="#8B5CF6" style="background: #8B5CF6;"></button>
-                                    <button class="color-preset" data-color="#EC4899" style="background: #EC4899;"></button>
-                                    <button class="color-preset" data-color="#EF4444" style="background: #EF4444;"></button>
-                                    <button class="color-preset" data-color="#F59E0B" style="background: #F59E0B;"></button>
-                                    <button class="color-preset" data-color="#10B981" style="background: #10B981;"></button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Download Options -->
-                        <div class="qr-card">
-                            <h3><i class="fas fa-download"></i> Download Options</h3>
-                            <div class="download-options">
-                                <div class="download-format">
-                                    <label>Format</label>
-                                    <div class="format-buttons">
-                                        <button class="format-btn active" data-format="png">
-                                            <i class="fas fa-file-image"></i> PNG
-                                        </button>
-                                        <button class="format-btn" data-format="jpg">
-                                            <i class="fas fa-file-image"></i> JPG
-                                        </button>
-                                        <button class="format-btn" data-format="svg">
-                                            <i class="fas fa-file-code"></i> SVG
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="download-background" id="downloadBgOptions" style="display: none;">
-                                    <label>Background Color (JPG only)</label>
-                                    <div class="color-input-group">
-                                        <input type="color" id="bgColorPicker" value="#ffffff">
-                                        <input type="text" class="form-input color-hex" id="bgColorHex" value="#ffffff">
-                                    </div>
-                                </div>
-                                <div class="download-transparent" id="transparentOption">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="transparentBg" checked>
-                                        <span>Transparent Background</span>
-                                    </label>
-                                </div>
-                                <button class="btn btn-success btn-block" id="downloadQRBtn" disabled>
-                                    <i class="fas fa-download"></i> Download QR Code
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Detailed Geographic Analytics Page -->
-            <section class="page" id="geo-detailsPage" style="display: none;">
-                <div class="page-header">
-                    <div class="header-content">
-                        <button class="btn btn-secondary" onclick="navigateToPage('analytics')" style="margin-bottom: 12px;">
-                            <i class="fas fa-arrow-left"></i> Back to Analytics
-                        </button>
-                        <div style="display: flex; align-items: center; gap: 16px; margin-top: 8px;">
-                            <div class="view-toggle-buttons">
-                                <button class="view-toggle-btn active" id="clickDetailsViewBtn" onclick="switchGeoView('details')">
-                                    <i class="fas fa-table"></i> Click Details
-                                </button>
-                                <button class="view-toggle-btn" id="globeViewBtn" onclick="switchGeoView('globe')">
-                                    <i class="fas fa-globe-americas"></i> Globe View
-                                </button>
-                            </div>
-                        </div>
-                        <h2 style="margin-top: 12px;">Detailed Geographic Analytics</h2>
-                        <p class="header-subtitle">Complete click details with IP addresses and locations</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" id="exportGeoDataBtn">
-                            <i class="fas fa-download"></i> Export CSV
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Location Summary Stats -->
-                <div class="stats-grid" style="margin-bottom: 24px;">
-                    <div class="stat-card">
-                        <div class="stat-icon purple">
-                            <i class="fas fa-map-marked-alt"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalLocations">0</span>
-                            <span class="stat-label">Unique Locations</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-flag"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalCountries">0</span>
-                            <span class="stat-label">Countries</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-city"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalCities">0</span>
-                            <span class="stat-label">Cities</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon orange">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalGeoClicks">0</span>
-                            <span class="stat-label">Total Clicks</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Globe View Container -->
-                <div id="globeViewContainer" style="display: none;">
-                    <div class="analytics-card" style="margin-bottom: 24px;">
-                        <div class="card-header">
-                            <h3><i class="fas fa-globe-americas"></i> Interactive Globe</h3>
-                            <button class="btn btn-sm btn-secondary" onclick="resetGlobeView()">
-                                <i class="fas fa-undo"></i> Reset View
-                            </button>
-                        </div>
-                        <div class="card-body" style="padding: 0; position: relative; overflow: hidden;">
-                            <div id="globeViz" style="width: 100%; height: 650px;"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Location Legend -->
-                    <div class="analytics-card" style="margin-bottom: 24px;">
-                        <div class="card-header">
-                            <h3><i class="fas fa-map-marker-alt"></i> Locations</h3>
-                            <span class="badge" style="background: #f59e0b;" id="globeLocationsCount">0 locations</span>
-                        </div>
-                        <div class="card-body">
-                            <div id="globeLocationsList" class="globe-locations-grid">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Click Details Container -->
-                <div id="clickDetailsContainer">
-                
-                <!-- Filters -->
-                <div class="filters-bar" style="margin-bottom: 24px;">
-                    <div class="filter-tabs">
-                        <button class="filter-tab active" data-filter="all" onclick="filterGeoData('all')">All Clicks</button>
-                        <button class="filter-tab" data-filter="today" onclick="filterGeoData('today')">Today</button>
-                        <button class="filter-tab" data-filter="week" onclick="filterGeoData('week')">This Week</button>
-                        <button class="filter-tab" data-filter="month" onclick="filterGeoData('month')">This Month</button>
-                    </div>
-                    <div class="filter-actions">
-                        <div class="search-box" style="margin-right: 12px;">
-                            <i class="fas fa-search"></i>
-                            <input type="text" placeholder="Search by location, IP..." id="geoSearchInput" style="width: 250px;">
-                        </div>
-                        <select class="filter-select" id="geoSortSelect" onchange="sortGeoData(this.value)">
-                            <option value="recent">Most Recent</option>
-                            <option value="oldest">Oldest First</option>
-                            <option value="location">By Location</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Detailed Clicks Table -->
-                <div class="analytics-card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-table"></i> Click Details</h3>
-                        <span class="badge" id="geoTableCount">0 clicks</span>
-                    </div>
-                    <div class="card-body" style="padding: 0;">
-                        <div class="table-container">
-                            <table class="data-table" id="geoClicksTable">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th><i class="fas fa-clock"></i> Timestamp</th>
-                                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
-                                        <th><i class="fas fa-city"></i> City</th>
-                                        <th><i class="fas fa-flag"></i> Country</th>
-                                        <th><i class="fas fa-network-wired"></i> IP Address</th>
-                                        <th><i class="fas fa-mobile-alt"></i> Device</th>
-                                        <th><i class="fas fa-browser"></i> Browser</th>
-                                        <th><i class="fas fa-share-alt"></i> Referrer</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="geoClicksTableBody">
-                                    <!-- Populated dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                
-                </div><!-- End Click Details Container -->
-            </section>
-
-            <!-- Bio Link Page -->
-            <section class="page" id="bio-linkPage" style="display: none;">
-                <div class="page-header">
-                    <div class="header-content">
-                        <h2>Bio Link</h2>
-                        <p class="header-subtitle">Create and customize your link-in-bio page</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" id="createBioLinkBtn">
-                            <i class="fas fa-plus"></i> Create Bio Link
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Bio Link Stats -->
-                <div class="stats-grid" style="margin-bottom: 24px;" id="bioLinkStatsGrid">
-                    <div class="stat-card">
-                        <div class="stat-icon purple">
-                            <i class="fas fa-id-card"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalBioLinks">0</span>
-                            <span class="stat-label">Bio Links</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalBioViews">0</span>
-                            <span class="stat-label">Total Views</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="totalBioClicks">0</span>
-                            <span class="stat-label">Link Clicks</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon orange">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="avgBioCTR">0%</span>
-                            <span class="stat-label">Avg CTR</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bio Link Editor (shown when bio link exists) -->
-                <div id="bioLinkEditor" style="display: none;">
-                    <div style="display: grid; grid-template-columns: 1fr 400px; gap: 24px; align-items: start;">
-                        <!-- Editor Panel -->
-                        <div class="bio-editor-panel">
-                            <div class="card" style="padding: 0;">
-                                <!-- Profile Section -->
-                                <div style="padding: 24px; border-bottom: 1px solid #e5e7eb;">
-                                    <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                                        <i class="fas fa-user-circle"></i> Profile
-                                    </h3>
-                                    <div style="display: grid; gap: 16px;">
-                                        <div class="form-group" style="margin: 0;">
-                                            <label>Name</label>
-                                            <input type="text" class="form-input" id="editorBioName" placeholder="Your name">
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label>URL Slug</label>
-                                            <div style="display: flex; gap: 8px; align-items: center;">
-                                                <span style="color: #6b7280; font-size: 14px;">piik.me/</span>
-                                                <input type="text" class="form-input" id="editorBioSlug" placeholder="your-username" style="flex: 1;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label>Bio Description</label>
-                                            <textarea class="form-input" id="editorBioDescription" rows="3" placeholder="Tell people about yourself..."></textarea>
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label>Profile Picture</label>
-                                            <div style="display: flex; gap: 12px; align-items: center;">
-                                                <input type="file" class="form-input" id="editorProfilePictureFile" accept="image/*" style="display: none;">
-                                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('editorProfilePictureFile').click()" style="flex-shrink: 0;">
-                                                    <i class="fas fa-upload"></i> Upload Picture
-                                                </button>
-                                                <div id="editorProfilePicturePreview" style="display: none; align-items: center; gap: 8px; flex: 1;">
-                                                    <img id="editorProfilePicturePreviewImg" src="" alt="Preview" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                                                    <span id="editorProfilePictureFileName" style="font-size: 14px; color: #6b7280; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-                                                    <button type="button" class="btn-icon" onclick="removeEditorProfilePicture()" title="Remove">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <input type="hidden" id="editorProfilePicture">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Appearance Section -->
-                                <div style="padding: 24px; border-bottom: 1px solid #e5e7eb;">
-                                    <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                                        <i class="fas fa-palette"></i> Appearance
-                                    </h3>
-                                    <div style="display: grid; gap: 16px;">
-                                        <div class="form-group" style="margin: 0;">
-                                            <label>Theme Color</label>
-                                            <div class="color-input-group">
-                                                <input type="color" id="editorThemeColor" value="#06b6d4">
-                                                <input type="text" class="form-input color-hex" id="editorThemeColorHex" value="#06b6d4">
-                                            </div>
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label>Background Style</label>
-                                            <select class="form-input" id="editorBackgroundStyle">
-                                                <option value="gradient">Gradient</option>
-                                                <option value="solid">Solid Color</option>
-                                                <option value="image">Background Image</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Social Links Section -->
-                                <div style="padding: 24px; border-bottom: 1px solid #e5e7eb;">
-                                    <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                                        <i class="fas fa-share-alt"></i> Social Links
-                                    </h3>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                        <div class="form-group" style="margin: 0;">
-                                            <label><i class="fab fa-instagram"></i> Instagram</label>
-                                            <input type="text" class="form-input" id="editorInstagram" placeholder="@username">
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label><i class="fab fa-twitter"></i> Twitter</label>
-                                            <input type="text" class="form-input" id="editorTwitter" placeholder="@username">
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label><i class="fab fa-linkedin"></i> LinkedIn</label>
-                                            <input type="url" class="form-input" id="editorLinkedIn" placeholder="https://linkedin.com/in/username">
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label><i class="fab fa-github"></i> GitHub</label>
-                                            <input type="text" class="form-input" id="editorGithub" placeholder="username">
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label><i class="fab fa-youtube"></i> YouTube</label>
-                                            <input type="url" class="form-input" id="editorYoutube" placeholder="https://youtube.com/@username">
-                                        </div>
-                                        <div class="form-group" style="margin: 0;">
-                                            <label><i class="fas fa-globe"></i> Website</label>
-                                            <input type="url" class="form-input" id="editorWebsite" placeholder="https://yourwebsite.com">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Links Section -->
-                                <div style="padding: 24px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                                        <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
-                                            <i class="fas fa-link"></i> Links
-                                        </h3>
-                                        <button class="btn btn-sm btn-secondary" onclick="addEditorBioLinkItem()">
-                                            <i class="fas fa-plus"></i> Add Link
-                                        </button>
-                                    </div>
-                                    <div id="editorBioLinkItems" style="display: flex; flex-direction: column; gap: 12px;">
-                                        <!-- Links will be added here -->
-                                    </div>
-                                </div>
-
-                                <!-- Action Buttons -->
-                                <div style="padding: 24px; background: #000000; border-top: 1px solid #2a2a2a; display: flex; gap: 12px; justify-content: flex-end;">
-                                    <button class="btn btn-secondary" onclick="cancelBioLinkEdits()">
-                                        <i class="fas fa-times"></i> Cancel
-                                    </button>
-                                    <button class="btn btn-primary" onclick="saveEditorBioLink()">
-                                        <i class="fas fa-save"></i> Save Changes
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Live Preview Panel -->
-                        <div style="position: sticky; top: 24px;">
-                            <div class="card" style="padding: 20px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                                    <h3 style="margin: 0; font-size: 16px;">Live Preview</h3>
-                                    <div style="display: flex; gap: 8px;">
-                                        <button class="btn btn-sm btn-secondary" onclick="shareBioLink()" title="Share">
-                                            <i class="fas fa-share-alt"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-secondary" onclick="viewBioLinkPreview()" title="Open in new tab">
-                                            <i class="fas fa-external-link-alt"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <!-- Phone Mockup -->
-                                <div style="display: flex; justify-content: center; padding: 20px 0;">
-                                    <div class="phone-mockup">
-                                        <div class="phone-notch"></div>
-                                        <div class="phone-screen" id="bioLinkPreview">
-                                            <iframe id="bioPreviewFrame" 
-                                                    style="width: 100%; height: 100%; border: none; background: transparent; border-radius: inherit;"
-                                                    sandbox="allow-scripts allow-same-origin"
-                                                    srcdoc="">
-                                            </iframe>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Empty State -->
-                <div class="empty-state" id="bioLinksEmptyState" style="display: none;">
-                    <div class="empty-state-icon">
-                        <i class="fas fa-link"></i>
-                    </div>
-                    <h3>No bio link yet</h3>
-                    <p>Create your bio link page to showcase all your important links in one place</p>
-                    <button class="btn btn-primary" onclick="openBioLinkModal()">
-                        <i class="fas fa-plus"></i> Create Your Bio Link
-                    </button>
-                </div>
-            </section>
-
-            <!-- Profile Page -->
-            <section class="page" id="profilePage" style="display: none;">
-                <div class="page-header">
-                    <div class="header-content">
-                        <h2>Profile Settings</h2>
-                        <p class="header-subtitle">Manage your account and preferences</p>
-                    </div>
-                </div>
-
-                <div class="profile-grid">
-                    <!-- Profile Info Card -->
-                    <div class="profile-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-user"></i> Profile Information</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="profile-avatar-section">
-                                <img src="" alt="Profile" class="profile-avatar" id="profileAvatar">
-                                <button class="btn btn-secondary btn-sm">Change Photo</button>
-                            </div>
-                            <div class="form-group">
-                                <label>Full Name</label>
-                                <input type="text" class="form-input" id="profileName" placeholder="Your name">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" class="form-input" id="profileEmail" placeholder="your@email.com" readonly>
-                            </div>
-                            <button class="btn btn-primary">Save Changes</button>
-                        </div>
-                    </div>
-
-                    <!-- Account Settings -->
-                    <div class="profile-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-cog"></i> Account Settings</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="settings-item">
-                                <div class="settings-info">
-                                    <h4>Email Notifications</h4>
-                                    <p>Receive email updates about your links</p>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-info">
-                                    <h4>Weekly Reports</h4>
-                                    <p>Get weekly analytics summary</p>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-info">
-                                    <h4>Public Profile</h4>
-                                    <p>Make your profile visible to others</p>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- API Access (Coming Soon) -->
-                    <div class="profile-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-key"></i> API Access</h3>
-                            <span style="background: var(--accent-purple); color: #fff; font-size: 12px; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em;">Coming Soon</span>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-description">Premium API integrations, secure tokens, and rate-limited access are on the way.</p>
-                            <ul style="margin: 16px 0 20px 20px; color: var(--text-secondary); line-height: 1.6;">
-                                <li>Programmatic link creation & analytics sync</li>
-                                <li>Team-level API tokens with role controls</li>
-                                <li>Enterprise-grade rate limits & webhooks</li>
-                            </ul>
-                            <div style="padding: 16px; border-radius: 12px; background: rgba(139, 92, 246, 0.08); border: 1px dashed rgba(139, 92, 246, 0.3);">
-                                <h4 style="margin: 0 0 8px 0; font-size: 15px; color: var(--text-primary);">Available with Link360 Premium</h4>
-                                <p style="margin: 0 0 12px 0; font-size: 14px; color: var(--text-secondary);">Sign up to be the first to know when early access opens.</p>
-                                <button class="btn btn-secondary" style="width: 100%;" disabled>
-                                    <i class="fas fa-bell"></i> Notify Me When Ready
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Danger Zone -->
-                    <div class="profile-card danger-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="danger-item">
-                                <div class="danger-info">
-                                    <h4>Delete Account</h4>
-                                    <p>Permanently delete your account and all data</p>
-                                </div>
-                                <button id="deleteAccountBtn" class="btn btn-danger">Delete Account</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <div class="user-menu">
+              <button class="user-menu-btn" id="userMenuBtn">
+                <img
+                  src=""
+                  alt="User"
+                  class="user-avatar"
+                  id="topbarUserPhoto"
+                />
+              </button>
+              <div class="dropdown-menu" id="userDropdown">
+                <a href="#profile" class="dropdown-item">
+                  <i class="fas fa-user"></i> Profile
+                </a>
+                <a href="#settings" class="dropdown-item">
+                  <i class="fas fa-cog"></i> Settings
+                </a>
+                <hr class="dropdown-divider" />
+                <a href="#logout" class="dropdown-item" id="logoutBtn">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
+        <section class="page" id="homePage">
+          <div class="page-header">
+            <div class="header-content">
+              <h2>Your Links</h2>
+              <p class="header-subtitle">
+                Manage and track all your short links
+              </p>
+            </div>
+            <button class="btn btn-primary" id="createLinkBtn">
+              <i class="fas fa-plus"></i> Create New Link
+            </button>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon purple">
+                <i class="fas fa-link"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalLinks">0</span>
+                <span class="stat-label">Total Links</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="fas fa-mouse-pointer"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalClicks">0</span>
+                <span class="stat-label">Total Clicks</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="activeLinks">0</span>
+                <span class="stat-label">Active Links</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon orange">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="avgClickRate">0</span>
+                <span class="stat-label">Avg Click Rate</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="filters-bar">
+            <div class="filter-tabs">
+              <button class="filter-tab active" data-filter="all">
+                All Links
+              </button>
+              <button class="filter-tab" data-filter="active">Active</button>
+              <button class="filter-tab" data-filter="inactive">
+                Inactive
+              </button>
+            </div>
+            <div class="filter-actions">
+              <select class="filter-select" id="sortSelect">
+                <option value="recent">Most Recent</option>
+                <option value="clicks">Most Clicks</option>
+                <option value="oldest">Oldest First</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Links Grid -->
+          <div class="links-container" id="linksContainer">
+            <!-- Links will be populated here -->
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="emptyState" style="display: none">
+            <div class="empty-state-icon">
+              <i class="fas fa-link"></i>
+            </div>
+            <h3>No links yet</h3>
+            <p>Create your first piik to start tracking analytics</p>
+            <button class="btn btn-primary" id="createFirstBtn">
+              <i class="fas fa-plus"></i> Create Your First Link
+            </button>
+          </div>
+        </section>
+
+        <!-- Analytics Page -->
+        <section class="page" id="analyticsPage" style="display: none">
+          <div class="page-header">
+            <div class="header-content">
+              <h2>Analytics Dashboard</h2>
+              <p class="header-subtitle">
+                Detailed insights into your link performance
+              </p>
+            </div>
+            <div class="header-actions">
+              <select class="filter-select" id="analyticsLinkSelect">
+                <option value="all">All Links</option>
+              </select>
+              <select class="filter-select" id="analyticsTimeRange">
+                <option value="7d">Last 7 Days</option>
+                <option value="30d">Last 30 Days</option>
+                <option value="90d">Last 90 Days</option>
+                <option value="all">All Time</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Analytics Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="fas fa-eye"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="analyticsImpressions">0</span>
+                <span class="stat-label">Impressions</span>
+                <span
+                  class="stat-change"
+                  id="impressionsChange"
+                  style="display: none"
+                ></span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon blue-light">
+                <i class="fas fa-mouse-pointer"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="analyticsClicks">0</span>
+                <span class="stat-label">Total Clicks</span>
+                <span
+                  class="stat-change"
+                  id="clicksChange"
+                  style="display: none"
+                ></span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon purple">
+                <i class="fas fa-percentage"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="analyticsCTR">0%</span>
+                <span class="stat-label">Click-Through Rate</span>
+                <span
+                  class="stat-change"
+                  id="ctrChange"
+                  style="display: none"
+                ></span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="analyticsVisitors">0</span>
+                <span class="stat-label">Unique Visitors</span>
+                <span
+                  class="stat-change"
+                  id="visitorsChange"
+                  style="display: none"
+                ></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Clicks Over Time</h3>
+                <div class="chart-actions">
+                  <button class="btn-icon">
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="chart-body">
+                <canvas id="clicksChart"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Top Referrers</h3>
+              </div>
+              <div class="chart-body">
+                <canvas id="referrersChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed Tables -->
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <div class="card-header">
+                <h3><i class="fas fa-globe"></i> Geographic Data</h3>
+                <button
+                  class="btn btn-sm btn-secondary"
+                  id="seeMoreGeoBtn"
+                  onclick="openDetailedGeographicView()"
+                >
+                  <i class="fas fa-expand-alt"></i> See More
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="analytics-list" id="geographicList">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <div class="analytics-card">
+              <div class="card-header">
+                <h3><i class="fas fa-mobile-alt"></i> Devices</h3>
+              </div>
+              <div class="card-body">
+                <div class="analytics-list" id="devicesList">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <div class="analytics-card">
+              <div class="card-header">
+                <h3><i class="fas fa-browser"></i> Browsers</h3>
+              </div>
+              <div class="card-body">
+                <div class="analytics-list" id="browsersList">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <div class="analytics-card">
+              <div class="card-header">
+                <h3><i class="fas fa-share-alt"></i> Referrers</h3>
+              </div>
+              <div class="card-body">
+                <div class="analytics-list" id="referrersList">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QR Generator Page -->
+        <section class="page" id="qr-generatorPage" style="display: none">
+          <div class="page-header">
+            <div class="header-content">
+              <h2>QR Code Generator</h2>
+              <p class="header-subtitle">
+                Create custom branded QR codes in seconds
+              </p>
+            </div>
+          </div>
+
+          <div class="qr-generator-container">
+            <!-- QR Input Section -->
+            <div class="qr-input-section">
+              <div class="qr-card">
+                <h3><i class="fas fa-link"></i> Enter Your Link</h3>
+                <div class="form-group">
+                  <label>Link or Text</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="qrLinkInput"
+                    placeholder="https://example.com or paste any text"
+                  />
+                </div>
+                <button class="btn btn-primary" id="generateQRBtn">
+                  <i class="fas fa-bolt"></i> Generate QR Code
+                </button>
+              </div>
+
+              <!-- Quick Select Links -->
+              <div class="qr-card">
+                <h3>
+                  <i class="fas fa-zap"></i> Quick Generate from Your Links
+                </h3>
+                <div class="quick-links-grid" id="quickLinksGrid">
+                  <p class="text-muted">Your recent links will appear here</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- QR Customization Section -->
+            <div class="qr-customization-section">
+              <!-- QR Preview -->
+              <div class="qr-card qr-preview-card">
+                <h3><i class="fas fa-eye"></i> Preview</h3>
+                <div class="qr-preview-container" id="qrPreviewContainer">
+                  <div class="qr-canvas-wrapper">
+                    <canvas id="qrCanvas" width="400" height="400"></canvas>
+                    <div
+                      class="qr-brand-overlay"
+                      id="qrBrandOverlay"
+                      style="display: none"
+                    >
+                      <span id="qrBrandText"></span>
+                    </div>
+                  </div>
+                  <p class="text-muted" id="qrPlaceholder">
+                    Enter a link to generate QR code
+                  </p>
+                </div>
+              </div>
+
+              <!-- Pattern Selection -->
+              <div class="qr-card">
+                <h3><i class="fas fa-shapes"></i> QR Pattern Style</h3>
+                <div class="qr-pattern-grid">
+                  <div class="pattern-option active" data-pattern="square">
+                    <div class="pattern-preview pattern-square"></div>
+                    <span>Square</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="dots">
+                    <div class="pattern-preview pattern-dots"></div>
+                    <span>Dots</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="rounded">
+                    <div class="pattern-preview pattern-rounded"></div>
+                    <span>Rounded</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="extra-rounded">
+                    <div class="pattern-preview pattern-extra-rounded"></div>
+                    <span>Extra Rounded</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="classy">
+                    <div class="pattern-preview pattern-classy"></div>
+                    <span>Classy</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="classy-rounded">
+                    <div class="pattern-preview pattern-classy-rounded"></div>
+                    <span>Classy Round</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="circular">
+                    <div class="pattern-preview pattern-circular"></div>
+                    <span>Circular</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="diamond">
+                    <div class="pattern-preview pattern-diamond"></div>
+                    <span>Diamond</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="star">
+                    <div class="pattern-preview pattern-star"></div>
+                    <span>Star</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="bars">
+                    <div class="pattern-preview pattern-bars"></div>
+                    <span>Bars</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="thick">
+                    <div class="pattern-preview pattern-thick"></div>
+                    <span>Thick</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="thin">
+                    <div class="pattern-preview pattern-thin"></div>
+                    <span>Thin</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="fluid">
+                    <div class="pattern-preview pattern-fluid"></div>
+                    <span>Fluid</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="mosaic">
+                    <div class="pattern-preview pattern-mosaic"></div>
+                    <span>Mosaic</span>
+                  </div>
+                  <div class="pattern-option" data-pattern="leaf">
+                    <div class="pattern-preview pattern-leaf"></div>
+                    <span>Leaf</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Brand Name -->
+              <div class="qr-card">
+                <h3><i class="fas fa-tag"></i> Brand Name (Optional)</h3>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="qrBrandInput"
+                    placeholder="Enter your brand name"
+                    maxlength="20"
+                  />
+                  <small class="form-hint"
+                    >Appears in the center of QR code</small
+                  >
+                </div>
+              </div>
+
+              <!-- Event Frames -->
+              <div class="qr-card">
+                <h3><i class="fas fa-frame"></i> Event Frames</h3>
+                <div class="frame-grid">
+                  <div class="frame-option active" data-frame="none">
+                    <div class="frame-preview frame-none"></div>
+                    <span>No Frame</span>
+                  </div>
+                  <div class="frame-option" data-frame="business">
+                    <div class="frame-preview frame-business"></div>
+                    <span>Business</span>
+                  </div>
+                  <div class="frame-option" data-frame="wedding">
+                    <div class="frame-preview frame-wedding"></div>
+                    <span>Wedding</span>
+                  </div>
+                  <div class="frame-option" data-frame="birthday">
+                    <div class="frame-preview frame-birthday"></div>
+                    <span>Birthday</span>
+                  </div>
+                  <div class="frame-option" data-frame="party">
+                    <div class="frame-preview frame-party"></div>
+                    <span>Party</span>
+                  </div>
+                  <div class="frame-option" data-frame="concert">
+                    <div class="frame-preview frame-concert"></div>
+                    <span>Concert</span>
+                  </div>
+                  <div class="frame-option" data-frame="conference">
+                    <div class="frame-preview frame-conference"></div>
+                    <span>Conference</span>
+                  </div>
+                  <div class="frame-option" data-frame="restaurant">
+                    <div class="frame-preview frame-restaurant"></div>
+                    <span>Restaurant</span>
+                  </div>
+                  <div class="frame-option" data-frame="retail">
+                    <div class="frame-preview frame-retail"></div>
+                    <span>Retail</span>
+                  </div>
+                  <div class="frame-option" data-frame="social">
+                    <div class="frame-preview frame-social"></div>
+                    <span>Social Media</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Color Picker -->
+              <div class="qr-card">
+                <h3><i class="fas fa-palette"></i> QR Color</h3>
+                <div class="color-picker-container">
+                  <div class="color-slider">
+                    <label>Foreground Color</label>
+                    <div class="color-input-group">
+                      <input type="color" id="qrColorPicker" value="#000000" />
+                      <input
+                        type="text"
+                        class="form-input color-hex"
+                        id="qrColorHex"
+                        value="#000000"
+                      />
+                    </div>
+                  </div>
+                  <div class="color-presets">
+                    <button
+                      class="color-preset"
+                      data-color="#000000"
+                      style="background: #000000"
+                    ></button>
+                    <button
+                      class="color-preset"
+                      data-color="#06b6d4"
+                      style="background: #06b6d4"
+                    ></button>
+                    <button
+                      class="color-preset"
+                      data-color="#3B82F6"
+                      style="background: #3b82f6"
+                    ></button>
+                    <button
+                      class="color-preset"
+                      data-color="#8B5CF6"
+                      style="background: #8b5cf6"
+                    ></button>
+                    <button
+                      class="color-preset"
+                      data-color="#EC4899"
+                      style="background: #ec4899"
+                    ></button>
+                    <button
+                      class="color-preset"
+                      data-color="#EF4444"
+                      style="background: #ef4444"
+                    ></button>
+                    <button
+                      class="color-preset"
+                      data-color="#F59E0B"
+                      style="background: #f59e0b"
+                    ></button>
+                    <button
+                      class="color-preset"
+                      data-color="#10B981"
+                      style="background: #10b981"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Download Options -->
+              <div class="qr-card">
+                <h3><i class="fas fa-download"></i> Download Options</h3>
+                <div class="download-options">
+                  <div class="download-format">
+                    <label>Format</label>
+                    <div class="format-buttons">
+                      <button class="format-btn active" data-format="png">
+                        <i class="fas fa-file-image"></i> PNG
+                      </button>
+                      <button class="format-btn" data-format="jpg">
+                        <i class="fas fa-file-image"></i> JPG
+                      </button>
+                      <button class="format-btn" data-format="svg">
+                        <i class="fas fa-file-code"></i> SVG
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    class="download-background"
+                    id="downloadBgOptions"
+                    style="display: none"
+                  >
+                    <label>Background Color (JPG only)</label>
+                    <div class="color-input-group">
+                      <input type="color" id="bgColorPicker" value="#ffffff" />
+                      <input
+                        type="text"
+                        class="form-input color-hex"
+                        id="bgColorHex"
+                        value="#ffffff"
+                      />
+                    </div>
+                  </div>
+                  <div class="download-transparent" id="transparentOption">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="transparentBg" checked />
+                      <span>Transparent Background</span>
+                    </label>
+                  </div>
+                  <button
+                    class="btn btn-success btn-block"
+                    id="downloadQRBtn"
+                    disabled
+                  >
+                    <i class="fas fa-download"></i> Download QR Code
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Detailed Geographic Analytics Page -->
+        <section class="page" id="geo-detailsPage" style="display: none">
+          <div class="page-header">
+            <div class="header-content">
+              <button
+                class="btn btn-secondary"
+                onclick="navigateToPage('analytics')"
+                style="margin-bottom: 12px"
+              >
+                <i class="fas fa-arrow-left"></i> Back to Analytics
+              </button>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 16px;
+                  margin-top: 8px;
+                "
+              >
+                <div class="view-toggle-buttons">
+                  <button
+                    class="view-toggle-btn active"
+                    id="clickDetailsViewBtn"
+                    onclick="switchGeoView('details')"
+                  >
+                    <i class="fas fa-table"></i> Click Details
+                  </button>
+                  <button
+                    class="view-toggle-btn"
+                    id="globeViewBtn"
+                    onclick="switchGeoView('globe')"
+                  >
+                    <i class="fas fa-globe-americas"></i> Globe View
+                  </button>
+                </div>
+              </div>
+              <h2 style="margin-top: 12px">Detailed Geographic Analytics</h2>
+              <p class="header-subtitle">
+                Complete click details with IP addresses and locations
+              </p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn-primary" id="exportGeoDataBtn">
+                <i class="fas fa-download"></i> Export CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Location Summary Stats -->
+          <div class="stats-grid" style="margin-bottom: 24px">
+            <div class="stat-card">
+              <div class="stat-icon purple">
+                <i class="fas fa-map-marked-alt"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalLocations">0</span>
+                <span class="stat-label">Unique Locations</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="fas fa-flag"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalCountries">0</span>
+                <span class="stat-label">Countries</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="fas fa-city"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalCities">0</span>
+                <span class="stat-label">Cities</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon orange">
+                <i class="fas fa-mouse-pointer"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalGeoClicks">0</span>
+                <span class="stat-label">Total Clicks</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Globe View Container -->
+          <div id="globeViewContainer" style="display: none">
+            <div class="analytics-card" style="margin-bottom: 24px">
+              <div class="card-header">
+                <h3><i class="fas fa-globe-americas"></i> Interactive Globe</h3>
+                <button
+                  class="btn btn-sm btn-secondary"
+                  onclick="resetGlobeView()"
+                >
+                  <i class="fas fa-undo"></i> Reset View
+                </button>
+              </div>
+              <div
+                class="card-body"
+                style="padding: 0; position: relative; overflow: hidden"
+              >
+                <div id="globeViz" style="width: 100%; height: 650px"></div>
+              </div>
+            </div>
+
+            <!-- Location Legend -->
+            <div class="analytics-card" style="margin-bottom: 24px">
+              <div class="card-header">
+                <h3><i class="fas fa-map-marker-alt"></i> Locations</h3>
+                <span
+                  class="badge"
+                  style="background: #f59e0b"
+                  id="globeLocationsCount"
+                  >0 locations</span
+                >
+              </div>
+              <div class="card-body">
+                <div id="globeLocationsList" class="globe-locations-grid">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Click Details Container -->
+          <div id="clickDetailsContainer">
+            <!-- Filters -->
+            <div class="filters-bar" style="margin-bottom: 24px">
+              <div class="filter-tabs">
+                <button
+                  class="filter-tab active"
+                  data-filter="all"
+                  onclick="filterGeoData('all')"
+                >
+                  All Clicks
+                </button>
+                <button
+                  class="filter-tab"
+                  data-filter="today"
+                  onclick="filterGeoData('today')"
+                >
+                  Today
+                </button>
+                <button
+                  class="filter-tab"
+                  data-filter="week"
+                  onclick="filterGeoData('week')"
+                >
+                  This Week
+                </button>
+                <button
+                  class="filter-tab"
+                  data-filter="month"
+                  onclick="filterGeoData('month')"
+                >
+                  This Month
+                </button>
+              </div>
+              <div class="filter-actions">
+                <div class="search-box" style="margin-right: 12px">
+                  <i class="fas fa-search"></i>
+                  <input
+                    type="text"
+                    placeholder="Search by location, IP..."
+                    id="geoSearchInput"
+                    style="width: 250px"
+                  />
+                </div>
+                <select
+                  class="filter-select"
+                  id="geoSortSelect"
+                  onchange="sortGeoData(this.value)"
+                >
+                  <option value="recent">Most Recent</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="location">By Location</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Detailed Clicks Table -->
+            <div class="analytics-card">
+              <div class="card-header">
+                <h3><i class="fas fa-table"></i> Click Details</h3>
+                <span class="badge" id="geoTableCount">0 clicks</span>
+              </div>
+              <div class="card-body" style="padding: 0">
+                <div class="table-container">
+                  <table class="data-table" id="geoClicksTable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th><i class="fas fa-clock"></i> Timestamp</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                        <th><i class="fas fa-city"></i> City</th>
+                        <th><i class="fas fa-flag"></i> Country</th>
+                        <th><i class="fas fa-network-wired"></i> IP Address</th>
+                        <th><i class="fas fa-mobile-alt"></i> Device</th>
+                        <th><i class="fas fa-browser"></i> Browser</th>
+                        <th><i class="fas fa-share-alt"></i> Referrer</th>
+                      </tr>
+                    </thead>
+                    <tbody id="geoClicksTableBody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Click Details Container -->
+        </section>
+
+        <!-- Bio Link Page -->
+        <section class="page" id="bio-linkPage" style="display: none">
+          <div class="page-header">
+            <div class="header-content">
+              <h2>Bio Link</h2>
+              <p class="header-subtitle">
+                Create and customize your link-in-bio page
+              </p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn-primary" id="createBioLinkBtn">
+                <i class="fas fa-plus"></i> Create Bio Link
+              </button>
+            </div>
+          </div>
+
+          <!-- Bio Link Stats -->
+          <div
+            class="stats-grid"
+            style="margin-bottom: 24px"
+            id="bioLinkStatsGrid"
+          >
+            <div class="stat-card">
+              <div class="stat-icon purple">
+                <i class="fas fa-id-card"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalBioLinks">0</span>
+                <span class="stat-label">Bio Links</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="fas fa-eye"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalBioViews">0</span>
+                <span class="stat-label">Total Views</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="fas fa-mouse-pointer"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="totalBioClicks">0</span>
+                <span class="stat-label">Link Clicks</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon orange">
+                <i class="fas fa-percentage"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value" id="avgBioCTR">0%</span>
+                <span class="stat-label">Avg CTR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bio Link Editor (shown when bio link exists) -->
+          <div id="bioLinkEditor" style="display: none">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 400px;
+                gap: 24px;
+                align-items: start;
+              "
+            >
+              <!-- Editor Panel -->
+              <div class="bio-editor-panel">
+                <div class="card" style="padding: 0">
+                  <!-- Profile Section -->
+                  <div style="padding: 24px; border-bottom: 1px solid #e5e7eb">
+                    <h3
+                      style="
+                        margin-bottom: 20px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                      "
+                    >
+                      <i class="fas fa-user-circle"></i> Profile
+                    </h3>
+                    <div style="display: grid; gap: 16px">
+                      <div class="form-group" style="margin: 0">
+                        <label>Name</label>
+                        <input
+                          type="text"
+                          class="form-input"
+                          id="editorBioName"
+                          placeholder="Your name"
+                        />
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label>URL Slug</label>
+                        <div
+                          style="display: flex; gap: 8px; align-items: center"
+                        >
+                          <span style="color: #6b7280; font-size: 14px"
+                            >piik.me/</span
+                          >
+                          <input
+                            type="text"
+                            class="form-input"
+                            id="editorBioSlug"
+                            placeholder="your-username"
+                            style="flex: 1"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label>Bio Description</label>
+                        <textarea
+                          class="form-input"
+                          id="editorBioDescription"
+                          rows="3"
+                          placeholder="Tell people about yourself..."
+                        ></textarea>
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label>Profile Picture</label>
+                        <div
+                          style="display: flex; gap: 12px; align-items: center"
+                        >
+                          <input
+                            type="file"
+                            class="form-input"
+                            id="editorProfilePictureFile"
+                            accept="image/*"
+                            style="display: none"
+                          />
+                          <button
+                            type="button"
+                            class="btn btn-secondary"
+                            onclick="
+                              document
+                                .getElementById('editorProfilePictureFile')
+                                .click()
+                            "
+                            style="flex-shrink: 0"
+                          >
+                            <i class="fas fa-upload"></i> Upload Picture
+                          </button>
+                          <div
+                            id="editorProfilePicturePreview"
+                            style="
+                              display: none;
+                              align-items: center;
+                              gap: 8px;
+                              flex: 1;
+                            "
+                          >
+                            <img
+                              id="editorProfilePicturePreviewImg"
+                              src=""
+                              alt="Preview"
+                              style="
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                object-fit: cover;
+                              "
+                            />
+                            <span
+                              id="editorProfilePictureFileName"
+                              style="
+                                font-size: 14px;
+                                color: #6b7280;
+                                flex: 1;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                              "
+                            ></span>
+                            <button
+                              type="button"
+                              class="btn-icon"
+                              onclick="removeEditorProfilePicture()"
+                              title="Remove"
+                            >
+                              <i class="fas fa-times"></i>
+                            </button>
+                          </div>
+                        </div>
+                        <input type="hidden" id="editorProfilePicture" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Appearance Section -->
+                  <div style="padding: 24px; border-bottom: 1px solid #e5e7eb">
+                    <h3
+                      style="
+                        margin-bottom: 20px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                      "
+                    >
+                      <i class="fas fa-palette"></i> Appearance
+                    </h3>
+                    <div style="display: grid; gap: 16px">
+                      <div class="form-group" style="margin: 0">
+                        <label>Theme Color</label>
+                        <div class="color-input-group">
+                          <input
+                            type="color"
+                            id="editorThemeColor"
+                            value="#06b6d4"
+                          />
+                          <input
+                            type="text"
+                            class="form-input color-hex"
+                            id="editorThemeColorHex"
+                            value="#06b6d4"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label>Background Style</label>
+                        <select class="form-input" id="editorBackgroundStyle">
+                          <option value="gradient">Gradient</option>
+                          <option value="solid">Solid Color</option>
+                          <option value="image">Background Image</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Social Links Section -->
+                  <div style="padding: 24px; border-bottom: 1px solid #e5e7eb">
+                    <h3
+                      style="
+                        margin-bottom: 20px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                      "
+                    >
+                      <i class="fas fa-share-alt"></i> Social Links
+                    </h3>
+                    <div
+                      style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 16px;
+                      "
+                    >
+                      <div class="form-group" style="margin: 0">
+                        <label
+                          ><i class="fab fa-instagram"></i> Instagram</label
+                        >
+                        <input
+                          type="text"
+                          class="form-input"
+                          id="editorInstagram"
+                          placeholder="@username"
+                        />
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label><i class="fab fa-twitter"></i> Twitter</label>
+                        <input
+                          type="text"
+                          class="form-input"
+                          id="editorTwitter"
+                          placeholder="@username"
+                        />
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label><i class="fab fa-linkedin"></i> LinkedIn</label>
+                        <input
+                          type="url"
+                          class="form-input"
+                          id="editorLinkedIn"
+                          placeholder="https://linkedin.com/in/username"
+                        />
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label><i class="fab fa-github"></i> GitHub</label>
+                        <input
+                          type="text"
+                          class="form-input"
+                          id="editorGithub"
+                          placeholder="username"
+                        />
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label><i class="fab fa-youtube"></i> YouTube</label>
+                        <input
+                          type="url"
+                          class="form-input"
+                          id="editorYoutube"
+                          placeholder="https://youtube.com/@username"
+                        />
+                      </div>
+                      <div class="form-group" style="margin: 0">
+                        <label><i class="fas fa-globe"></i> Website</label>
+                        <input
+                          type="url"
+                          class="form-input"
+                          id="editorWebsite"
+                          placeholder="https://yourwebsite.com"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Links Section -->
+                  <div style="padding: 24px">
+                    <div
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 20px;
+                      "
+                    >
+                      <h3
+                        style="
+                          margin: 0;
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                        "
+                      >
+                        <i class="fas fa-link"></i> Links
+                      </h3>
+                      <button
+                        class="btn btn-sm btn-secondary"
+                        onclick="addEditorBioLinkItem()"
+                      >
+                        <i class="fas fa-plus"></i> Add Link
+                      </button>
+                    </div>
+                    <div
+                      id="editorBioLinkItems"
+                      style="display: flex; flex-direction: column; gap: 12px"
+                    >
+                      <!-- Links will be added here -->
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div
+                    style="
+                      padding: 24px;
+                      background: #000000;
+                      border-top: 1px solid #2a2a2a;
+                      display: flex;
+                      gap: 12px;
+                      justify-content: flex-end;
+                    "
+                  >
+                    <button
+                      class="btn btn-secondary"
+                      onclick="cancelBioLinkEdits()"
+                    >
+                      <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button
+                      class="btn btn-primary"
+                      onclick="saveEditorBioLink()"
+                    >
+                      <i class="fas fa-save"></i> Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Live Preview Panel -->
+              <div style="position: sticky; top: 24px">
+                <div class="card" style="padding: 20px">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      margin-bottom: 16px;
+                    "
+                  >
+                    <h3 style="margin: 0; font-size: 16px">Live Preview</h3>
+                    <div style="display: flex; gap: 8px">
+                      <button
+                        class="btn btn-sm btn-secondary"
+                        onclick="shareBioLink()"
+                        title="Share"
+                      >
+                        <i class="fas fa-share-alt"></i>
+                      </button>
+                      <button
+                        class="btn btn-sm btn-secondary"
+                        onclick="viewBioLinkPreview()"
+                        title="Open in new tab"
+                      >
+                        <i class="fas fa-external-link-alt"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Phone Mockup -->
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      padding: 20px 0;
+                    "
+                  >
+                    <div class="phone-mockup">
+                      <div class="phone-notch"></div>
+                      <div class="phone-screen" id="bioLinkPreview">
+                        <iframe
+                          id="bioPreviewFrame"
+                          style="
+                            width: 100%;
+                            height: 100%;
+                            border: none;
+                            background: transparent;
+                            border-radius: inherit;
+                          "
+                          sandbox="allow-scripts allow-same-origin"
+                          srcdoc=""
+                        >
+                        </iframe>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div
+            class="empty-state"
+            id="bioLinksEmptyState"
+            style="display: none"
+          >
+            <div class="empty-state-icon">
+              <i class="fas fa-link"></i>
+            </div>
+            <h3>No bio link yet</h3>
+            <p>
+              Create your bio link page to showcase all your important links in
+              one place
+            </p>
+            <button class="btn btn-primary" onclick="openBioLinkModal()">
+              <i class="fas fa-plus"></i> Create Your Bio Link
+            </button>
+          </div>
+        </section>
+
+        <!-- Profile Page -->
+        <section class="page" id="profilePage" style="display: none">
+          <div class="page-header">
+            <div class="header-content">
+              <h2>Profile Settings</h2>
+              <p class="header-subtitle">Manage your account and preferences</p>
+            </div>
+          </div>
+
+          <div class="profile-grid">
+            <!-- Profile Info Card -->
+            <div class="profile-card">
+              <div class="card-header">
+                <h3><i class="fas fa-user"></i> Profile Information</h3>
+              </div>
+              <div class="card-body">
+                <div class="profile-avatar-section">
+                  <img
+                    src=""
+                    alt="Profile"
+                    class="profile-avatar"
+                    id="profileAvatar"
+                  />
+                  <button class="btn btn-secondary btn-sm">Change Photo</button>
+                </div>
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="profileName"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    class="form-input"
+                    id="profileEmail"
+                    placeholder="your@email.com"
+                    readonly
+                  />
+                </div>
+                <button class="btn btn-primary">Save Changes</button>
+              </div>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="profile-card">
+              <div class="card-header">
+                <h3><i class="fas fa-cog"></i> Account Settings</h3>
+              </div>
+              <div class="card-body">
+                <div class="settings-item">
+                  <div class="settings-info">
+                    <h4>Email Notifications</h4>
+                    <p>Receive email updates about your links</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-info">
+                    <h4>Weekly Reports</h4>
+                    <p>Get weekly analytics summary</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-info">
+                    <h4>Public Profile</h4>
+                    <p>Make your profile visible to others</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- API Access (Coming Soon) -->
+            <div class="profile-card">
+              <div class="card-header">
+                <h3><i class="fas fa-key"></i> API Access</h3>
+                <span
+                  style="
+                    background: var(--accent-purple);
+                    color: #fff;
+                    font-size: 12px;
+                    padding: 4px 10px;
+                    border-radius: 999px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                  "
+                  >Coming Soon</span
+                >
+              </div>
+              <div class="card-body">
+                <p class="card-description">
+                  Premium API integrations, secure tokens, and rate-limited
+                  access are on the way.
+                </p>
+                <ul
+                  style="
+                    margin: 16px 0 20px 20px;
+                    color: var(--text-secondary);
+                    line-height: 1.6;
+                  "
+                >
+                  <li>Programmatic link creation & analytics sync</li>
+                  <li>Team-level API tokens with role controls</li>
+                  <li>Enterprise-grade rate limits & webhooks</li>
+                </ul>
+                <div
+                  style="
+                    padding: 16px;
+                    border-radius: 12px;
+                    background: rgba(139, 92, 246, 0.08);
+                    border: 1px dashed rgba(139, 92, 246, 0.3);
+                  "
+                >
+                  <h4
+                    style="
+                      margin: 0 0 8px 0;
+                      font-size: 15px;
+                      color: var(--text-primary);
+                    "
+                  >
+                    Available with Link360 Premium
+                  </h4>
+                  <p
+                    style="
+                      margin: 0 0 12px 0;
+                      font-size: 14px;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    Sign up to be the first to know when early access opens.
+                  </p>
+                  <button
+                    class="btn btn-secondary"
+                    style="width: 100%"
+                    disabled
+                  >
+                    <i class="fas fa-bell"></i> Notify Me When Ready
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="profile-card danger-card">
+              <div class="card-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+              </div>
+              <div class="card-body">
+                <div class="danger-item">
+                  <div class="danger-info">
+                    <h4>Delete Account</h4>
+                    <p>Permanently delete your account and all data</p>
+                  </div>
+                  <button id="deleteAccountBtn" class="btn btn-danger">
+                    Delete Account
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
     <!-- Create Link Modal -->
     <div class="modal" id="createLinkModal">
-        <div class="modal-overlay" id="modalOverlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Create New Link</h3>
-                <button class="modal-close" id="modalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Destination URL *</label>
-                    <input type="url" class="form-input" id="destinationUrl" placeholder="https://example.com">
-                </div>
-                
-                <div class="form-group">
-                    <label>
-                        Custom Short Code (Optional)
-                        <span style="color: var(--text-tertiary); font-size: 12px; font-weight: 400;">
-                            - Leave empty for auto-generated
-                        </span>
-                    </label>
-                    <div style="position: relative;">
-                        <span id="usernamePrefix" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 14px; display: none;"></span>
-                        <input 
-                            type="text" 
-                            class="form-input" 
-                            id="customShortCode" 
-                            placeholder="my-custom-link"
-                            pattern="[a-zA-Z0-9_-]+"
-                            maxlength="50"
-                            style="padding-right: 80px;">
-                        <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); font-size: 12px;">
-                            <span id="shortCodeCounter">0</span>/50
-                        </span>
-                    </div>
-                    <small id="customShortCodeHint" style="color: var(--text-tertiary); font-size: 12px; margin-top: 4px; display: block;">
-                        Only letters, numbers, hyphens, and underscores allowed
-                    </small>
-                    <div id="customShortCodeError" style="color: var(--accent-red); font-size: 12px; margin-top: 4px; display: none;"></div>
-                    <div id="customShortCodeSuccess" style="color: var(--accent-green); font-size: 12px; margin-top: 4px; display: none;">
-                        ✓ Short code is available!
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h4>UTM Parameters (Optional)</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Source</label>
-                            <input type="text" class="form-input" id="utmSource" placeholder="google">
-                        </div>
-                        <div class="form-group">
-                            <label>Medium</label>
-                            <input type="text" class="form-input" id="utmMedium" placeholder="cpc">
-                        </div>
-                        <div class="form-group">
-                            <label>Campaign</label>
-                            <input type="text" class="form-input" id="utmCampaign" placeholder="spring_sale">
-                        </div>
-                        <div class="form-group">
-                            <label>Term</label>
-                            <input type="text" class="form-input" id="utmTerm" placeholder="running+shoes">
-                        </div>
-                        <div class="form-group">
-                            <label>Content</label>
-                            <input type="text" class="form-input" id="utmContent" placeholder="banner_ad">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="modalCancel">Cancel</button>
-                <button class="btn btn-primary" id="createLinkSubmit">
-                    <i class="fas fa-plus"></i> Create Link
-                </button>
-            </div>
+      <div class="modal-overlay" id="modalOverlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Create New Link</h3>
+          <button class="modal-close" id="modalClose">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Destination URL *</label>
+            <input
+              type="url"
+              class="form-input"
+              id="destinationUrl"
+              placeholder="https://example.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>
+              Custom Short Code (Optional)
+              <span
+                style="
+                  color: var(--text-tertiary);
+                  font-size: 12px;
+                  font-weight: 400;
+                "
+              >
+                - Leave empty for auto-generated
+              </span>
+            </label>
+            <div style="position: relative">
+              <span
+                id="usernamePrefix"
+                style="
+                  position: absolute;
+                  left: 12px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  color: var(--text-secondary);
+                  font-size: 14px;
+                  display: none;
+                "
+              ></span>
+              <input
+                type="text"
+                class="form-input"
+                id="customShortCode"
+                placeholder="my-custom-link"
+                pattern="[a-zA-Z0-9_-]+"
+                maxlength="50"
+                style="padding-right: 80px"
+              />
+              <span
+                style="
+                  position: absolute;
+                  right: 12px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  color: var(--text-tertiary);
+                  font-size: 12px;
+                "
+              >
+                <span id="shortCodeCounter">0</span>/50
+              </span>
+            </div>
+            <small
+              id="customShortCodeHint"
+              style="
+                color: var(--text-tertiary);
+                font-size: 12px;
+                margin-top: 4px;
+                display: block;
+              "
+            >
+              Only letters, numbers, hyphens, and underscores allowed
+            </small>
+            <div
+              id="customShortCodeError"
+              style="
+                color: var(--accent-red);
+                font-size: 12px;
+                margin-top: 4px;
+                display: none;
+              "
+            ></div>
+            <div
+              id="customShortCodeSuccess"
+              style="
+                color: var(--accent-green);
+                font-size: 12px;
+                margin-top: 4px;
+                display: none;
+              "
+            >
+              ✓ Short code is available!
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>UTM Parameters (Optional)</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Source</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="utmSource"
+                  placeholder="google"
+                />
+              </div>
+              <div class="form-group">
+                <label>Medium</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="utmMedium"
+                  placeholder="cpc"
+                />
+              </div>
+              <div class="form-group">
+                <label>Campaign</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="utmCampaign"
+                  placeholder="spring_sale"
+                />
+              </div>
+              <div class="form-group">
+                <label>Term</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="utmTerm"
+                  placeholder="running+shoes"
+                />
+              </div>
+              <div class="form-group">
+                <label>Content</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="utmContent"
+                  placeholder="banner_ad"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+          <button class="btn btn-primary" id="createLinkSubmit">
+            <i class="fas fa-plus"></i> Create Link
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Username Setup Modal -->
-    <div class="modal" id="usernameModal" style="display: none;">
-        <div class="modal-overlay"></div>
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-user-tag"></i> Choose Your Username</h3>
-            </div>
-            <div class="modal-body">
-                <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">
-                    Your username will be used for all your short links (e.g., piik.me/<strong>username</strong>/link)
-                    <br><strong style="color: var(--accent-orange);">⚠️ You can only change this once!</strong>
-                </p>
-                <div class="form-group">
-                    <label>Username *</label>
-                    <input 
-                        type="text" 
-                        class="form-input" 
-                        id="usernameInput" 
-                        placeholder="your-username"
-                        pattern="[a-zA-Z0-9_-]+"
-                        minlength="3"
-                        maxlength="20"
-                        autocomplete="off">
-                    <small style="color: var(--text-tertiary); font-size: 12px; margin-top: 4px; display: block;">
-                        3-20 characters. Only letters, numbers, hyphens, and underscores.
-                    </small>
-                    <div id="usernameError" style="color: var(--accent-red); font-size: 12px; margin-top: 4px; display: none;"></div>
-                    <div id="usernameSuccess" style="color: var(--accent-green); font-size: 12px; margin-top: 4px; display: none;">
-                        ✓ Username is available!
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="skipUsernameBtn">Skip for Now</button>
-                <button class="btn btn-primary" id="setUsernameBtn">
-                    <i class="fas fa-check"></i> Set Username
-                </button>
-            </div>
+    <div class="modal" id="usernameModal" style="display: none">
+      <div class="modal-overlay"></div>
+      <div class="modal-content" style="max-width: 500px">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-tag"></i> Choose Your Username</h3>
         </div>
+        <div class="modal-body">
+          <p
+            style="
+              color: var(--text-secondary);
+              margin-bottom: 20px;
+              font-size: 14px;
+            "
+          >
+            Your username will be used for all your short links (e.g.,
+            piik.me/<strong>username</strong>/link)
+            <br /><strong style="color: var(--accent-orange)"
+              >⚠️ You can only change this once!</strong
+            >
+          </p>
+          <div class="form-group">
+            <label>Username *</label>
+            <input
+              type="text"
+              class="form-input"
+              id="usernameInput"
+              placeholder="your-username"
+              pattern="[a-zA-Z0-9_-]+"
+              minlength="3"
+              maxlength="20"
+              autocomplete="off"
+            />
+            <small
+              style="
+                color: var(--text-tertiary);
+                font-size: 12px;
+                margin-top: 4px;
+                display: block;
+              "
+            >
+              3-20 characters. Only letters, numbers, hyphens, and underscores.
+            </small>
+            <div
+              id="usernameError"
+              style="
+                color: var(--accent-red);
+                font-size: 12px;
+                margin-top: 4px;
+                display: none;
+              "
+            ></div>
+            <div
+              id="usernameSuccess"
+              style="
+                color: var(--accent-green);
+                font-size: 12px;
+                margin-top: 4px;
+                display: none;
+              "
+            >
+              ✓ Username is available!
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="skipUsernameBtn">
+            Skip for Now
+          </button>
+          <button class="btn btn-primary" id="setUsernameBtn">
+            <i class="fas fa-check"></i> Set Username
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Bug Report Modal -->
-    <div class="modal" id="bugReportModal" style="display: none;">
-        <div class="modal-overlay"></div>
-        <div class="modal-content bug-report-modal">
-            <div class="modal-header">
-                <h2><i class="fas fa-bug"></i> Report a Bug</h2>
-                <button class="modal-close" id="closeBugReportModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">
-                    Found an issue? Let us know and we'll fix it as soon as possible!
-                </p>
-                <form id="bugReportForm">
-                    <div class="form-group">
-                        <label for="bugTitle">Bug Title <span style="color: var(--accent-red);">*</span></label>
-                        <input type="text" id="bugTitle" class="form-input" placeholder="Brief description of the issue" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="bugDescription">Description <span style="color: var(--accent-red);">*</span></label>
-                        <textarea id="bugDescription" class="form-input" rows="5" placeholder="Please describe the bug in detail..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="bugSteps">Steps to Reproduce</label>
-                        <textarea id="bugSteps" class="form-input" rows="3" placeholder="1. Go to...&#10;2. Click on...&#10;3. See error"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="bugEmail">Your Email (optional)</label>
-                        <input type="email" id="bugEmail" class="form-input" placeholder="your@email.com">
-                    </div>
-                    <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelBugReport">Cancel</button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Submit Report
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <div class="modal" id="bugReportModal" style="display: none">
+      <div class="modal-overlay"></div>
+      <div class="modal-content bug-report-modal">
+        <div class="modal-header">
+          <h2><i class="fas fa-bug"></i> Report a Bug</h2>
+          <button class="modal-close" id="closeBugReportModal">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="modal-body">
+          <p
+            style="
+              color: var(--text-secondary);
+              margin-bottom: 20px;
+              font-size: 14px;
+            "
+          >
+            Found an issue? Let us know and we'll fix it as soon as possible!
+          </p>
+          <form id="bugReportForm">
+            <div class="form-group">
+              <label for="bugTitle"
+                >Bug Title
+                <span style="color: var(--accent-red)">*</span></label
+              >
+              <input
+                type="text"
+                id="bugTitle"
+                class="form-input"
+                placeholder="Brief description of the issue"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="bugDescription"
+                >Description
+                <span style="color: var(--accent-red)">*</span></label
+              >
+              <textarea
+                id="bugDescription"
+                class="form-input"
+                rows="5"
+                placeholder="Please describe the bug in detail..."
+                required
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="bugSteps">Steps to Reproduce</label>
+              <textarea
+                id="bugSteps"
+                class="form-input"
+                rows="3"
+                placeholder="1. Go to...&#10;2. Click on...&#10;3. See error"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="bugEmail">Your Email (optional)</label>
+              <input
+                type="email"
+                id="bugEmail"
+                class="form-input"
+                placeholder="your@email.com"
+              />
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="cancelBugReport"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Submit Report
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
     <!-- Bio Link Modal -->
-    <div class="modal" id="bioLinkModal" style="display: none;">
-        <div class="modal-overlay" id="bioLinkModalOverlay"></div>
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <h3 id="bioLinkModalTitle">Create Bio Link</h3>
-                <button class="modal-close" id="bioLinkModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Import Section -->
-                <div class="form-section" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(8, 145, 178, 0.05)); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
-                    <h4 style="margin-bottom: 16px;"><i class="fas fa-download"></i> Import from Other Platforms</h4>
-                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; margin-bottom: 16px;">Already have a Linktree or Bento profile? Import your data instantly!</p>
-                    <div class="form-group">
-                        <label>Paste your Linktree or Bento URL</label>
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" class="form-input" id="importUrl" placeholder="https://linktr.ee/yourname or https://bento.me/yourname" style="flex: 1;">
-                            <button type="button" class="btn btn-primary" id="importDataBtn" style="white-space: nowrap;">
-                                <i class="fas fa-magic"></i> Import
-                            </button>
-                        </div>
-                        <small style="color: rgba(255, 255, 255, 0.6); font-size: 12px; margin-top: 8px; display: block;">
-                            Supported: linktr.ee, bento.me
-                        </small>
-                        <div id="importStatus" style="margin-top: 12px; padding: 12px; border-radius: 8px; display: none;"></div>
-                    </div>
-                </div>
-
-                <!-- Bio Link Basic Info -->
-                <div class="form-section">
-                    <h4><i class="fas fa-info-circle"></i> Basic Information</h4>
-                    <div class="form-group">
-                        <label>Bio Link Name *</label>
-                        <input type="text" class="form-input" id="bioLinkName" placeholder="My Social Links">
-                    </div>
-                    <div class="form-group">
-                        <label>Custom URL Slug *</label>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: var(--text-tertiary);">piik.me/bio/</span>
-                            <input type="text" class="form-input" id="bioLinkSlug" placeholder="yourname" pattern="[a-zA-Z0-9_-]+" style="flex: 1;">
-                        </div>
-                        <small style="color: var(--text-tertiary); font-size: 12px; margin-top: 4px; display: block;">
-                            Only letters, numbers, hyphens, and underscores
-                        </small>
-                        <div id="bioSlugError" style="color: var(--accent-red); font-size: 12px; margin-top: 4px; display: none;"></div>
-                        <div id="bioSlugSuccess" style="color: var(--accent-green); font-size: 12px; margin-top: 4px; display: none;">
-                            ✓ URL is available!
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Description (Optional)</label>
-                        <textarea class="form-input" id="bioLinkDescription" placeholder="A short bio about yourself" rows="3" maxlength="200"></textarea>
-                        <small style="color: var(--text-tertiary); font-size: 12px;"><span id="bioDescCount">0</span>/200</small>
-                    </div>
-                </div>
-
-                <!-- Links Section -->
-                <div class="form-section">
-                    <h4><i class="fas fa-link"></i> Links</h4>
-                    <div id="bioLinksListContainer">
-                        <!-- Links will be added here dynamically -->
-                    </div>
-                    <button class="btn btn-secondary btn-sm" id="addBioLinkItemBtn" style="margin-top: 12px;">
-                        <i class="fas fa-plus"></i> Add Link
-                    </button>
-                </div>
-
-                <!-- Appearance -->
-                <div class="form-section">
-                    <h4><i class="fas fa-palette"></i> Appearance</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Profile Picture (Optional)</label>
-                            <div style="display: flex; gap: 12px; align-items: center;">
-                                <input type="file" class="form-input" id="bioProfilePictureFile" accept="image/*" style="display: none;">
-                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('bioProfilePictureFile').click()" style="flex-shrink: 0;">
-                                    <i class="fas fa-upload"></i> Upload Picture
-                                </button>
-                                <div id="bioProfilePicturePreview" style="display: none; align-items: center; gap: 8px; flex: 1;">
-                                    <img id="bioProfilePicturePreviewImg" src="" alt="Preview" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                                    <span id="bioProfilePictureFileName" style="font-size: 14px; color: #6b7280; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-                                    <button type="button" class="btn-icon" onclick="removeBioProfilePicture()" title="Remove">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <input type="hidden" id="bioProfilePicture">
-                        </div>
-                        <div class="form-group">
-                            <label>Theme Color</label>
-                            <div class="color-input-group">
-                                <input type="color" id="bioThemeColor" value="#06b6d4">
-                                <input type="text" class="form-input color-hex" id="bioThemeColorHex" value="#06b6d4">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Background Style</label>
-                        <select class="form-input" id="bioBackgroundStyle">
-                            <option value="gradient">Gradient</option>
-                            <option value="solid">Solid Color</option>
-                            <option value="image">Background Image</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Social Links -->
-                <div class="form-section">
-                    <h4><i class="fas fa-share-alt"></i> Social Links (Optional)</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label><i class="fab fa-instagram"></i> Instagram</label>
-                            <input type="text" class="form-input" id="bioInstagram" placeholder="@username">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fab fa-twitter"></i> Twitter</label>
-                            <input type="text" class="form-input" id="bioTwitter" placeholder="@username">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fab fa-linkedin"></i> LinkedIn</label>
-                            <input type="url" class="form-input" id="bioLinkedIn" placeholder="https://linkedin.com/in/username">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fab fa-github"></i> GitHub</label>
-                            <input type="text" class="form-input" id="bioGithub" placeholder="username">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fab fa-youtube"></i> YouTube</label>
-                            <input type="url" class="form-input" id="bioYoutube" placeholder="https://youtube.com/@username">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-globe"></i> Website</label>
-                            <input type="url" class="form-input" id="bioWebsite" placeholder="https://yourwebsite.com">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="bioLinkModalCancel">Cancel</button>
-                <button class="btn btn-primary" id="saveBioLinkBtn">
-                    <i class="fas fa-save"></i> Save Bio Link
-                </button>
-            </div>
+    <div class="modal" id="bioLinkModal" style="display: none">
+      <div class="modal-overlay" id="bioLinkModalOverlay"></div>
+      <div class="modal-content" style="max-width: 800px">
+        <div class="modal-header">
+          <h3 id="bioLinkModalTitle">Create Bio Link</h3>
+          <button class="modal-close" id="bioLinkModalClose">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="modal-body">
+          <!-- Import Section -->
+          <div
+            class="form-section"
+            style="
+              background: linear-gradient(
+                135deg,
+                rgba(6, 182, 212, 0.1),
+                rgba(8, 145, 178, 0.05)
+              );
+              border: 1px solid rgba(6, 182, 212, 0.2);
+              border-radius: 16px;
+              padding: 24px;
+              margin-bottom: 24px;
+            "
+          >
+            <h4 style="margin-bottom: 16px">
+              <i class="fas fa-download"></i> Import from Other Platforms
+            </h4>
+            <p
+              style="
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 14px;
+                margin-bottom: 16px;
+              "
+            >
+              Already have a Linktree or Bento profile? Import your data
+              instantly!
+            </p>
+            <div class="form-group">
+              <label>Paste your Linktree or Bento URL</label>
+              <div style="display: flex; gap: 8px">
+                <input
+                  type="text"
+                  class="form-input"
+                  id="importUrl"
+                  placeholder="https://linktr.ee/yourname or https://bento.me/yourname"
+                  style="flex: 1"
+                />
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="importDataBtn"
+                  style="white-space: nowrap"
+                >
+                  <i class="fas fa-magic"></i> Import
+                </button>
+              </div>
+              <small
+                style="
+                  color: rgba(255, 255, 255, 0.6);
+                  font-size: 12px;
+                  margin-top: 8px;
+                  display: block;
+                "
+              >
+                Supported: linktr.ee, bento.me
+              </small>
+              <div
+                id="importStatus"
+                style="
+                  margin-top: 12px;
+                  padding: 12px;
+                  border-radius: 8px;
+                  display: none;
+                "
+              ></div>
+            </div>
+          </div>
+
+          <!-- Bio Link Basic Info -->
+          <div class="form-section">
+            <h4><i class="fas fa-info-circle"></i> Basic Information</h4>
+            <div class="form-group">
+              <label>Bio Link Name *</label>
+              <input
+                type="text"
+                class="form-input"
+                id="bioLinkName"
+                placeholder="My Social Links"
+              />
+            </div>
+            <div class="form-group">
+              <label>Custom URL Slug *</label>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="color: var(--text-tertiary)">piik.me/bio/</span>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="bioLinkSlug"
+                  placeholder="yourname"
+                  pattern="[a-zA-Z0-9_-]+"
+                  style="flex: 1"
+                />
+              </div>
+              <small
+                style="
+                  color: var(--text-tertiary);
+                  font-size: 12px;
+                  margin-top: 4px;
+                  display: block;
+                "
+              >
+                Only letters, numbers, hyphens, and underscores
+              </small>
+              <div
+                id="bioSlugError"
+                style="
+                  color: var(--accent-red);
+                  font-size: 12px;
+                  margin-top: 4px;
+                  display: none;
+                "
+              ></div>
+              <div
+                id="bioSlugSuccess"
+                style="
+                  color: var(--accent-green);
+                  font-size: 12px;
+                  margin-top: 4px;
+                  display: none;
+                "
+              >
+                ✓ URL is available!
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description (Optional)</label>
+              <textarea
+                class="form-input"
+                id="bioLinkDescription"
+                placeholder="A short bio about yourself"
+                rows="3"
+                maxlength="200"
+              ></textarea>
+              <small style="color: var(--text-tertiary); font-size: 12px"
+                ><span id="bioDescCount">0</span>/200</small
+              >
+            </div>
+          </div>
+
+          <!-- Links Section -->
+          <div class="form-section">
+            <h4><i class="fas fa-link"></i> Links</h4>
+            <div id="bioLinksListContainer">
+              <!-- Links will be added here dynamically -->
+            </div>
+            <button
+              class="btn btn-secondary btn-sm"
+              id="addBioLinkItemBtn"
+              style="margin-top: 12px"
+            >
+              <i class="fas fa-plus"></i> Add Link
+            </button>
+          </div>
+
+          <!-- Appearance -->
+          <div class="form-section">
+            <h4><i class="fas fa-palette"></i> Appearance</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Profile Picture (Optional)</label>
+                <div style="display: flex; gap: 12px; align-items: center">
+                  <input
+                    type="file"
+                    class="form-input"
+                    id="bioProfilePictureFile"
+                    accept="image/*"
+                    style="display: none"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="
+                      document.getElementById('bioProfilePictureFile').click()
+                    "
+                    style="flex-shrink: 0"
+                  >
+                    <i class="fas fa-upload"></i> Upload Picture
+                  </button>
+                  <div
+                    id="bioProfilePicturePreview"
+                    style="
+                      display: none;
+                      align-items: center;
+                      gap: 8px;
+                      flex: 1;
+                    "
+                  >
+                    <img
+                      id="bioProfilePicturePreviewImg"
+                      src=""
+                      alt="Preview"
+                      style="
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                      "
+                    />
+                    <span
+                      id="bioProfilePictureFileName"
+                      style="
+                        font-size: 14px;
+                        color: #6b7280;
+                        flex: 1;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                      "
+                    ></span>
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      onclick="removeBioProfilePicture()"
+                      title="Remove"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                <input type="hidden" id="bioProfilePicture" />
+              </div>
+              <div class="form-group">
+                <label>Theme Color</label>
+                <div class="color-input-group">
+                  <input type="color" id="bioThemeColor" value="#06b6d4" />
+                  <input
+                    type="text"
+                    class="form-input color-hex"
+                    id="bioThemeColorHex"
+                    value="#06b6d4"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Background Style</label>
+              <select class="form-input" id="bioBackgroundStyle">
+                <option value="gradient">Gradient</option>
+                <option value="solid">Solid Color</option>
+                <option value="image">Background Image</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="form-section">
+            <h4><i class="fas fa-share-alt"></i> Social Links (Optional)</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label><i class="fab fa-instagram"></i> Instagram</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="bioInstagram"
+                  placeholder="@username"
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fab fa-twitter"></i> Twitter</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="bioTwitter"
+                  placeholder="@username"
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fab fa-linkedin"></i> LinkedIn</label>
+                <input
+                  type="url"
+                  class="form-input"
+                  id="bioLinkedIn"
+                  placeholder="https://linkedin.com/in/username"
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fab fa-github"></i> GitHub</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="bioGithub"
+                  placeholder="username"
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fab fa-youtube"></i> YouTube</label>
+                <input
+                  type="url"
+                  class="form-input"
+                  id="bioYoutube"
+                  placeholder="https://youtube.com/@username"
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-globe"></i> Website</label>
+                <input
+                  type="url"
+                  class="form-input"
+                  id="bioWebsite"
+                  placeholder="https://yourwebsite.com"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="bioLinkModalCancel">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="saveBioLinkBtn">
+            <i class="fas fa-save"></i> Save Bio Link
+          </button>
+        </div>
+      </div>
     </div>
 
-
     <!-- Share Bio Link Modal -->
-    <div class="modal" id="shareBioLinkModal" style="display: none;">
-        <div class="modal-overlay" id="shareBioLinkModalOverlay"></div>
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3>Share Your Bio Link</h3>
-                <button class="modal-close" onclick="closeShareBioLinkModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Bio Link URL -->
-                <div class="form-group">
-                    <label>Your Bio Link</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" class="form-input" id="shareBioLinkUrl" readonly style="flex: 1;">
-                        <button class="btn btn-secondary" onclick="copyShareBioLink()" id="copyShareBtn">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Share Options -->
-                <div style="margin-top: 24px;">
-                    <label style="display: block; margin-bottom: 12px; font-weight: 600;">Share to:</label>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                        <button class="btn btn-secondary" onclick="shareToWhatsApp()" style="justify-content: flex-start;">
-                            <i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp
-                        </button>
-                        <button class="btn btn-secondary" onclick="shareToTelegram()" style="justify-content: flex-start;">
-                            <i class="fab fa-telegram" style="color: #0088cc;"></i> Telegram
-                        </button>
-                        <button class="btn btn-secondary" onclick="shareToTwitter()" style="justify-content: flex-start;">
-                            <i class="fab fa-twitter" style="color: #1DA1F2;"></i> Twitter
-                        </button>
-                        <button class="btn btn-secondary" onclick="shareToFacebook()" style="justify-content: flex-start;">
-                            <i class="fab fa-facebook" style="color: #1877F2;"></i> Facebook
-                        </button>
-                        <button class="btn btn-secondary" onclick="shareToLinkedIn()" style="justify-content: flex-start;">
-                            <i class="fab fa-linkedin" style="color: #0A66C2;"></i> LinkedIn
-                        </button>
-                        <button class="btn btn-secondary" onclick="shareToEmail()" style="justify-content: flex-start;">
-                            <i class="fas fa-envelope" style="color: #EA4335;"></i> Email
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Native Share (for mobile) -->
-                <div id="nativeShareBtn" style="margin-top: 16px; display: none;">
-                    <button class="btn btn-primary" onclick="nativeShare()" style="width: 100%;">
-                        <i class="fas fa-share-alt"></i> More Sharing Options
-                    </button>
-                </div>
-            </div>
+    <div class="modal" id="shareBioLinkModal" style="display: none">
+      <div class="modal-overlay" id="shareBioLinkModalOverlay"></div>
+      <div class="modal-content" style="max-width: 500px">
+        <div class="modal-header">
+          <h3>Share Your Bio Link</h3>
+          <button class="modal-close" onclick="closeShareBioLinkModal()">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="modal-body">
+          <!-- Bio Link URL -->
+          <div class="form-group">
+            <label>Your Bio Link</label>
+            <div style="display: flex; gap: 8px">
+              <input
+                type="text"
+                class="form-input"
+                id="shareBioLinkUrl"
+                readonly
+                style="flex: 1"
+              />
+              <button
+                class="btn btn-secondary"
+                onclick="copyShareBioLink()"
+                id="copyShareBtn"
+              >
+                <i class="fas fa-copy"></i> Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- Share Options -->
+          <div style="margin-top: 24px">
+            <label style="display: block; margin-bottom: 12px; font-weight: 600"
+              >Share to:</label
+            >
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+              "
+            >
+              <button
+                class="btn btn-secondary"
+                onclick="shareToWhatsApp()"
+                style="justify-content: flex-start"
+              >
+                <i class="fab fa-whatsapp" style="color: #25d366"></i> WhatsApp
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="shareToTelegram()"
+                style="justify-content: flex-start"
+              >
+                <i class="fab fa-telegram" style="color: #0088cc"></i> Telegram
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="shareToTwitter()"
+                style="justify-content: flex-start"
+              >
+                <i class="fab fa-twitter" style="color: #1da1f2"></i> Twitter
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="shareToFacebook()"
+                style="justify-content: flex-start"
+              >
+                <i class="fab fa-facebook" style="color: #1877f2"></i> Facebook
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="shareToLinkedIn()"
+                style="justify-content: flex-start"
+              >
+                <i class="fab fa-linkedin" style="color: #0a66c2"></i> LinkedIn
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="shareToEmail()"
+                style="justify-content: flex-start"
+              >
+                <i class="fas fa-envelope" style="color: #ea4335"></i> Email
+              </button>
+            </div>
+          </div>
+
+          <!-- Native Share (for mobile) -->
+          <div id="nativeShareBtn" style="margin-top: 16px; display: none">
+            <button
+              class="btn btn-primary"
+              onclick="nativeShare()"
+              style="width: 100%"
+            >
+              <i class="fas fa-share-alt"></i> More Sharing Options
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Login Modal (shown when user clicks login) -->
-    <div class="modal" id="loginModal" style="display: none;">
-        <div class="modal-overlay" id="loginModalOverlay"></div>
-        <div class="modal-content login-modal">
-            <button class="modal-close" id="loginModalClose">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="login-header">
-                <div class="login-logo">
-                    <img src="assets/images/logo.png" alt="piik.me" class="login-logo-image">
-                </div>
-                <h2>Welcome to piik.me</h2>
-                <p>Sign in to start tracking your links</p>
-            </div>
-            
-            <div class="modal-body">
-                <button class="btn btn-google" id="googleLoginBtn">
-                    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="none" fill-rule="evenodd">
-                            <path d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z" fill="#EA4335"/>
-                            <path d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z" fill="#4285F4"/>
-                            <path d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z" fill="#FBBC05"/>
-                            <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z" fill="#34A853"/>
-                        </g>
-                    </svg>
-                    Sign in with Google
-                </button>
-            </div>
+    <div class="modal" id="loginModal" style="display: none">
+      <div class="modal-overlay" id="loginModalOverlay"></div>
+      <div class="modal-content login-modal">
+        <button class="modal-close" id="loginModalClose">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="login-header">
+          <div class="login-logo">
+            <img
+              src="assets/images/logo.png"
+              alt="piik.me"
+              class="login-logo-image"
+            />
+          </div>
+          <h2>Welcome to piik.me</h2>
+          <p>Sign in to start tracking your links</p>
         </div>
+
+        <div class="modal-body">
+          <button class="btn btn-google" id="googleLoginBtn">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g fill="none" fill-rule="evenodd">
+                <path
+                  d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"
+                  fill="#EA4335"
+                />
+                <path
+                  d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"
+                  fill="#34A853"
+                />
+              </g>
+            </svg>
+            Sign in with Google
+          </button>
+        </div>
+      </div>
     </div>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" aria-label="Back to top" title="Back to top">
+      <i class="fas fa-chevron-up icon" aria-hidden="true"></i>
+    </button>
 
     <!-- Scripts -->
     <!-- Firebase SDK -->
@@ -1481,14 +2372,14 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="js/firebase-config.js"></script>
-    
+
     <!-- Other Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://unpkg.com/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
     <script src="https://unpkg.com/globe.gl@2.31.0/dist/globe.gl.min.js"></script>
-    
+
     <!-- App Scripts -->
     <script src="js/auth.js"></script>
     <script src="js/version-checker.js"></script>
@@ -1496,5 +2387,6 @@
     <script src="js/globe-view.js"></script>
     <script src="js/bio-link.js"></script>
     <script src="js/app.js"></script>
-</body>
+    <script src="js/back-to-top.js"></script>
+  </body>
 </html>
