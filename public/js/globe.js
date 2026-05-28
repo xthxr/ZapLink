@@ -129,6 +129,20 @@ class GlobeVisualization {
         this.globe.controls().autoRotate = true;
         this.globe.controls().autoRotateSpeed = 0.3;
         this.globe.controls().enableZoom = true;
+
+        // Pause rendering when out of viewport for performance
+        if ('IntersectionObserver' in window) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                if (this.globe && this.globe.resumeAnimation) this.globe.resumeAnimation();
+              } else {
+                if (this.globe && this.globe.pauseAnimation) this.globe.pauseAnimation();
+              }
+            });
+          }, { threshold: 0.1 });
+          observer.observe(this.container);
+        }
       });
 
     // Add zoom listener to adjust hex altitude

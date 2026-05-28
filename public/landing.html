@@ -555,6 +555,203 @@
                   </span>
                 </button>
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>piik.me | The Intelligent Link Infrastructure</title>
+    <meta name="description" content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management infrastructure.">
+    <meta name="keywords" content="link shortener, bio link, qr code generator, link analytics, marketing tools">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://piik.me/">
+    <meta property="og:title" content="piik.me | The Intelligent Link Infrastructure">
+    <meta property="og:description" content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management.">
+    <meta property="og:image" content="assets/images/favicon.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://piik.me/">
+    <meta property="twitter:title" content="piik.me | The Intelligent Link Infrastructure">
+    <meta property="twitter:description" content="Transform your links into powerful assets. Real-time analytics, custom domains, and enterprise-grade link management.">
+    <meta property="twitter:image" content="https://piik.me/assets/images/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+
+    <!-- Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    </noscript>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/landing.css">
+
+    <!-- Dynamic Favicon for /user page -->
+    <script src="js/user-favicon.js" defer></script>
+    
+    <!-- Theme Check (Before Body) -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
+                document.documentElement.classList.add('light-theme');
+            }
+        })();
+    </script>
+</head>
+<body class="bg-black text-white overflow-x-hidden antialiased selection:bg-accent selection:text-white">
+    
+    <!-- Ambient Background -->
+    <div class="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent/10 blur-[120px] rounded-full mix-blend-screen opacity-50"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-violet-600/10 blur-[120px] rounded-full mix-blend-screen opacity-50"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10 transition-all duration-300" id="navbar" aria-label="Main navigation">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="/" class="group landing-nav-brand">
+                <span class="text-white font-semibold text-lg tracking-tight">PIIK.ME</span>
+            </a>
+            <!-- Give the logo a unique class to exclude from GSAP -->
+            <a href="/" class="group navbar-logo" style="display:none"></a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors">PLATFORM</a>
+                <a href="#analytics" class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors">FEATURES</a>
+                <a href="#pricing" class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors">PRICING</a>
+                <a href="https://github.com/xthxr/piik.me" target="_blank" rel="noopener" class="simple-nav-link text-sm font-medium text-gray-400 hover:text-white uppercase tracking-wider transition-colors flex items-center gap-2">
+                    <i class="fab fa-github"></i>
+                    GITHUB
+                </a>
+            </div>
+            
+            <!-- Right Side Actions -->
+            <div class="hidden md:flex items-center gap-3">
+                <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle dark mode">
+                    <i class="fas fa-sun light-icon" style="display: none;"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
+                <button id="loginBtn" class="simple-btn-secondary">LOG IN</button>
+                <button id="getStartedBtn" class="simple-btn-primary">GET STARTED</button>
+            </div>
+
+            <!-- Mobile Toggles -->
+            <div class="flex items-center gap-2 md:hidden">
+                <button id="mobileThemeToggleBtn" class="theme-toggle-btn text-white/70 hover:text-white transition-colors p-2" aria-label="Toggle dark mode">
+                    <i class="fas fa-sun light-icon" style="display: none;"></i>
+                    <i class="fas fa-moon dark-icon text-xl"></i>
+                </button>
+                <button class="text-white/70 hover:text-white transition-colors p-2" id="mobileMenuToggle" aria-label="Open mobile menu">
+                    <i class="fas fa-bars text-xl" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 md:hidden" id="mobileMenu">
+        <div class="flex flex-col items-center justify-center h-full gap-8">
+            <a href="#features" class="text-2xl font-medium text-gray-400 hover:text-white transition-colors">Platform</a>
+            <a href="#analytics" class="text-2xl font-medium text-gray-400 hover:text-white transition-colors">Analytics</a>
+            <a href="#pricing" class="text-2xl font-medium text-gray-400 hover:text-white transition-colors">Pricing</a>
+                <div class="flex flex-col gap-4 mt-12 mb-12 w-64">
+                    <button id="mobileLoginBtn" class="simple-btn-secondary w-full text-center" style="padding: 0.875rem;">Log in</button>
+                    <button id="mobileGetStartedBtn" class="simple-btn-primary w-full text-center" style="padding: 0.875rem;">Get Started</button>
+                </div>
+         </div>
+    </div>
+
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex flex-col justify-center pt-32 pb-32 overflow-hidden bg-black hero-bg-section">
+        <canvas id="globeViz" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;"></canvas>
+
+        <div class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" style="z-index: 2;"></div>
+
+        <div class="relative w-full max-w-7xl mx-auto px-6 text-center mt-10 hero-content-wrapper" style="z-index: 10;">
+            <div class="flex justify-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in-up w-fit mx-auto backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-sm text-gray-200 font-medium">Beta v0.2 is Now Live -</span>
+                    <a href="https://github.com/xthxr/piik.me/releases" target="_blank" rel="noopener" class="ml-1 font-semibold text-white bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 bg-[length:200%_auto] bg-clip-text text-transparent shine-effect hover:opacity-80 transition-opacity" style="text-decoration: none;">
+                        <span class="shine-text">What's Newww?</span>
+                    </a>
+                </div>
+            </div>
+            <style>
+                .shine-effect .shine-text {
+                    background: linear-gradient(
+                        90deg,
+                        #fff 0%,
+                        #ffe066 40%,
+                        #fff 60%,
+                        #ffe066 100%
+                    );
+                    background-size: 200% auto;
+                    color: #fff;
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    animation: shine-move 2s linear infinite;
+                }
+                @keyframes shine-move {
+                    0% {
+                        background-position: 200% center;
+                    }
+                    100% {
+                        background-position: 0% center;
+                    }
+                }
+            </style>
+
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight animate-fade-in-up" style="animation-delay: 0.1s;">
+                Links turned into <br />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">intelligent assets.</span>
+            </h1>
+
+            <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up" style="animation-delay: 0.2s;">
+                The open-source link infrastructure for modern businesses.
+                <br class="hidden md:block" />Real-time analytics, custom domains, and zero latency redirects.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <button id="heroStartBtn" class="simple-btn-primary w-full sm:w-auto" style="padding: 1rem 2rem; font-size: 0.875rem;">
+                    Start for free
+                </button>
+                <a href="#features" class="simple-btn-secondary w-full sm:w-auto" style="padding: 1rem 2rem; font-size: 0.875rem; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(4px);">
+                    View features
+                </a>
+            </div>
+        </div>
+    </section>
+
+        <!-- Features Grid -->
+        <section class="py-24 relative z-20 bg-black" id="features">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-24" id="analytics">
+                    <h2 class="text-3xl md:text-5xl font-bold mb-6">
+                        Everything you need to <br />
+                        manage your links.
+                    </h2>
+                    <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                        Stop using multiple tools. Piik.me gives you a complete
+                        suite of link management tools in one powerful
+                        dashboard.
+                    </p>
+                </div>
+
+
                 <div class="space-y-5">
                   <div
                     class="flex items-center gap-3 text-sm text-gray-300 mb-3"

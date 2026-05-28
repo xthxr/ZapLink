@@ -167,6 +167,20 @@ async function initializeGlobe() {
         }, 0);
         
         console.log('Globe initialized successfully');
+
+        // Pause rendering when out of viewport for performance
+        if ('IntersectionObserver' in window && globeInstance) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (globeInstance.resumeAnimation) globeInstance.resumeAnimation();
+                    } else {
+                        if (globeInstance.pauseAnimation) globeInstance.pauseAnimation();
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(container);
+        }
         
         // Update with actual data
         await updateGlobeData();

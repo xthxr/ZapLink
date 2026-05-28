@@ -844,56 +844,126 @@ img {
     height: auto;
 }
 
-/* Fix: Mobile hamburger drawer button styles */
-#mobileMenu .simple-btn-primary {
-    display: block;
-    width: 100%;
-    padding: 0.875rem 1.5rem;
-    background: #ffffff;
-    color: #000000;
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-align: center;
-    border-radius: 0.75rem;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s;
-}
+/* ================================
+   THEME TOGGLE BUTTON & LIGHT THEME OVERRIDES
+   ================================ */
 
-#mobileMenu .simple-btn-primary:hover {
-    background: #e5e5e5;
-}
-
-#mobileMenu .simple-btn-secondary {
-    display: block;
-    width: 100%;
-    padding: 0.875rem 1.5rem;
+.theme-toggle-btn {
     background: transparent;
-    color: #ffffff;
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-align: center;
-    border-radius: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: none;
+    color: #d1d5db;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
 }
-
-#mobileMenu .simple-btn-secondary:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-#mobileMenu {
-    padding: 2rem;
-}
-
-#mobileMenu a {
-    text-decoration: none;
-    letter-spacing: 0.05em;
-    font-weight: 500;
-}
-
-#mobileMenu a:hover {
+.theme-toggle-btn:hover {
     color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+.theme-toggle-btn i {
+    transition: all 0.3s ease;
+}
+
+/* Light Theme Variables & Overrides */
+html.light-theme {
+    --color-bg: #f9fafb;
+    --color-text: #111827;
+}
+html.light-theme body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+html.light-theme .theme-toggle-btn {
+    color: #4b5563;
+}
+html.light-theme .theme-toggle-btn:hover {
+    color: #000000;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Base Overrides */
+html.light-theme .bg-black { background-color: #ffffff; }
+html.light-theme .text-white { color: #111827; }
+html.light-theme .text-black { color: #ffffff; }
+html.light-theme .bg-white\/5 { background-color: rgba(0, 0, 0, 0.03); }
+html.light-theme .bg-white\/10 { background-color: rgba(0, 0, 0, 0.06); }
+html.light-theme .bg-black\/20 { background-color: rgba(255, 255, 255, 0.8); }
+html.light-theme .bg-black\/40 { background-color: rgba(243, 244, 246, 0.8); }
+html.light-theme .bg-black\/90, html.light-theme .bg-black\/95 { background-color: rgba(255, 255, 255, 0.95); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+/* Text Overrides */
+html.light-theme .text-gray-200 { color: #1f2937; }
+html.light-theme .text-gray-300 { color: #374151; }
+html.light-theme .text-gray-400 { color: #4b5563; }
+html.light-theme .text-gray-500 { color: #6b7280; }
+html.light-theme .text-gray-800 { color: #d1d5db; }
+html.light-theme .bg-gray-800 { background-color: #e5e7eb; }
+html.light-theme .bg-gray-800\/50 { background-color: rgba(229, 231, 235, 0.5); }
+html.light-theme .bg-gray-900 { background-color: #f3f4f6; }
+
+/* Border Overrides */
+html.light-theme .border-white\/5 { border-color: rgba(0, 0, 0, 0.05); }
+html.light-theme .border-white\/10 { border-color: rgba(0, 0, 0, 0.1); }
+html.light-theme .border-white\/20 { border-color: rgba(0, 0, 0, 0.2); }
+html.light-theme .border-gray-800 { border-color: #e5e7eb; }
+
+/* Gradients Overrides */
+html.light-theme .from-white { --tw-gradient-from: #000; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(0, 0, 0, 0)); }
+html.light-theme .from-black { --tw-gradient-from: #ffffff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0)); }
+html.light-theme .via-black\/80 { --tw-gradient-stops: var(--tw-gradient-from), rgba(255, 255, 255, 0.8), var(--tw-gradient-to, rgba(255, 255, 255, 0)); }
+html.light-theme .from-gray-900 { --tw-gradient-from: #f3f4f6; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(243, 244, 246, 0)); }
+html.light-theme .from-white\/10 { --tw-gradient-from: rgba(0, 0, 0, 0.05); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(0, 0, 0, 0)); }
+html.light-theme .to-black { --tw-gradient-to: #ffffff; }
+html.light-theme .to-white\/5 { --tw-gradient-to: rgba(0, 0, 0, 0.03); }
+
+/* Buttons Overrides */
+html.light-theme .simple-btn-primary { background: #111827; color: #ffffff; }
+html.light-theme .simple-btn-primary:hover { background: #374151; }
+html.light-theme .simple-btn-secondary { border-color: #111827; color: #111827; }
+html.light-theme .simple-btn-secondary:hover { background: #111827; color: #ffffff; }
+
+/* Nav Links Overrides */
+html.light-theme .simple-nav-link { color: #4b5563; }
+html.light-theme .simple-nav-link:hover { color: #111827; }
+html.light-theme .landing-nav-brand span { color: #111827; }
+
+/* Misc Elements Overrides */
+html.light-theme .md\:hidden.text-white\/70 { color: rgba(0, 0, 0, 0.7); }
+html.light-theme .md\:hidden.text-white\/70:hover { color: #111827; }
+html.light-theme .group:hover .group-hover\:border-white\/20 { border-color: rgba(0, 0, 0, 0.2); }
+html.light-theme .bg-gradient-to-r.from-white.to-gray-500 { background-image: linear-gradient(to right, #111827, #4b5563); }
+
+/* Shine effect */
+html.light-theme .shine-effect .shine-text { background: linear-gradient(90deg, #111827 0%, #3b82f6 40%, #111827 60%, #3b82f6 100%) !important; background-size: 200% auto !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; }
+
+/* Hero Light Mode Contrast Fix */
+html.light-theme .hero-content-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150vw;
+    height: 150vh;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0) 70%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+html.light-theme .hero-content-wrapper .simple-btn-secondary {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(8px);
+    border-color: rgba(17, 24, 39, 0.2);
+}
+html.light-theme .hero-content-wrapper .simple-btn-secondary:hover {
+    background: #111827 !important;
+    color: #ffffff;
+    border-color: #111827;
 }
