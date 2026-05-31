@@ -1172,7 +1172,7 @@ html.light-theme .group:hover .group-hover\:border-white\/20 { border-color: rgb
 html.light-theme .bg-gradient-to-r.from-white.to-gray-500 { background-image: linear-gradient(to right, #111827, #4b5563); }
 
 /* Shine effect */
-html.light-theme .shine-effect .shine-text { background: linear-gradient(90deg, #111827 0%, #3b82f6 40%, #111827 60%, #3b82f6 100%) !important; background-size: 200% auto !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; }
+html.light-theme .shine-effect .shine-text { background: linear-gradient(90deg, #111827 0%, #3b82f6 40%, #111827 60%, #3b82f6 100%) !important; background-size: 200% auto !important; -webkit-background-clip: text !important; background-clip: text !important; -webkit-text-fill-color: transparent !important; }
 
 /* Hero Light Mode Contrast Fix */
 html.light-theme .hero-content-wrapper::before {
@@ -1328,4 +1328,12 @@ html.light-theme .hero-content-wrapper .simple-btn-secondary:hover {
         width: 100%;
         text-align: center;
     }
+}
+
+/* Navbar Scroll Hide/Show transitions */
+.navbar-hide {
+    transform: translateY(-100%) !important;
+}
+.navbar-show {
+    transform: translateY(0) !important;
 }

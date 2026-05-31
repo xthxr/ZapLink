@@ -124,32 +124,48 @@ function initMobileMenu() {
 function initScrollAnimations() {
     const navbar = document.getElementById('navbar');
     if (navbar) {
+        let lastScrollY = window.scrollY;
+        let isNavbarVisible = true;
+        const SCROLL_THRESHOLD = 5;
+        const MIN_HIDE_SCROLL = 50;
+
         window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            const scrollDifference = currentScrollY - lastScrollY;
             const isLight = document.documentElement.classList.contains('light-theme');
-            if (window.scrollY > 50) {
+
+            // Background styling on scroll
+            if (currentScrollY > 50) {
                 navbar.style.backgroundColor = isLight ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.7)';
                 navbar.classList.add('shadow-lg');
             } else {
                 navbar.style.backgroundColor = isLight ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.2)';
                 navbar.classList.remove('shadow-lg');
             }
-        } else if (currentScrollY > MIN_HIDE_SCROLL) {
-            // Scrolling down - hide navbar
-            if (scrollDifference > SCROLL_THRESHOLD && isNavbarVisible) {
-                navbar.classList.remove('navbar-show');
-                navbar.classList.add('navbar-hide');
-                isNavbarVisible = false;
-            }
-            // Scrolling up - show navbar
-            else if (scrollDifference < -SCROLL_THRESHOLD && !isNavbarVisible) {
+
+            // Hide/Show navbar on scroll
+            if (currentScrollY <= MIN_HIDE_SCROLL) {
                 navbar.classList.remove('navbar-hide');
                 navbar.classList.add('navbar-show');
                 isNavbarVisible = true;
+            } else {
+                // Scrolling down - hide navbar
+                if (scrollDifference > SCROLL_THRESHOLD && isNavbarVisible) {
+                    navbar.classList.remove('navbar-show');
+                    navbar.classList.add('navbar-hide');
+                    isNavbarVisible = false;
+                }
+                // Scrolling up - show navbar
+                else if (scrollDifference < -SCROLL_THRESHOLD && !isNavbarVisible) {
+                    navbar.classList.remove('navbar-hide');
+                    navbar.classList.add('navbar-show');
+                    isNavbarVisible = true;
+                }
             }
-        }
 
-        lastScrollY = currentScrollY;
-    });
+            lastScrollY = currentScrollY;
+        });
+    }
 }
 
 // ================================
