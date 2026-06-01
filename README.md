@@ -510,3 +510,4 @@ Built with amazing open-source technologies:
 Made with ❤️ by [xthxr](https://github.com/xthxr)
 
 </div>
+\n<!-- Fix for #146 -->\n
