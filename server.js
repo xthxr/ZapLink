@@ -14,6 +14,7 @@ const fetch = typeof globalThis.fetch === 'function'
   : (...args) => import('node-fetch').then(({ default: fetchFn }) => fetchFn(...args));
 const redisUtils = require('./src/utils/redis.utils');
 const redirectCache = require('./src/utils/redirect-cache.utils');
+const rateLimit = require('express-rate-limit');
 const { securityHeaders, apiLimiter } = require('./src/middleware/security.middleware');
 require('dotenv').config();
 
@@ -54,12 +55,34 @@ firebaseState.reason = 'Firebase connected successfully';
 const app = express();
 const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
 const server = isServerless ? null : http.createServer(app);
+// Allowed origins: the production frontend and localhost for development.
+// Set ALLOWED_ORIGIN in the environment to override for custom deployments.
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGIN || 'https://piik.me')
+  .split(',')
+  .map((o) => o.trim())
+  .concat(['http://localhost:3000', 'http://localhost:3001']);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (server-to-server, curl, mobile apps).
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
 const io = isServerless
   ? { emit: () => {} }
   : socketIo(server, {
       cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
+        origin: ALLOWED_ORIGINS,
+        methods: ['GET', 'POST'],
+        credentials: true,
       }
     });
 
@@ -78,7 +101,7 @@ function fromFirestoreId(firestoreId) {
 // Middleware
 app.use(securityHeaders);
 app.use(apiLimiter);
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static('public', { index: false }));
 app.use((req, res, next) => {
@@ -967,8 +990,25 @@ app.post('/api/track/share/:shortCode', async (req, res) => {
   res.json({ success: true, message: 'Shares tracked via UTM parameters' });
 });
 
-// Create GitHub Issue for Bug Report
-app.post('/api/bug-report', async (req, res) => {
+// Per-user rate limiter for bug reports: 3 submissions per hour.
+// Without this, any authenticated user can create unlimited GitHub issues
+// using the server's GITHUB_TOKEN, exhausting the API quota for everyone.
+const bugReportLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3,
+  keyGenerator: (req) => req.user?.uid || req.ip,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'You can submit a maximum of 3 bug reports per hour. Please try again later.'
+  }
+});
+
+// Create GitHub Issue for Bug Report.
+// Requires authentication so anonymous callers cannot use the server's
+// GITHUB_TOKEN to create unlimited issues on the repository.
+app.post('/api/bug-report', verifyToken, bugReportLimiter, async (req, res) => {
   try {
     const { title, description, steps, email, userId, userEmail } = req.body;
     
