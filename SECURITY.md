@@ -33,3 +33,4 @@ We aim to respond to security reports within 72 hours and will work with you to 
 ## Acknowledgments
 
 We appreciate responsible disclosure and will acknowledge contributors who help improve the security of this project.
+\n<!-- Fix for #148 -->\n
