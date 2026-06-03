@@ -49,6 +49,42 @@ let bioLinks = [];
 let currentBioLink = null;
 let bioLinkItems = [];
 
+// Helper: make an authenticated API call
+async function apiCall(url, options = {}) {
+    const token = await getAuthToken();
+    if (!token) {
+        throw new Error('Authentication required');
+    }
+    const response = await fetch(url, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            ...options.headers
+        }
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.error || 'Request failed');
+    }
+    return data;
+}
+
+// Helper: convert Firestore serialized timestamps to Date objects
+function parseTimestamps(obj) {
+    if (!obj || typeof obj !== 'object') return obj;
+    const result = Array.isArray(obj) ? [...obj] : { ...obj };
+    for (const key of Object.keys(result)) {
+        const val = result[key];
+        if (val && typeof val === 'object' && '_seconds' in val && 'nanoseconds' in val) {
+            result[key] = new Date(val._seconds * 1000 + val.nanoseconds / 1000000);
+        } else if (val && typeof val === 'object' && '_seconds' in val) {
+            result[key] = new Date(val._seconds * 1000);
+        }
+    }
+    return result;
+}
+
 // Initialize Bio Link functionality
 function initBioLink() {
     console.log('Initializing Bio Link module');
@@ -94,30 +130,26 @@ function initBioLink() {
 // Load all bio links for the current user
 async function loadBioLinks() {
     try {
-        if (typeof firebase === 'undefined' || !firebase.firestore) {
-            console.error('Firebase not ready');
-            showToast('Firebase not initialized', 'error');
-            return;
-        }
-
-        const user = firebase.auth().currentUser;
-        if (!user || !user.uid) {
+        const token = await getAuthToken();
+        if (!token) {
             console.error('User not authenticated');
             showToast('Please log in to view bio links', 'error');
             return;
         }
 
-        console.log('Loading bio links for user:', user.uid);
+        console.log('Loading bio links');
 
-        const db = firebase.firestore();
-        const bioLinksSnapshot = await db.collection('bioLinks')
-            .where('userId', '==', user.uid)
-            .get();
-
-        bioLinks = [];
-        bioLinksSnapshot.forEach(doc => {
-            bioLinks.push({ id: doc.id, ...doc.data() });
+        const response = await fetch('/api/bio-links', {
+            headers: { 'Authorization': `Bearer ${token}` }
         });
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to load bio links');
+        }
+
+        // Parse timestamps from serialized Firestore data
+        bioLinks = (result.bioLinks || []).map(link => parseTimestamps(link));
 
         console.log('Loaded', bioLinks.length, 'bio links');
 
@@ -294,13 +326,8 @@ function removeBioLinkItem(index) {
 // Save bio link
 async function saveBioLink() {
     try {
-        // Check if Firebase is ready
-        if (typeof firebase === 'undefined' || !firebase.firestore) {
-            showToast('Firebase not ready. Please try again.', 'error');
-            return;
-        }
-
-        if (!currentUser || !currentUser.uid) {
+        const token = await getAuthToken();
+        if (!token) {
             showToast('You must be logged in to save bio links', 'error');
             return;
         }
@@ -320,25 +347,10 @@ async function saveBioLink() {
             return;
         }
 
-        // Check if slug is available (only if creating new or slug changed)
-        const db = firebase.firestore();
-        
-        if (!currentBioLink || currentBioLink.slug !== slug) {
-            const existingSlug = await db.collection('bioLinks')
-                .where('slug', '==', slug)
-                .get();
-
-            if (!existingSlug.empty) {
-                showToast('This URL slug is already taken', 'error');
-                return;
-            }
-        }
-
         // Filter out empty links
         const validLinks = bioLinkItems.filter(item => item.title && item.url);
 
         const bioLinkData = {
-            userId: currentUser.uid,
             name,
             slug,
             description,
@@ -353,32 +365,22 @@ async function saveBioLink() {
                 github: document.getElementById('bioGithub').value.trim(),
                 youtube: document.getElementById('bioYoutube').value.trim(),
                 website: document.getElementById('bioWebsite').value.trim()
-            },
-            views: currentBioLink?.views || 0,
-            clicks: currentBioLink?.clicks || 0,
-            verified: currentBioLink?.verified || false,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }
         };
 
         if (currentBioLink) {
-            // Update existing
-            await db.collection('bioLinks').doc(currentBioLink.id).update(bioLinkData);
+            // Update existing via API
+            await apiCall(`/api/bio-links/${currentBioLink.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(bioLinkData)
+            });
             showToast('Bio link updated successfully!', 'success');
         } else {
-            // Check if user already has a bio link
-            const userBioLinks = await db.collection('bioLinks')
-                .where('userId', '==', currentUser.uid)
-                .get();
-            
-            if (!userBioLinks.empty) {
-                showToast('You can only create one bio link. Please edit your existing one.', 'error');
-                closeBioLinkModal();
-                return;
-            }
-            
-            // Create new
-            bioLinkData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-            await db.collection('bioLinks').add(bioLinkData);
+            // Create new via API
+            await apiCall('/api/bio-links', {
+                method: 'POST',
+                body: JSON.stringify(bioLinkData)
+            });
             showToast('Bio link created successfully!', 'success');
         }
 
@@ -419,13 +421,12 @@ async function deleteBioLink(bioLinkId) {
     }
 
     try {
-        const db = firebase.firestore();
-        await db.collection('bioLinks').doc(bioLinkId).delete();
+        await apiCall(`/api/bio-links/${bioLinkId}`, { method: 'DELETE' });
         showToast('Bio link deleted successfully', 'success');
         loadBioLinks();
     } catch (error) {
         console.error('Error deleting bio link:', error);
-        showToast('Failed to delete bio link', 'error');
+        showToast('Failed to delete bio link: ' + error.message, 'error');
     }
 }
 
@@ -525,12 +526,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                     }
 
-                    const db = firebase.firestore();
-                    const existingSlug = await db.collection('bioLinks')
-                        .where('slug', '==', slug)
-                        .get();
+                    const token = await getAuthToken();
+                    if (!token) return;
 
-                    if (existingSlug.empty) {
+                    const response = await fetch(`/api/bio-links/check-slug/${encodeURIComponent(slug)}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const result = await response.json();
+
+                    if (result.available) {
                         bioSlugSuccess.style.display = 'block';
                     } else {
                         bioSlugError.textContent = 'This URL slug is already taken';
@@ -1013,10 +1017,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Create upload promise with timeout
-                const uploadPromise = new Promise(async (resolve, reject) => {
-                    try {
-                        // Upload to Firebase Storage
-                        const storage = firebase.storage();
+                const uploadPromise = new Promise((resolve, reject) => {
+                    (async () => {
+                        try {
+                            // Upload to Firebase Storage
+                            const storage = firebase.storage();
                         console.log('Storage bucket:', storage.app.options.storageBucket);
                         
                         const storageRef = storage.ref();
@@ -1053,6 +1058,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } catch (error) {
                         reject(error);
                     }
+                })();
                 });
 
                 // Set timeout for upload (60 seconds)
@@ -1596,10 +1602,17 @@ async function saveEditorBioLink(isAutoSave = false) {
         }
         
         // Check if slug changed and is available
-        const db = firebase.firestore();
         if (currentEditorBioLink.slug !== slug) {
-            const existingSlug = await db.collection('bioLinks').where('slug', '==', slug).get();
-            if (!existingSlug.empty) {
+            const token = await getAuthToken();
+            if (!token) {
+                isSaving = false;
+                return;
+            }
+            const slugResponse = await fetch(`/api/bio-links/check-slug/${encodeURIComponent(slug)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const slugResult = await slugResponse.json();
+            if (!slugResult.available) {
                 if (!isAutoSave) showToast('This URL slug is already taken', 'error');
                 isSaving = false;
                 return;
@@ -1623,11 +1636,13 @@ async function saveEditorBioLink(isAutoSave = false) {
                 github: document.getElementById('editorGithub').value.trim(),
                 youtube: document.getElementById('editorYoutube').value.trim(),
                 website: document.getElementById('editorWebsite').value.trim()
-            },
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }
         };
         
-        await db.collection('bioLinks').doc(currentEditorBioLink.id).update(bioLinkData);
+        await apiCall(`/api/bio-links/${currentEditorBioLink.id}`, {
+            method: 'PUT',
+            body: JSON.stringify(bioLinkData)
+        });
         
         if (!isAutoSave) {
             showToast('Bio link updated successfully!', 'success');

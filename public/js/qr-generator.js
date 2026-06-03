@@ -205,15 +205,6 @@ const QRGenerator = {
         window.addEventListener('scroll', handleScroll);
     },
 
-    updateFloatingPreview() {
-        // Copy main canvas to floating canvas
-        if (this.qrCanvas && this.floatingCanvas) {
-            const ctx = this.floatingCanvas.getContext('2d');
-            ctx.clearRect(0, 0, 400, 400);
-            ctx.drawImage(this.qrCanvas, 0, 0, 400, 400);
-        }
-    },
-
     cacheDom() {
         this.qrLinkInput = document.getElementById('qrLinkInput');
         this.generateBtn = document.getElementById('generateQRBtn');
@@ -854,14 +845,21 @@ const QRGenerator = {
                 return;
             }
 
-            const db = firebase.firestore();
-            
-            // Get user links - sort on client side to avoid index requirement
-            const linksSnapshot = await db.collection('links')
-                .where('userId', '==', user.uid)
-                .get();
+            // Fetch user links via API
+            const token = await user.getIdToken();
+            const response = await fetch('/api/user/links', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-            if (linksSnapshot.empty) {
+            if (!response.ok) {
+                this.quickLinksGrid.innerHTML = '<p class="text-muted">Failed to load links</p>';
+                return;
+            }
+
+            const result = await response.json();
+            const links = result.links || [];
+
+            if (links.length === 0) {
                 this.quickLinksGrid.innerHTML = `
                     <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
                         <i class="fas fa-link" style="font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block;"></i>
@@ -871,16 +869,10 @@ const QRGenerator = {
                 `;
                 return;
             }
-
-            // Sort links by creation date (most recent first) and limit to 6
-            const links = [];
-            linksSnapshot.forEach(doc => {
-                links.push({ id: doc.id, ...doc.data() });
-            });
             
             links.sort((a, b) => {
-                const dateA = a.createdAt?.toDate?.() || new Date(0);
-                const dateB = b.createdAt?.toDate?.() || new Date(0);
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
                 return dateB - dateA;
             });
             

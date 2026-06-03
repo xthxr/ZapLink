@@ -65,4 +65,21 @@ const apiLimiter = rateLimit({
     }
 });
 
-module.exports = { securityHeaders, apiLimiter };
+/**
+ * Strict rate limiter for the bug-report endpoint.
+ * Each IP is capped at 5 reports per hour. The endpoint uses the server's
+ * GITHUB_TOKEN to create GitHub issues, so unrestricted access lets any
+ * caller exhaust the token's API quota and flood the repository with spam.
+ */
+const bugReportLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        error: 'Too many bug reports submitted. Please wait before trying again.'
+    }
+});
+
+module.exports = { securityHeaders, apiLimiter, bugReportLimiter };

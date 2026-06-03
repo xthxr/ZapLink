@@ -14,7 +14,7 @@ const fetch = typeof globalThis.fetch === 'function'
   : (...args) => import('node-fetch').then(({ default: fetchFn }) => fetchFn(...args));
 const redisUtils = require('./src/utils/redis.utils');
 const redirectCache = require('./src/utils/redirect-cache.utils');
-const { securityHeaders, apiLimiter } = require('./src/middleware/security.middleware');
+const { securityHeaders, apiLimiter, bugReportLimiter } = require('./src/middleware/security.middleware');
 require('dotenv').config();
 
 // Initialize Firebase Admin
@@ -54,11 +54,15 @@ firebaseState.reason = 'Firebase connected successfully';
 const app = express();
 const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
 const server = isServerless ? null : http.createServer(app);
+// Restrict Socket.IO CORS to the configured application origin.
+// Falls back to the same ALLOWED_ORIGIN used for the Express CORS middleware
+// so both share a single configuration point in the environment.
+const allowedOrigin = process.env.ALLOWED_ORIGIN || false;
 const io = isServerless
   ? { emit: () => {} }
   : socketIo(server, {
       cors: {
-        origin: "*",
+        origin: allowedOrigin,
         methods: ["GET", "POST"]
       }
     });
@@ -78,7 +82,15 @@ function fromFirestoreId(firestoreId) {
 // Middleware
 app.use(securityHeaders);
 app.use(apiLimiter);
-app.use(cors());
+// Restrict CORS to the configured application origin.
+// Without an origin restriction, any third-party website can make credentialed
+// cross-origin requests to the API. Set ALLOWED_ORIGIN in the environment to
+// the production front-end URL (e.g. https://piik.me). When unset, cross-origin
+// requests are blocked entirely (origin: false) rather than allowed for all.
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGIN || false,
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.static('public', { index: false }));
 app.use((req, res, next) => {
@@ -91,7 +103,8 @@ app.use((req, res, next) => {
 const COLLECTIONS = {
   LINKS: 'links',
   ANALYTICS: 'analytics',
-  USERS: 'users'
+  USERS: 'users',
+  BIO_LINKS: 'bioLinks'
 };
 
 // Middleware to verify Firebase token
@@ -267,9 +280,15 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
     return res.status(400).json({ error: 'URL is required' });
   }
 
-  // Validate URL
+  // Validate URL structure and block dangerous schemes.
+  // new URL() only checks syntactic correctness; it accepts javascript:, data:,
+  // vbscript:, and other schemes that are unsafe as redirect destinations.
+  // Enforce an explicit allowlist so only http and https links can be shortened.
   try {
-    new URL(url);
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return res.status(400).json({ error: 'Only http and https URLs are allowed' });
+    }
   } catch (e) {
     return res.status(400).json({ error: 'Invalid URL' });
   }
@@ -423,8 +442,47 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
   }
 });
 
-// Get analytics for a short link (requires authentication)
-app.get('/api/analytics/:shortCode', verifyToken, async (req, res) => {
+// Get aggregated analytics for all of the authenticated user's links
+app.get('/api/user/analytics', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+
+  try {
+    const linksSnapshot = await db.collection(COLLECTIONS.LINKS)
+      .where('userId', '==', userId)
+      .get();
+
+    const linksData = [];
+    linksSnapshot.forEach(doc => {
+      const data = doc.data();
+      linksData.push({ id: doc.id, ...data });
+    });
+
+    // Fetch analytics for each link
+    const analyticsPromises = linksData.map(async (link) => {
+      const firestoreId = toFirestoreId(link.shortCode);
+      try {
+        const analyticsDoc = await db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId).get();
+        return {
+          shortCode: link.shortCode,
+          linkData: link,
+          analytics: analyticsDoc.exists ? analyticsDoc.data() : null
+        };
+      } catch (err) {
+        return { shortCode: link.shortCode, linkData: link, analytics: null };
+      }
+    });
+
+    const analyticsData = await Promise.all(analyticsPromises);
+
+    res.json({ success: true, data: analyticsData });
+  } catch (error) {
+    console.error('Error fetching analytics:', error);
+    res.status(500).json({ error: 'Failed to fetch analytics' });
+  }
+});
+
+// Get analytics for a short link
+app.get('/api/analytics/:shortCode', async (req, res) => {
   const { shortCode } = req.params;
   
   try {
@@ -615,6 +673,202 @@ app.get('/api/user/bio-slug', verifyToken, async (req, res) => {
   }
 });
 
+// ================================
+// BIO-LINKS API
+// ================================
+
+// GET /api/bio-links/check-slug/:slug - Check if a slug is available
+app.get('/api/bio-links/check-slug/:slug', verifyToken, async (req, res) => {
+  const { slug } = req.params;
+  
+  try {
+    const existingSlug = await db.collection(COLLECTIONS.BIO_LINKS)
+      .where('slug', '==', slug)
+      .get();
+    
+    res.json({ available: existingSlug.empty });
+  } catch (error) {
+    console.error('Error checking slug:', error);
+    res.status(500).json({ error: 'Failed to check slug availability' });
+  }
+});
+
+// GET /api/bio-links - Fetch all bio links for authenticated user
+app.get('/api/bio-links', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  
+  try {
+    const snapshot = await db.collection(COLLECTIONS.BIO_LINKS)
+      .where('userId', '==', userId)
+      .get();
+    
+    const bioLinks = [];
+    snapshot.forEach(doc => {
+      bioLinks.push({ id: doc.id, ...doc.data() });
+    });
+    
+    // Sort by createdAt descending
+    bioLinks.sort((a, b) => {
+      const dateA = a.createdAt?.toDate?.() || new Date(0);
+      const dateB = b.createdAt?.toDate?.() || new Date(0);
+      return dateB - dateA;
+    });
+    
+    res.json({ success: true, bioLinks });
+  } catch (error) {
+    console.error('Error fetching bio links:', error);
+    res.status(500).json({ error: 'Failed to fetch bio links' });
+  }
+});
+
+// POST /api/bio-links - Create a new bio link
+app.post('/api/bio-links', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const { name, slug, description, profilePicture, themeColor, backgroundStyle, links, social } = req.body;
+  
+  // Validation
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Name is required' });
+  }
+  if (!slug || !/^[a-zA-Z0-9-_]+$/.test(slug)) {
+    return res.status(400).json({ error: 'Invalid slug format' });
+  }
+  
+  try {
+    // Check if slug is available
+    const existingSlug = await db.collection(COLLECTIONS.BIO_LINKS)
+      .where('slug', '==', slug)
+      .get();
+    
+    if (!existingSlug.empty) {
+      return res.status(409).json({ error: 'This URL slug is already taken' });
+    }
+    
+    // Check if user already has a bio link
+    const userBioLinks = await db.collection(COLLECTIONS.BIO_LINKS)
+      .where('userId', '==', userId)
+      .get();
+    
+    if (!userBioLinks.empty) {
+      return res.status(409).json({ error: 'You can only create one bio link. Please edit your existing one.' });
+    }
+    
+    const bioLinkData = {
+      userId,
+      name: name.trim(),
+      slug,
+      description: description || '',
+      profilePicture: profilePicture || '',
+      themeColor: themeColor || '#06b6d4',
+      backgroundStyle: backgroundStyle || 'gradient',
+      links: links || [],
+      social: social || {},
+      views: 0,
+      clicks: 0,
+      verified: false,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+    
+    const docRef = await db.collection(COLLECTIONS.BIO_LINKS).add(bioLinkData);
+    
+    res.status(201).json({ success: true, id: docRef.id, message: 'Bio link created successfully' });
+  } catch (error) {
+    console.error('Error creating bio link:', error);
+    res.status(500).json({ error: 'Failed to create bio link' });
+  }
+});
+
+// PUT /api/bio-links/:id - Update a bio link
+app.put('/api/bio-links/:id', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const { id } = req.params;
+  const { name, slug, description, profilePicture, themeColor, backgroundStyle, links, social } = req.body;
+  
+  // Validation
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Name is required' });
+  }
+  if (!slug || !/^[a-zA-Z0-9-_]+$/.test(slug)) {
+    return res.status(400).json({ error: 'Invalid slug format' });
+  }
+  
+  try {
+    const bioLinkRef = db.collection(COLLECTIONS.BIO_LINKS).doc(id);
+    const bioLinkDoc = await bioLinkRef.get();
+    
+    if (!bioLinkDoc.exists) {
+      return res.status(404).json({ error: 'Bio link not found' });
+    }
+    
+    const bioLinkData = bioLinkDoc.data();
+    
+    // Verify ownership
+    if (bioLinkData.userId !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to update this bio link' });
+    }
+    
+    // Check slug availability if changed
+    if (slug !== bioLinkData.slug) {
+      const existingSlug = await db.collection(COLLECTIONS.BIO_LINKS)
+        .where('slug', '==', slug)
+        .get();
+      
+      if (!existingSlug.empty) {
+        return res.status(409).json({ error: 'This URL slug is already taken' });
+      }
+    }
+    
+    const updateData = {
+      name: name.trim(),
+      slug,
+      description: description || '',
+      profilePicture: profilePicture || '',
+      themeColor: themeColor || '#06b6d4',
+      backgroundStyle: backgroundStyle || 'gradient',
+      links: links || [],
+      social: social || {},
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await bioLinkRef.update(updateData);
+    
+    res.json({ success: true, message: 'Bio link updated successfully' });
+  } catch (error) {
+    console.error('Error updating bio link:', error);
+    res.status(500).json({ error: 'Failed to update bio link' });
+  }
+});
+
+// DELETE /api/bio-links/:id - Delete a bio link
+app.delete('/api/bio-links/:id', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+  const { id } = req.params;
+  
+  try {
+    const bioLinkRef = db.collection(COLLECTIONS.BIO_LINKS).doc(id);
+    const bioLinkDoc = await bioLinkRef.get();
+    
+    if (!bioLinkDoc.exists) {
+      return res.status(404).json({ error: 'Bio link not found' });
+    }
+    
+    const bioLinkData = bioLinkDoc.data();
+    
+    // Verify ownership
+    if (bioLinkData.userId !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to delete this bio link' });
+    }
+    
+    await bioLinkRef.delete();
+    
+    res.json({ success: true, message: 'Bio link deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting bio link:', error);
+    res.status(500).json({ error: 'Failed to delete bio link' });
+  }
+});
+
 // Get all links for a user (requires authentication)
 app.get('/api/user/links', verifyToken, async (req, res) => {
   const userId = req.user.uid;
@@ -744,7 +998,119 @@ app.delete('/api/user', verifyToken, async (req, res) => {
   }
 });
 
-// Delete a link (requires authentication and ownership)
+// Deactivate a link (soft delete — marks as inactive with scheduled permanent deletion)
+app.put('/api/links/:shortCode/deactivate', verifyToken, async (req, res) => {
+  let { shortCode } = req.params;
+  shortCode = decodeURIComponent(shortCode);
+  const userId = req.user.uid;
+
+  try {
+    const firestoreId = toFirestoreId(shortCode);
+    const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
+    const linkDoc = await linkRef.get();
+
+    if (!linkDoc.exists) {
+      return res.status(404).json({ error: 'Link not found' });
+    }
+
+    const linkData = linkDoc.data();
+
+    // Verify ownership
+    if (linkData.userId !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to deactivate this link' });
+    }
+
+    const deactivationDate = new Date();
+    const permanentDeletionDate = new Date();
+    permanentDeletionDate.setDate(permanentDeletionDate.getDate() + 15);
+
+    await linkRef.update({
+      isActive: false,
+      deactivatedAt: deactivationDate,
+      scheduledDeletion: permanentDeletionDate
+    });
+
+    // Clear cache
+    await redisUtils.deleteLinkFromRedis(shortCode);
+    await redirectCache.delete(shortCode);
+
+    res.json({ success: true, message: 'Link deactivated. Will be permanently deleted in 15 days.' });
+  } catch (error) {
+    console.error('Error deactivating link:', error);
+    res.status(500).json({ error: 'Failed to deactivate link' });
+  }
+});
+
+// Reactivate a deactivated link
+app.put('/api/links/:shortCode/reactivate', verifyToken, async (req, res) => {
+  let { shortCode } = req.params;
+  shortCode = decodeURIComponent(shortCode);
+  const userId = req.user.uid;
+
+  try {
+    const firestoreId = toFirestoreId(shortCode);
+    const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
+    const linkDoc = await linkRef.get();
+
+    if (!linkDoc.exists) {
+      return res.status(404).json({ error: 'Link not found' });
+    }
+
+    const linkData = linkDoc.data();
+
+    // Verify ownership
+    if (linkData.userId !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to reactivate this link' });
+    }
+
+    await linkRef.update({
+      isActive: true,
+      deactivatedAt: admin.firestore.FieldValue.delete(),
+      scheduledDeletion: admin.firestore.FieldValue.delete()
+    });
+
+    // Restore in Redis
+    await redisUtils.setLinkInRedis(shortCode, { ...linkData, isActive: true });
+
+    res.json({ success: true, message: 'Link reactivated successfully' });
+  } catch (error) {
+    console.error('Error reactivating link:', error);
+    res.status(500).json({ error: 'Failed to reactivate link' });
+  }
+});
+
+// Permanently delete all inactive links for the authenticated user
+app.delete('/api/links/inactive', verifyToken, async (req, res) => {
+  const userId = req.user.uid;
+
+  try {
+    const inactiveLinksQuery = await db.collection(COLLECTIONS.LINKS)
+      .where('userId', '==', userId)
+      .where('isActive', '==', false)
+      .get();
+
+    if (inactiveLinksQuery.empty) {
+      return res.json({ success: true, message: 'No inactive links to delete', count: 0 });
+    }
+
+    const batch = db.batch();
+    let count = 0;
+
+    inactiveLinksQuery.docs.forEach(doc => {
+      batch.delete(doc.ref);
+      count++;
+    });
+
+    await batch.commit();
+
+    res.json({ success: true, message: `Successfully deleted ${count} inactive link${count > 1 ? 's' : ''}`, count });
+  } catch (error) {
+    console.error('Error deleting inactive links:', error);
+    res.status(500).json({ error: 'Failed to delete inactive links' });
+  }
+});
+
+// Delete a single link by shortCode (requires authentication and ownership)
 app.delete('/api/links/:shortCode', verifyToken, async (req, res) => {
   let { shortCode } = req.params;
   // Decode URL-encoded shortCode (e.g., atharcloud%2Ftuf -> atharcloud/tuf)
@@ -961,8 +1327,8 @@ app.post('/api/track/share/:shortCode', async (req, res) => {
   res.json({ success: true, message: 'Shares tracked via UTM parameters' });
 });
 
-// Create GitHub Issue for Bug Report
-app.post('/api/bug-report', async (req, res) => {
+// Create GitHub Issue for Bug Report (requires authentication + strict rate limit)
+app.post('/api/bug-report', verifyToken, bugReportLimiter, async (req, res) => {
   try {
     const { title, description, steps, email, userId, userEmail } = req.body;
     
@@ -1147,7 +1513,7 @@ function getReferrerSource(req) {
   const httpReferrer = req.headers['referer'] || req.headers['referrer'] || '';
   const utmSource = req.query.utm_source;
   
-  let referrerSource = 'Direct';
+  let referrerSource;
   
   if (utmSource) {
     referrerSource = utmSource.charAt(0).toUpperCase() + utmSource.slice(1);

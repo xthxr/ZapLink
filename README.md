@@ -469,6 +469,32 @@ We welcome contributions!  See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 ---
 
+## 💖 Contributors
+
+Thanks to all the amazing people who contribute to **piik.me** 🚀
+
+<p align="center">
+  <a href="https://github.com/xthxr/piik.me/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=xthxr/piik.me" alt="Contributors"/>
+  </a>
+</p>
+
+---
+
+## ⭐ Project Support
+
+<p align="center">
+  <a href="https://github.com/xthxr/piik.me/stargazers">
+    <img src="https://img.shields.io/github/stars/xthxr/piik.me?style=social" alt="Stars">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/xthxr/piik.me/network/members">
+    <img src="https://img.shields.io/github/forks/xthxr/piik.me?style=social" alt="Forks">
+  </a>
+</p>
+
+---
+
 ## 📄 License
 
 piik.me is open-source software licensed under the **MIT License**.

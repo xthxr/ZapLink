@@ -117,8 +117,7 @@ async function initializeGlobe() {
         
         // Create globe instance with hexagonal land patterns
         console.log('Initializing Globe.gl...');
-        globeInstance = Globe()
-            (container)
+        globeInstance = Globe()(container)
             .width(container.clientWidth)
             .height(650)
             .globeMaterial(new THREE.MeshPhongMaterial({

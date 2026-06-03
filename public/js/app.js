@@ -1637,17 +1637,8 @@ async function openSplitTestModal(shortCode) {
     
     try {
         let linkData = null;
-        if (typeof firebase !== 'undefined' && firebase.firestore) {
-            const db = firebase.firestore();
-            const docId = toFirestoreId(shortCode);
-            const doc = await db.collection('links').doc(docId).get();
-            if (doc.exists) {
-                linkData = doc.data();
-            }
-        }
-        
-        // If not found in firestore, search in userLinks array
-        if (!linkData && typeof userLinks !== 'undefined') {
+        // Find link from already-loaded userLinks array (loaded via API)
+        if (typeof userLinks !== 'undefined') {
             linkData = userLinks.find(l => l.shortCode === shortCode);
         }
         
@@ -2198,39 +2189,25 @@ async function deleteLink(shortCode) {
     }
     
     try {
-        if (typeof firebase === 'undefined' || !firebase.firestore) {
-            showToast('Firestore not available', 'error');
+        const token = await getAuthToken();
+        if (!token) {
+            showToast('Authentication required', 'error');
             return;
         }
         
-        const db = firebase.firestore();
-        
-        // Find the link document
-        const linkQuery = await db.collection('links')
-            .where('shortCode', '==', shortCode)
-            .where('userId', '==', currentUser.uid)
-            .limit(1)
-            .get();
-        
-        if (linkQuery.empty) {
-            showToast('Link not found', 'error');
-            return;
-        }
-        
-        const linkDoc = linkQuery.docs[0];
-        
-        // Soft delete: mark as inactive with deletion date
-        const deactivationDate = firebase.firestore.Timestamp.now();
-        const permanentDeletionDate = new Date();
-        permanentDeletionDate.setDate(permanentDeletionDate.getDate() + 15);
-        
-        await linkDoc.ref.update({
-            isActive: false,
-            deactivatedAt: deactivationDate,
-            scheduledDeletion: firebase.firestore.Timestamp.fromDate(permanentDeletionDate)
+        const shortCodeEncoded = encodeURIComponent(shortCode);
+        const response = await fetch(`/api/links/${shortCodeEncoded}/deactivate`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        showToast('Link deactivated. Will be permanently deleted in 15 days.', 'success');
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to deactivate link');
+        }
+        
+        showToast(result.message || 'Link deactivated. Will be permanently deleted in 15 days.', 'success');
         loadLinks();
         
     } catch (error) {
@@ -2251,36 +2228,24 @@ async function permanentlyDeleteInactiveLinks() {
     }
     
     try {
-        if (typeof firebase === 'undefined' || !firebase.firestore) {
-            showToast('Firestore not available', 'error');
+        const token = await getAuthToken();
+        if (!token) {
+            showToast('Authentication required', 'error');
             return;
         }
         
-        const db = firebase.firestore();
-        
-        // Find all inactive links
-        const inactiveLinksQuery = await db.collection('links')
-            .where('userId', '==', currentUser.uid)
-            .where('isActive', '==', false)
-            .get();
-        
-        if (inactiveLinksQuery.empty) {
-            showToast('No inactive links to delete', 'info');
-            return;
-        }
-        
-        // Delete all inactive links
-        const batch = db.batch();
-        let count = 0;
-        
-        inactiveLinksQuery.docs.forEach(doc => {
-            batch.delete(doc.ref);
-            count++;
+        const response = await fetch('/api/links/inactive', {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        await batch.commit();
+        const result = await response.json();
         
-        showToast(`Successfully deleted ${count} inactive link${count > 1 ? 's' : ''}`, 'success');
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to delete inactive links');
+        }
+        
+        showToast(result.message || `Successfully deleted ${result.count || 0} inactive link(s)`, 'success');
         loadLinks();
         
     } catch (error) {
@@ -2295,35 +2260,25 @@ async function reactivateLink(shortCode) {
     }
     
     try {
-        if (typeof firebase === 'undefined' || !firebase.firestore) {
-            showToast('Firestore not available', 'error');
+        const token = await getAuthToken();
+        if (!token) {
+            showToast('Authentication required', 'error');
             return;
         }
         
-        const db = firebase.firestore();
-        
-        // Find the link document
-        const linkQuery = await db.collection('links')
-            .where('shortCode', '==', shortCode)
-            .where('userId', '==', currentUser.uid)
-            .limit(1)
-            .get();
-        
-        if (linkQuery.empty) {
-            showToast('Link not found', 'error');
-            return;
-        }
-        
-        const linkDoc = linkQuery.docs[0];
-        
-        // Reactivate the link
-        await linkDoc.ref.update({
-            isActive: true,
-            deactivatedAt: firebase.firestore.FieldValue.delete(),
-            scheduledDeletion: firebase.firestore.FieldValue.delete()
+        const shortCodeEncoded = encodeURIComponent(shortCode);
+        const response = await fetch(`/api/links/${shortCodeEncoded}/reactivate`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        showToast('Link reactivated successfully!', 'success');
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to reactivate link');
+        }
+        
+        showToast(result.message || 'Link reactivated successfully!', 'success');
         loadLinks();
         
     } catch (error) {
@@ -2337,39 +2292,31 @@ async function reactivateLink(shortCode) {
 // ================================
 
 async function loadAnalytics() {
-    // Load analytics overview
     const analyticsLinkSelect = document.getElementById('analyticsLinkSelect');
     
-    // Fetch user's links if not already loaded
     if (!currentUser) return;
     
     try {
-        if (typeof firebase === 'undefined' || !firebase.firestore) {
-            console.log('Firestore not available');
+        const token = await getAuthToken();
+        if (!token) return;
+        
+        // Fetch user's links for dropdown via API
+        const response = await fetch('/api/user/links', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            console.error('Failed to fetch links for analytics');
             return;
         }
         
-        const db = firebase.firestore();
-        
-        // Fetch links to populate dropdown
-        const linksSnapshot = await db.collection('links')
-            .where('userId', '==', currentUser.uid)
-            .get();
-        
-        const links = [];
-        linksSnapshot.forEach(doc => {
-            const linkData = doc.data();
-            links.push({
-                shortCode: linkData.shortCode,
-                shortUrl: linkData.shortUrl,
-                originalUrl: linkData.originalUrl
-            });
-        });
+        const result = await response.json();
+        const links = result.links || [];
         
         // Populate link selector
         if (analyticsLinkSelect && links.length > 0) {
             analyticsLinkSelect.innerHTML = '<option value="all">All Links</option>' +
-                links.map(link => `<option value="${link.shortCode}">${link.shortUrl.replace('https://', '').replace('http://', '')}</option>`).join('');
+                links.map(link => `<option value="${link.shortCode}">${(link.shortUrl || '').replace('https://', '').replace('http://', '')}</option>`).join('');
             
             // Remove previous listener if exists
             const newSelect = analyticsLinkSelect.cloneNode(true);
@@ -2378,15 +2325,15 @@ async function loadAnalytics() {
             // Add change listener to new element
             newSelect.addEventListener('change', () => {
                 loadAnalyticsData(newSelect.value);
-                setupAnalyticsRealtime(newSelect.value);
+                startAnalyticsPolling(newSelect.value);
             });
         }
         
         // Load analytics data
         loadAnalyticsData('all');
         
-        // Set up real-time listener
-        setupAnalyticsRealtime('all');
+        // Start polling instead of Firestore real-time listeners
+        startAnalyticsPolling('all');
         
     } catch (error) {
         console.error('Error loading analytics:', error);
@@ -2400,131 +2347,92 @@ async function loadLinkAnalytics(shortCode) {
         analyticsLinkSelect.value = shortCode;
     }
     loadAnalyticsData(shortCode);
-    setupAnalyticsRealtime(shortCode);
+    startAnalyticsPolling(shortCode);
 }
 
-async function setupAnalyticsRealtime(linkFilter) {
-    if (typeof firebase === 'undefined' || !firebase.firestore) {
-        console.log('Firestore not available');
-        return;
+// Analytics polling interval
+const ANALYTICS_POLL_INTERVAL = 5000; // 5 seconds
+
+// Start polling for analytics updates instead of Firestore onSnapshot
+function startAnalyticsPolling(linkFilter) {
+    // Clear any existing polling interval
+    if (window.analyticsPollInterval) {
+        clearInterval(window.analyticsPollInterval);
     }
     
-    const db = firebase.firestore();
+    // Start new polling interval
+    window.analyticsPollInterval = setInterval(() => {
+        debounceAnalyticsUpdate(() => loadAnalyticsData(linkFilter), 100);
+    }, ANALYTICS_POLL_INTERVAL);
     
-    // Unsubscribe from previous listener if exists
-    if (window.analyticsUnsubscribe) {
-        window.analyticsUnsubscribe();
-    }
-    
-    // Set up real-time listener for analytics collection (ULTRA FAST!)
-    if (linkFilter === 'all') {
-        // First, get all shortCodes for current user
-        const linksSnapshot = await db.collection('links')
-            .where('userId', '==', currentUser.uid)
-            .get();
-        
-        const shortCodes = linksSnapshot.docs.map(doc => doc.data().shortCode);
-        
-        if (shortCodes.length === 0) {
-            console.log('No links found for user');
-            return;
-        }
-        
-        // Listen to analytics collection for ALL user's links
-        // This will trigger INSTANTLY when any click happens!
-        window.analyticsUnsubscribe = db.collection('analytics')
-            .where('shortCode', 'in', shortCodes.slice(0, 10)) // Firestore 'in' limit is 10
-            .onSnapshot((snapshot) => {
-                console.log('🚀 REAL-TIME UPDATE: New click detected! Updating in 100ms...');
-                // Ultra-fast debounce (100ms) for smooth updates
-                debounceAnalyticsUpdate(() => loadAnalyticsData('all'), 100);
-            }, (error) => {
-                console.error('Real-time listener error:', error);
-            });
-        
-        // If user has more than 10 links, set up additional listeners
-        if (shortCodes.length > 10) {
-            for (let i = 10; i < shortCodes.length; i += 10) {
-                const batch = shortCodes.slice(i, i + 10);
-                db.collection('analytics')
-                    .where('shortCode', 'in', batch)
-                    .onSnapshot((snapshot) => {
-                        console.log('🚀 REAL-TIME UPDATE: New click detected (batch)!');
-                        debounceAnalyticsUpdate(() => loadAnalyticsData('all'), 100);
-                    });
-            }
-        }
-    } else {
-        // Listen to specific link's analytics - INSTANT UPDATES!
-        window.analyticsUnsubscribe = db.collection('analytics')
-            .where('shortCode', '==', linkFilter)
-            .onSnapshot((snapshot) => {
-                console.log('🚀 REAL-TIME UPDATE: Click on', linkFilter);
-                // Instant update with minimal debounce
-                debounceAnalyticsUpdate(() => loadAnalyticsData(linkFilter), 100);
-            }, (error) => {
-                console.error('Real-time listener error:', error);
-            });
-    }
+    // Store current filter for resume
+    window.analyticsPollFilter = linkFilter;
 }
 
 async function loadAnalyticsData(linkFilter) {
     try {
-        if (typeof firebase === 'undefined' || !firebase.firestore) {
-            showToast('Firestore not available', 'error');
-            return;
-        }
-        
         // Check if user is authenticated
         if (!currentUser || !currentUser.uid) {
             console.log('User not authenticated yet, skipping analytics load');
             return;
         }
         
-        const db = firebase.firestore();
+        const token = await getAuthToken();
+        if (!token) return;
+        
         let totalClicks = 0;
         let totalImpressions = 0;
-        let uniqueVisitors = new Set();
         let countries = new Set();
         let locations = {};
         let devices = {};
         let browsers = {};
         let referrers = {};
-        let clicksOverTime = {};
         let allClickHistory = [];
         let isSplitTest = false;
         let splitTestVariants = [];
         let variantClicks = {};
+        let analyticsEntries = [];
         
-        // Fetch links based on filter
-        let linksQuery;
+        // Fetch analytics data via API
         if (linkFilter === 'all') {
-            linksQuery = db.collection('links').where('userId', '==', currentUser.uid);
+            const response = await fetch('/api/user/analytics', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) {
+                console.error('Failed to fetch analytics');
+                updateAnalyticsUI(0, 0, 0, 0, {}, {}, {}, {});
+                return;
+            }
+            const result = await response.json();
+            analyticsEntries = result.data || [];
+            
+            if (analyticsEntries.length === 0) {
+                console.log('No links found for user');
+                updateAnalyticsUI(0, 0, 0, 0, {}, {}, {}, {});
+                return;
+            }
         } else {
-            linksQuery = db.collection('links').where('shortCode', '==', linkFilter).where('userId', '==', currentUser.uid);
+            const response = await fetch(`/api/analytics/${encodeURIComponent(linkFilter)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) {
+                console.log('Analytics not found for link');
+                updateAnalyticsUI(0, 0, 0, 0, {}, {}, {}, {});
+                return;
+            }
+            const result = await response.json();
+            analyticsEntries = [{
+                shortCode: linkFilter,
+                linkData: result.link || {},
+                analytics: result.analytics || null
+            }];
         }
         
-        const linksSnapshot = await linksQuery.get();
-        
-        if (linksSnapshot.empty) {
-            console.log('No links found for user');
-            // Update UI with zeros
-            updateAnalyticsUI(0, 0, 0, 0, {}, {}, {}, {});
-            return;
-        }
-        
-        // Fetch analytics for each link (NEW STRUCTURE)
-        for (const linkDoc of linksSnapshot.docs) {
-            const linkData = linkDoc.data();
-            const shortCode = linkData.shortCode;
-            
-            // Get analytics document for this link (single document per link)
-            // Use toFirestoreId to handle shortCodes with slashes (e.g., username/slug)
-            const firestoreId = toFirestoreId(shortCode);
-            const analyticsDoc = await db.collection('analytics').doc(firestoreId).get();
-            
-            if (analyticsDoc.exists) {
-                const analytics = analyticsDoc.data();
+        // Process each entry
+        for (const entry of analyticsEntries) {
+            const linkData = entry.linkData || {};
+            const shortCode = entry.shortCode;
+            const analytics = entry.analytics;
                 
                 // Read split test if filtering by a single link
                 if (linkFilter !== 'all' && linkData.splitTest) {
@@ -2585,7 +2493,6 @@ async function loadAnalyticsData(linkFilter) {
                     });
                 }
             }
-        }
         
         // Sort click history by timestamp
         allClickHistory.sort((a, b) => {
@@ -2986,62 +2893,66 @@ function openDetailedGeographicView() {
 
 async function loadDetailedGeographicData() {
     try {
-        if (typeof firebase === 'undefined' || !firebase.firestore) {
-            showToast('Firestore not available', 'error');
-            return;
-        }
-        
         if (!currentUser || !currentUser.uid) {
             console.log('User not authenticated');
             return;
         }
         
-        const db = firebase.firestore();
+        const token = await getAuthToken();
+        if (!token) return;
+        
         allGeoClicks = [];
         
         // Get current link filter from analytics page
         const analyticsLinkSelect = document.getElementById('analyticsLinkSelect');
         const linkFilter = analyticsLinkSelect ? analyticsLinkSelect.value : 'all';
         
-        // Fetch links based on filter
-        let linksQuery;
+        // Fetch analytics data via API
+        let analyticsEntries = [];
         if (linkFilter === 'all') {
-            linksQuery = db.collection('links').where('userId', '==', currentUser.uid);
+            const response = await fetch('/api/user/analytics', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) {
+                console.log('No analytics data found');
+                renderGeoClicksTable([]);
+                return;
+            }
+            const result = await response.json();
+            analyticsEntries = result.data || [];
         } else {
-            linksQuery = db.collection('links').where('shortCode', '==', linkFilter).where('userId', '==', currentUser.uid);
+            const response = await fetch(`/api/analytics/${encodeURIComponent(linkFilter)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) {
+                console.log('No analytics data found');
+                renderGeoClicksTable([]);
+                return;
+            }
+            const result = await response.json();
+            analyticsEntries = [{
+                shortCode: linkFilter,
+                linkData: result.link || {},
+                analytics: result.analytics || null
+            }];
         }
         
-        const linksSnapshot = await linksQuery.get();
-        
-        if (linksSnapshot.empty) {
-            console.log('No links found');
-            renderGeoClicksTable([]);
-            return;
-        }
-        
-        // Fetch all clicks with location data
-        for (const linkDoc of linksSnapshot.docs) {
-            const linkData = linkDoc.data();
-            const shortCode = linkData.shortCode;
+        // Extract click history with location data
+        for (const entry of analyticsEntries) {
+            const analytics = entry.analytics;
+            const linkData = entry.linkData || {};
+            const shortCode = entry.shortCode;
             
-            // Use toFirestoreId to handle shortCodes with slashes (e.g., username/slug)
-            const firestoreId = toFirestoreId(shortCode);
-            const analyticsDoc = await db.collection('analytics').doc(firestoreId).get();
-            
-            if (analyticsDoc.exists) {
-                const analytics = analyticsDoc.data();
-                
-                if (analytics.clickHistory && Array.isArray(analytics.clickHistory)) {
-                    analytics.clickHistory.forEach(click => {
-                        if (click.location) {
-                            allGeoClicks.push({
-                                ...click,
-                                shortCode,
-                                shortUrl: linkData.shortUrl
-                            });
-                        }
-                    });
-                }
+            if (analytics && analytics.clickHistory && Array.isArray(analytics.clickHistory)) {
+                analytics.clickHistory.forEach(click => {
+                    if (click.location) {
+                        allGeoClicks.push({
+                            ...click,
+                            shortCode,
+                            shortUrl: linkData.shortUrl
+                        });
+                    }
+                });
             }
         }
         

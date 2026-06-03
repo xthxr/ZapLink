@@ -185,7 +185,7 @@ class VersionChecker {
             // Links
             .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
             // Bullet lists
-            .replace(/^\- (.+)$/gim, '<li>$1</li>')
+            .replace(/^- (.+)$/gim, '<li>$1</li>')
             .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
             // Horizontal rule
             .replace(/^---$/gim, '<hr>')
