@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
@@ -50,7 +50,6 @@
     overflow-x: hidden;
   }
 
-  /* ── ambient bg ── */
   body::before {
     content: '';
     position: fixed;
@@ -68,7 +67,7 @@
     height: 58px;
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 2rem;
-    background: rgba(10,10,15,0.85);
+    background: rgba(10,10,15,0.92);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
   }
@@ -79,6 +78,7 @@
     color: var(--text);
     text-decoration: none;
     letter-spacing: 0.04em;
+    flex-shrink: 0;
   }
   .nav-brand span { color: var(--accent); }
 
@@ -118,6 +118,91 @@
     color: #0a0a0f;
   }
   .btn-nav.primary:hover { opacity: 0.9; }
+
+  /* ── MOBILE MENU BUTTON ── */
+  .menu-btn {
+    display: none;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    transition: var(--t);
+    z-index: 1001;
+  }
+  .menu-btn:hover { background: var(--surface-hover); }
+
+  /* ── MOBILE DRAWER ── */
+  .mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 58px; left: 0; right: 0;
+    background: rgba(10,10,15,0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem 1.5rem;
+    z-index: 999;
+    flex-direction: column;
+    gap: 0.25rem;
+    transform: translateY(-8px);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .mobile-drawer.open {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .mobile-drawer a {
+    font-size: 0.9rem; font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    transition: var(--t);
+  }
+  .mobile-drawer a:hover { color: var(--text); background: var(--surface-hover); }
+  .mobile-drawer a.active { color: var(--accent); background: var(--accent-dim); }
+  .mobile-drawer-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0.5rem 0;
+  }
+  .mobile-drawer-cta {
+    display: flex; gap: 0.5rem; margin-top: 0.25rem;
+  }
+  .mobile-drawer-cta a {
+    flex: 1; text-align: center;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600;
+    text-decoration: none;
+    transition: var(--t);
+  }
+  .mobile-drawer-cta .login {
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .mobile-drawer-cta .login:hover { color: var(--text); background: var(--surface-hover); }
+  .mobile-drawer-cta .signup {
+    background: var(--accent);
+    color: #0a0a0f;
+    border: 1px solid var(--accent);
+  }
+  .mobile-drawer-cta .signup:hover { opacity: 0.88; }
+
+  /* overlay behind drawer */
+  .drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 58px 0 0 0;
+    z-index: 998;
+    background: transparent;
+  }
+  .drawer-overlay.open { display: block; }
 
   /* ── MAIN LAYOUT ── */
   main {
@@ -169,10 +254,6 @@
     grid-template-columns: 1fr 380px;
     gap: 1.25rem;
     align-items: start;
-  }
-
-  @media (max-width: 900px) {
-    .qr-grid { grid-template-columns: 1fr; }
   }
 
   /* ── GLASS CARD ── */
@@ -250,7 +331,6 @@
     background: rgba(99,179,237,0.04);
   }
   input::placeholder, textarea::placeholder { color: var(--text-subtle); }
-
   select option { background: #1a1a2e; color: var(--text); }
 
   .input-row {
@@ -258,9 +338,6 @@
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
   }
-
-  /* wifi fields */
-  #wifi-fields .form-group { margin-bottom: 1rem; }
 
   /* ── CUSTOMISE SECTION ── */
   .section-divider {
@@ -295,7 +372,6 @@
   }
   .color-field span { font-size: 0.8rem; color: var(--text-muted); }
 
-  /* error correction + size */
   .ec-grid {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
   }
@@ -344,7 +420,6 @@
   .qr-placeholder svg { opacity: 0.25; }
   .qr-placeholder p { font-size: 0.8rem; }
 
-  /* download buttons */
   .dl-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;
     margin-bottom: 1rem;
@@ -384,7 +459,6 @@
   .btn-generate:hover { opacity: 0.88; transform: translateY(-1px); }
   .btn-generate:active { transform: translateY(0); }
 
-  /* copy link row */
   .copy-row {
     display: flex; gap: 0.5rem;
     margin-top: 0.75rem;
@@ -410,7 +484,6 @@
   .btn-copy:hover { border-color: var(--border-accent); color: var(--accent); }
   .btn-copy.copied { color: var(--green); border-color: var(--green); }
 
-  /* stats strip under preview */
   .qr-stats {
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 1px;
@@ -467,7 +540,7 @@
     display: flex; align-items: center; justify-content: center;
     min-height: 80px;
   }
-  .history-item .hi-preview canvas, .history-item .hi-preview img {
+  .history-item .hi-preview img {
     max-width: 72px; max-height: 72px;
   }
   .history-item .hi-label {
@@ -497,52 +570,19 @@
     backdrop-filter: blur(12px);
     white-space: nowrap;
   }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* ── MOBILE NAV ── */
-  .menu-btn {
-    display: none;
-    background: none; border: 1px solid var(--border);
-    border-radius: 8px; padding: 0.4rem 0.6rem;
-    color: var(--text); cursor: pointer;
-    font-size: 1.1rem;
-  }
-
-  @media (max-width: 768px) {
-    .nav-links { display: none; }
-    .nav-cta { display: none; }
-    .menu-btn { display: block; }
-    .input-row { grid-template-columns: 1fr; }
-    .color-row { grid-template-columns: 1fr; }
-    .dl-grid { grid-template-columns: 1fr 1fr; }
-    main { padding: 78px 1rem 3rem; }
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ── RANGE SLIDER ── */
-  input[type="range"] {
-    width: 100%;
-    accent-color: var(--accent);
-  }
-
-  .range-row {
-    display: flex; align-items: center; gap: 0.75rem;
-  }
+  input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .range-row { display: flex; align-items: center; gap: 0.75rem; }
   .range-row input[type="range"] { flex: 1; }
   .range-val {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--accent);
-    min-width: 36px;
-    text-align: right;
+    font-size: 0.8rem; color: var(--accent);
+    min-width: 36px; text-align: right;
   }
 
-  /* format toggle */
-  .format-pills {
-    display: flex; gap: 6px;
-  }
+  .format-pills { display: flex; gap: 6px; }
   .fmt-btn {
     padding: 0.35rem 0.85rem;
     font-size: 0.75rem; font-weight: 600;
@@ -559,14 +599,24 @@
     color: var(--accent);
   }
 
-  /* hidden tab content */
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* size indicator */
-  .size-note {
-    font-size: 0.72rem; color: var(--text-subtle);
-    margin-top: 0.35rem;
+  .size-note { font-size: 0.72rem; color: var(--text-subtle); margin-top: 0.35rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .qr-grid { grid-template-columns: 1fr; }
+    .preview-card { position: static; }
+  }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .menu-btn { display: flex; align-items: center; justify-content: center; }
+    .input-row { grid-template-columns: 1fr; }
+    .color-row { grid-template-columns: 1fr; }
+    main { padding: 78px 1rem 3rem; }
   }
 </style>
 </head>
@@ -576,18 +626,39 @@
 <!-- ── NAV ── -->
 <nav>
   <a href="/" class="nav-brand">PIIK<span>.ME</span></a>
+
   <div class="nav-links">
     <a href="/">Platform</a>
     <a href="/#features">Features</a>
-    <a href="/qr-generator.html" class="active">QR Generator</a>
-    <a href="https://github.com/xthxr/piik.me" target="_blank" rel="noopener">GitHub</a>
+    <a href="qr-generator.html" class="active">QR Generator</a>
+    <a href="https://github.com/xthxr/piik.me" target="_blank" rel="noopener noreferrer">GitHub</a>
   </div>
+
   <div class="nav-cta">
     <a href="/home" class="btn-nav">Log in</a>
     <a href="/home" class="btn-nav primary">Get Started</a>
   </div>
-  <button class="menu-btn" aria-label="Menu">&#9776;</button>
+
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileDrawer">
+    <i class="fas fa-bars" id="menuIcon"></i>
+  </button>
 </nav>
+
+<!-- ── MOBILE DRAWER ── -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="mobile-drawer" id="mobileDrawer" role="navigation" aria-label="Mobile navigation">
+  <a href="/">Platform</a>
+  <a href="/#features">Features</a>
+  <a href="qr-generator.html" class="active">QR Generator</a>
+  <a href="https://github.com/xthxr/piik.me" target="_blank" rel="noopener noreferrer">
+    <i class="fab fa-github" style="margin-right:6px;"></i>GitHub
+  </a>
+  <div class="mobile-drawer-divider"></div>
+  <div class="mobile-drawer-cta">
+    <a href="/home" class="login">Log in</a>
+    <a href="/home" class="signup">Get Started</a>
+  </div>
+</div>
 
 <main>
 
@@ -609,13 +680,12 @@
       <div class="card">
         <p class="card-title">Content type</p>
 
-        <!-- TYPE TABS -->
         <div class="tabs" id="type-tabs" role="tablist">
           <button class="tab active" data-type="url" role="tab" aria-selected="true">URL</button>
-          <button class="tab" data-type="text" role="tab">Text</button>
-          <button class="tab" data-type="wifi" role="tab">WiFi</button>
-          <button class="tab" data-type="vcard" role="tab">vCard</button>
-          <button class="tab" data-type="email" role="tab">Email</button>
+          <button class="tab" data-type="text" role="tab" aria-selected="false">Text</button>
+          <button class="tab" data-type="wifi" role="tab" aria-selected="false">WiFi</button>
+          <button class="tab" data-type="vcard" role="tab" aria-selected="false">vCard</button>
+          <button class="tab" data-type="email" role="tab" aria-selected="false">Email</button>
         </div>
 
         <!-- URL -->
@@ -653,8 +723,8 @@
             </select>
           </div>
           <div class="form-group">
-            <label>
-              <input type="checkbox" id="wifi-hidden" style="width:auto; margin-right:6px;" />
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="wifi-hidden" style="width:auto;margin:0;cursor:pointer;" />
               Hidden network
             </label>
           </div>
@@ -707,9 +777,7 @@
         </div>
 
         <!-- ── CUSTOMISE ── -->
-        <div class="section-divider">
-          <span>Customise</span><hr />
-        </div>
+        <div class="section-divider"><span>Customise</span><hr /></div>
 
         <div class="color-row">
           <div class="form-group">
@@ -766,13 +834,11 @@
 
         <div class="qr-canvas-wrap" id="qr-wrap">
           <div id="qr-output">
-            <div class="qr-placeholder">
+            <div class="qr-placeholder" id="qr-placeholder">
               <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
                 <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3"/>
                 <rect x="16" y="5" width="3" height="3"/><rect x="5" y="16" width="3" height="3"/>
-                <line x1="14" y1="14" x2="14" y2="14"/><line x1="17" y1="14" x2="17" y2="14"/>
-                <line x1="14" y1="17" x2="14" y2="17"/><line x1="17" y1="17" x2="17" y2="17"/>
               </svg>
               <p>Enter content to generate</p>
             </div>
@@ -784,12 +850,12 @@
           Generate QR Code
         </button>
 
-        <div class="dl-grid" id="dl-btns" style="margin-top:0.75rem; display:none;">
-          <button class="btn-dl" id="dl-png" onclick="downloadQR('png')">
+        <div class="dl-grid" id="dl-btns" style="margin-top:0.75rem;display:none;">
+          <button class="btn-dl" onclick="downloadQR('png')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             PNG
           </button>
-          <button class="btn-dl" id="dl-svg" onclick="downloadQR('svg')">
+          <button class="btn-dl" onclick="downloadQR('svg')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             SVG
           </button>
@@ -803,7 +869,6 @@
           </button>
         </div>
 
-        <!-- encoded content copy -->
         <div class="copy-row" id="copy-row" style="display:none;">
           <input type="text" id="encoded-preview" readonly placeholder="Encoded content" />
           <button class="btn-copy" id="copy-btn" onclick="copyEncoded()">
@@ -812,7 +877,6 @@
           </button>
         </div>
 
-        <!-- stats -->
         <div class="qr-stats" id="qr-stats" style="display:none;">
           <div class="qr-stat">
             <span class="val" id="stat-size">—</span>
@@ -841,31 +905,93 @@
 
 </main>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
+  /* ============================================================
+     STATE
+  ============================================================ */
   let activeType = 'url';
-  let activeEC = 'L';
-  let activeFmt = 'png';
+  let activeEC   = 'L';
+  let activeFmt  = 'png';
+
+  /**
+   * currentQRData — the payload that was last *rendered* to canvas.
+   * All action handlers (download, copy, share) read THIS, never the form.
+   */
   let currentQRData = null;
-  let sessionHistory = [];
-  let qrInstance = null;
 
-  const ECMap = { L: QRCode.CorrectLevel.L, M: QRCode.CorrectLevel.M, Q: QRCode.CorrectLevel.Q, H: QRCode.CorrectLevel.H };
+  let sessionHistory  = [];
+  let historySaveTimer = null;   // FIX: cancel stale history saves
 
-  /* ── TAB SWITCHING ── */
+  const ECMap = {
+    L: QRCode.CorrectLevel.L,
+    M: QRCode.CorrectLevel.M,
+    Q: QRCode.CorrectLevel.Q,
+    H: QRCode.CorrectLevel.H
+  };
+
+  /* ============================================================
+     MOBILE DRAWER
+  ============================================================ */
+  const menuBtn      = document.getElementById('menuBtn');
+  const menuIcon     = document.getElementById('menuIcon');
+  const mobileDrawer = document.getElementById('mobileDrawer');
+  const drawerOverlay = document.getElementById('drawerOverlay');
+
+  function openDrawer() {
+    mobileDrawer.classList.add('open');
+    drawerOverlay.classList.add('open');
+    menuBtn.setAttribute('aria-expanded', 'true');
+    menuIcon.className = 'fas fa-times';
+  }
+
+  function closeDrawer() {
+    mobileDrawer.classList.remove('open');
+    drawerOverlay.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuIcon.className = 'fas fa-bars';
+  }
+
+  menuBtn.addEventListener('click', () => {
+    mobileDrawer.classList.contains('open') ? closeDrawer() : openDrawer();
+  });
+  drawerOverlay.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+  // Close drawer when a link inside it is tapped
+  mobileDrawer.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', closeDrawer);
+  });
+
+  /* ============================================================
+     TAB SWITCHING
+  ============================================================ */
   document.getElementById('type-tabs').addEventListener('click', e => {
     const btn = e.target.closest('.tab');
     if (!btn) return;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
     document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+
     btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
     activeType = btn.dataset.type;
     document.getElementById('tab-' + activeType).classList.add('active');
+
+    // FIX: clear preview when switching to a tab that has no content yet
+    const newContent = buildContent();
+    if (!newContent) {
+      clearPreview();
+    }
   });
 
-  /* ── ERROR CORRECTION ── */
+  /* ============================================================
+     ERROR CORRECTION
+  ============================================================ */
   document.getElementById('ec-btns').addEventListener('click', e => {
     const btn = e.target.closest('.ec-btn');
     if (!btn) return;
@@ -876,7 +1002,9 @@
     if (currentQRData) generateQR();
   });
 
-  /* ── FORMAT PILLS ── */
+  /* ============================================================
+     FORMAT PILLS
+  ============================================================ */
   document.getElementById('fmt-pills').addEventListener('click', e => {
     const btn = e.target.closest('.fmt-btn');
     if (!btn) return;
@@ -885,14 +1013,18 @@
     activeFmt = btn.dataset.fmt;
   });
 
-  /* ── SIZE SLIDER ── */
+  /* ============================================================
+     SIZE SLIDER
+  ============================================================ */
   document.getElementById('qr-size').addEventListener('input', e => {
     document.getElementById('size-val').textContent = e.target.value + 'px';
     document.getElementById('stat-size').textContent = e.target.value + 'px';
     if (currentQRData) generateQR();
   });
 
-  /* ── COLOR PICKERS ── */
+  /* ============================================================
+     COLOR PICKERS
+  ============================================================ */
   document.getElementById('fg-color').addEventListener('input', e => {
     document.getElementById('fg-label').textContent = e.target.value;
     if (currentQRData) generateQR();
@@ -902,11 +1034,18 @@
     if (currentQRData) generateQR();
   });
 
-  /* ── LIVE GENERATION (debounced) ── */
+  /* ============================================================
+     LIVE GENERATION (debounced)
+  ============================================================ */
   let debTimer;
+  const LIVE_INPUTS = [
+    'url-input','text-input','wifi-ssid','wifi-pass',
+    'vc-first','vc-last','vc-org','vc-phone','vc-email','vc-url',
+    'em-to','em-subject','em-body'
+  ];
+
   document.addEventListener('input', e => {
-    const inputs = ['url-input','text-input','wifi-ssid','wifi-pass','vc-first','vc-last','vc-org','vc-phone','vc-email','vc-url','em-to','em-subject','em-body'];
-    if (inputs.includes(e.target.id)) {
+    if (LIVE_INPUTS.includes(e.target.id)) {
       clearTimeout(debTimer);
       debTimer = setTimeout(generateQR, 420);
     }
@@ -915,61 +1054,129 @@
     if (e.target.id === 'wifi-enc' || e.target.id === 'wifi-hidden') generateQR();
   });
 
-  /* ── BUILD CONTENT STRING ── */
+  /* ============================================================
+     ESCAPE HELPERS
+     FIX: Escape reserved characters in WiFi and vCard payloads.
+     WiFi: escape \  ;  ,  "  :
+     vCard: escape \  ,  ; (newlines kept as \n in string literals)
+  ============================================================ */
+
+  /**
+   * Escape a value for use inside a WiFi QR string.
+   * Reserved chars: \ ; , " :
+   */
+  function escapeWifi(str) {
+    return String(str)
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,')
+      .replace(/"/g, '\\"')
+      .replace(/:/g, '\\:');
+  }
+
+  /**
+   * Escape a value for use inside a vCard property value.
+   * Reserved chars: \ , ;
+   * Newlines inside values are escaped as \n (vCard literal).
+   */
+  function escapeVcard(str) {
+    return String(str)
+      .replace(/\\/g, '\\\\')
+      .replace(/,/g, '\\,')
+      .replace(/;/g, '\\;')
+      .replace(/\r?\n/g, '\\n');
+  }
+
+  /* ============================================================
+     BUILD CONTENT STRING
+  ============================================================ */
   function buildContent() {
     switch (activeType) {
+
       case 'url': {
         const u = document.getElementById('url-input').value.trim();
         return u || null;
       }
+
       case 'text': {
         const t = document.getElementById('text-input').value.trim();
         return t || null;
       }
+
       case 'wifi': {
         const ssid = document.getElementById('wifi-ssid').value.trim();
         if (!ssid) return null;
-        const pass = document.getElementById('wifi-pass').value;
-        const enc = document.getElementById('wifi-enc').value;
+        const pass   = document.getElementById('wifi-pass').value;
+        const enc    = document.getElementById('wifi-enc').value;
         const hidden = document.getElementById('wifi-hidden').checked ? 'true' : 'false';
-        return `WIFI:T:${enc};S:${ssid};P:${pass};H:${hidden};;`;
+        // FIX: escape all values before composing the payload
+        return `WIFI:T:${escapeWifi(enc)};S:${escapeWifi(ssid)};P:${escapeWifi(pass)};H:${hidden};;`;
       }
+
       case 'vcard': {
         const first = document.getElementById('vc-first').value.trim();
-        const last = document.getElementById('vc-last').value.trim();
+        const last  = document.getElementById('vc-last').value.trim();
         if (!first && !last) return null;
-        const org = document.getElementById('vc-org').value.trim();
+        const org   = document.getElementById('vc-org').value.trim();
         const phone = document.getElementById('vc-phone').value.trim();
         const email = document.getElementById('vc-email').value.trim();
-        const url = document.getElementById('vc-url').value.trim();
-        let v = `BEGIN:VCARD\nVERSION:3.0\nN:${last};${first};;;\nFN:${first} ${last}\n`;
-        if (org) v += `ORG:${org}\n`;
-        if (phone) v += `TEL:${phone}\n`;
-        if (email) v += `EMAIL:${email}\n`;
-        if (url) v += `URL:${url}\n`;
+        const url   = document.getElementById('vc-url').value.trim();
+        // FIX: escape all field values before composing the payload
+        let v = `BEGIN:VCARD\r\nVERSION:3.0\r\nN:${escapeVcard(last)};${escapeVcard(first)};;;\r\nFN:${escapeVcard(first + (first && last ? ' ' : '') + last)}\r\n`;
+        if (org)   v += `ORG:${escapeVcard(org)}\r\n`;
+        if (phone) v += `TEL:${escapeVcard(phone)}\r\n`;
+        if (email) v += `EMAIL:${escapeVcard(email)}\r\n`;
+        if (url)   v += `URL:${url}\r\n`;
         v += 'END:VCARD';
         return v;
       }
+
       case 'email': {
         const to = document.getElementById('em-to').value.trim();
         if (!to) return null;
         const subject = encodeURIComponent(document.getElementById('em-subject').value.trim());
-        const body = encodeURIComponent(document.getElementById('em-body').value.trim());
+        const body    = encodeURIComponent(document.getElementById('em-body').value.trim());
         return `mailto:${to}?subject=${subject}&body=${body}`;
       }
     }
     return null;
   }
 
-  /* ── GENERATE ── */
+  /* ============================================================
+     CLEAR PREVIEW
+  ============================================================ */
+  function clearPreview() {
+    currentQRData = null;
+    const output = document.getElementById('qr-output');
+    output.innerHTML = '';
+    const ph = document.createElement('div');
+    ph.className = 'qr-placeholder';
+    ph.innerHTML = `
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3"/>
+        <rect x="16" y="5" width="3" height="3"/><rect x="5" y="16" width="3" height="3"/>
+      </svg>
+      <p>Enter content to generate</p>`;
+    output.appendChild(ph);
+    document.getElementById('dl-btns').style.display   = 'none';
+    document.getElementById('copy-row').style.display  = 'none';
+    document.getElementById('qr-stats').style.display  = 'none';
+  }
+
+  /* ============================================================
+     GENERATE QR
+  ============================================================ */
   function generateQR() {
     const content = buildContent();
-    if (!content) return;
-    currentQRData = content;
+    if (!content) { clearPreview(); return; }
+
+    // FIX: snapshot content NOW — lock it to this render cycle
+    const lockedContent = content;
 
     const size = parseInt(document.getElementById('qr-size').value);
-    const fg = document.getElementById('fg-color').value;
-    const bg = document.getElementById('bg-color').value;
+    const fg   = document.getElementById('fg-color').value;
+    const bg   = document.getElementById('bg-color').value;
 
     const output = document.getElementById('qr-output');
     output.innerHTML = '';
@@ -978,8 +1185,8 @@
     wrap.style.display = 'flex';
     output.appendChild(wrap);
 
-    qrInstance = new QRCode(wrap, {
-      text: content,
+    new QRCode(wrap, {
+      text: lockedContent,
       width: size,
       height: size,
       colorDark: fg,
@@ -987,62 +1194,79 @@
       correctLevel: ECMap[activeEC]
     });
 
-    /* update UI */
-    document.getElementById('dl-btns').style.display = 'grid';
+    // FIX: only after successful render do we update currentQRData
+    currentQRData = lockedContent;
+
+    document.getElementById('dl-btns').style.display  = 'grid';
     document.getElementById('copy-row').style.display = 'flex';
     document.getElementById('qr-stats').style.display = 'grid';
 
     const preview = document.getElementById('encoded-preview');
-    preview.value = content.length > 80 ? content.slice(0, 78) + '…' : content;
+    preview.value = lockedContent.length > 80
+      ? lockedContent.slice(0, 78) + '…'
+      : lockedContent;
 
-    document.getElementById('stat-size').textContent = size + 'px';
-    document.getElementById('stat-ec').textContent = activeEC;
-    document.getElementById('stat-chars').textContent = content.length;
+    document.getElementById('stat-size').textContent  = size + 'px';
+    document.getElementById('stat-ec').textContent    = activeEC;
+    document.getElementById('stat-chars').textContent = lockedContent.length;
 
-    /* save to history after 600ms (canvas needs a moment) */
-    setTimeout(() => saveToHistory(content), 650);
+    // FIX: cancel any pending history save, then schedule a new one that
+    // captures the canvas data-URL at fire time, not at schedule time.
+    clearTimeout(historySaveTimer);
+    historySaveTimer = setTimeout(() => {
+      const canvas = getCanvas();
+      if (!canvas) return;
+      // Pass both content AND the already-rendered data-URL
+      saveToHistory(lockedContent, canvas.toDataURL('image/png'));
+    }, 650);
   }
 
-  /* ── GET CANVAS ── */
+  /* ============================================================
+     GET CANVAS
+  ============================================================ */
   function getCanvas() {
     return document.querySelector('#qr-output canvas');
   }
 
-  /* ── DOWNLOAD ── */
+  /* ============================================================
+     DOWNLOAD
+     FIX: use currentQRData, never re-derive from form
+  ============================================================ */
   function downloadQR(fmt) {
-    const content = buildContent();
-    if (!content) { toast('Generate a QR code first'); return; }
+    if (!currentQRData) { toast('Generate a QR code first'); return; }
 
     if (fmt === 'png') {
       const canvas = getCanvas();
-      if (!canvas) return;
+      if (!canvas) { toast('No QR canvas found'); return; }
       const a = document.createElement('a');
       a.href = canvas.toDataURL('image/png');
       a.download = 'piikme-qr.png';
       a.click();
       toast('PNG downloaded ✓');
+
     } else {
-      /* SVG generation */
-      const size = parseInt(document.getElementById('qr-size').value);
-      const fg = document.getElementById('fg-color').value;
-      const bg = document.getElementById('bg-color').value;
-
+      // SVG: pixel-accurate export from current canvas
       const canvas = getCanvas();
-      if (!canvas) return;
+      if (!canvas) { toast('No QR canvas found'); return; }
 
-      /* Use the canvas pixel data to build an SVG */
-      const ctx2 = canvas.getContext('2d');
-      const w = canvas.width, h = canvas.height;
+      const size = parseInt(document.getElementById('qr-size').value);
+      const fg   = document.getElementById('fg-color').value;
+      const bg   = document.getElementById('bg-color').value;
+
+      const ctx2      = canvas.getContext('2d');
+      const w         = canvas.width;
+      const h         = canvas.height;
       const imageData = ctx2.getImageData(0, 0, w, h);
-      const data = imageData.data;
-      const moduleSize = 1;
-      let svgRects = '';
+      const data      = imageData.data;
+      let svgRects    = '';
 
       for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
           const idx = (y * w + x) * 4;
-          const r = data[idx], g = data[idx+1], b = data[idx+2];
-          const hex = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+          const r   = data[idx];
+          const g   = data[idx + 1];
+          const b   = data[idx + 2];
+          const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
           if (hex.toLowerCase() !== bg.toLowerCase()) {
             svgRects += `<rect x="${x}" y="${y}" width="1" height="1" fill="${fg}"/>`;
           }
@@ -1050,21 +1274,24 @@
       }
 
       const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${size}" height="${size}"><rect width="${w}" height="${h}" fill="${bg}"/>${svgRects}</svg>`;
-      const blob = new Blob([svgStr], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'piikme-qr.svg';
+      const blob   = new Blob([svgStr], { type: 'image/svg+xml' });
+      const url    = URL.createObjectURL(blob);
+      const a      = document.createElement('a');
+      a.href       = url;
+      a.download   = 'piikme-qr.svg';
       a.click();
       URL.revokeObjectURL(url);
       toast('SVG downloaded ✓');
     }
   }
 
-  /* ── COPY IMAGE ── */
+  /* ============================================================
+     COPY IMAGE
+  ============================================================ */
   async function copyQRImage() {
+    if (!currentQRData) { toast('Generate first'); return; }
     const canvas = getCanvas();
-    if (!canvas) { toast('Generate first'); return; }
+    if (!canvas) { toast('No QR canvas found'); return; }
     try {
       canvas.toBlob(async blob => {
         await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
@@ -1075,38 +1302,56 @@
     }
   }
 
-  /* ── COPY ENCODED TEXT ── */
+  /* ============================================================
+     COPY ENCODED TEXT
+     FIX: use currentQRData, never re-derive from form
+  ============================================================ */
   function copyEncoded() {
-    const content = buildContent();
-    if (!content) return;
-    navigator.clipboard.writeText(content).then(() => {
+    if (!currentQRData) return;
+    navigator.clipboard.writeText(currentQRData).then(() => {
       const btn = document.getElementById('copy-btn');
       btn.classList.add('copied');
       btn.textContent = '✓ Copied';
       toast('Content copied ✓');
-      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy'; }, 2200);
-    });
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        // Rebuild safely — no innerHTML with user content
+        btn.textContent = '';
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '13'); svg.setAttribute('height', '13');
+        svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>';
+        btn.appendChild(svg);
+        btn.appendChild(document.createTextNode(' Copy'));
+      }, 2200);
+    }).catch(() => toast('Copy failed'));
   }
 
-  /* ── SHARE ── */
+  /* ============================================================
+     SHARE
+     FIX: use currentQRData
+  ============================================================ */
   async function shareQR() {
+    if (!currentQRData) { toast('Generate first'); return; }
     const canvas = getCanvas();
-    if (!canvas) { toast('Generate first'); return; }
-    if (!navigator.share) { toast('Share not supported'); return; }
+    if (!canvas) { toast('No QR canvas found'); return; }
+    if (!navigator.share) { toast('Share not supported in this browser'); return; }
     canvas.toBlob(async blob => {
       const file = new File([blob], 'piikme-qr.png', { type: 'image/png' });
       try {
         await navigator.share({ title: 'QR Code from piik.me', files: [file] });
-      } catch {}
+      } catch { /* user cancelled */ }
     });
   }
 
-  /* ── HISTORY ── */
-  function saveToHistory(content) {
-    const canvas = getCanvas();
-    if (!canvas) return;
-
-    const dataUrl = canvas.toDataURL('image/png');
+  /* ============================================================
+     HISTORY
+     FIX: accept dataUrl as parameter — no stale canvas read
+     FIX: build card with DOM nodes, never innerHTML with user content
+  ============================================================ */
+  function saveToHistory(content, dataUrl) {
     const existing = sessionHistory.findIndex(h => h.content === content);
     if (existing !== -1) sessionHistory.splice(existing, 1);
 
@@ -1116,42 +1361,87 @@
   }
 
   function renderHistory() {
-    const sec = document.getElementById('history-section');
+    const sec  = document.getElementById('history-section');
     const grid = document.getElementById('history-grid');
+
     if (sessionHistory.length === 0) { sec.style.display = 'none'; return; }
     sec.style.display = 'block';
     grid.innerHTML = '';
+
     sessionHistory.forEach(item => {
       const el = document.createElement('div');
       el.className = 'history-item';
-      el.innerHTML = `
-        <div class="hi-preview"><img src="${item.dataUrl}" alt="QR" /></div>
-        <span class="hi-type">${item.type.toUpperCase()}</span>
-        <span class="hi-label">${item.content.replace(/\n/g,' ')}</span>
-      `;
-      el.addEventListener('click', () => {
-        /* reload this QR */
-        currentQRData = item.content;
-        const output = document.getElementById('qr-output');
-        output.innerHTML = '';
-        const wrap = document.createElement('div');
-        output.appendChild(wrap);
-        const size = parseInt(document.getElementById('qr-size').value);
-        const fg = document.getElementById('fg-color').value;
-        const bg = document.getElementById('bg-color').value;
-        new QRCode(wrap, { text: item.content, width: size, height: size, colorDark: fg, colorLight: bg, correctLevel: ECMap[activeEC] });
-        document.getElementById('dl-btns').style.display = 'grid';
-        document.getElementById('copy-row').style.display = 'flex';
-        document.getElementById('qr-stats').style.display = 'grid';
-        document.getElementById('stat-chars').textContent = item.content.length;
-        document.getElementById('encoded-preview').value = item.content.length > 80 ? item.content.slice(0,78)+'…' : item.content;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
+
+      // Preview image
+      const previewWrap = document.createElement('div');
+      previewWrap.className = 'hi-preview';
+      const img = document.createElement('img');
+      img.src = item.dataUrl;
+      img.alt = 'QR preview';
+      previewWrap.appendChild(img);
+
+      // Type badge — safe, comes from our own activeType variable
+      const typeBadge = document.createElement('span');
+      typeBadge.className = 'hi-type';
+      typeBadge.textContent = item.type.toUpperCase();
+
+      // Label — FIX: textContent, never innerHTML
+      const label = document.createElement('span');
+      label.className = 'hi-label';
+      label.textContent = item.content.replace(/\r?\n/g, ' ');
+
+      el.appendChild(previewWrap);
+      el.appendChild(typeBadge);
+      el.appendChild(label);
+
+      // Restore on click — use saved content + dataUrl, not the form
+      el.addEventListener('click', () => restoreFromHistory(item));
+
       grid.appendChild(el);
     });
   }
 
-  /* ── TOAST ── */
+  function restoreFromHistory(item) {
+    // FIX: lock to the history item's payload — do not read the form
+    currentQRData = item.content;
+
+    const size = parseInt(document.getElementById('qr-size').value);
+    const fg   = document.getElementById('fg-color').value;
+    const bg   = document.getElementById('bg-color').value;
+
+    const output = document.getElementById('qr-output');
+    output.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    output.appendChild(wrap);
+
+    new QRCode(wrap, {
+      text: item.content,
+      width: size,
+      height: size,
+      colorDark: fg,
+      colorLight: bg,
+      correctLevel: ECMap[activeEC]
+    });
+
+    document.getElementById('dl-btns').style.display  = 'grid';
+    document.getElementById('copy-row').style.display = 'flex';
+    document.getElementById('qr-stats').style.display = 'grid';
+    document.getElementById('stat-chars').textContent = item.content.length;
+    document.getElementById('stat-size').textContent  = size + 'px';
+    document.getElementById('stat-ec').textContent    = activeEC;
+
+    const preview = document.getElementById('encoded-preview');
+    preview.value = item.content.length > 80
+      ? item.content.slice(0, 78) + '…'
+      : item.content;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ============================================================
+     TOAST
+  ============================================================ */
   function toast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1159,13 +1449,15 @@
     setTimeout(() => t.classList.remove('show'), 2800);
   }
 
-  /* ── ENTER KEY ON URL ── */
+  /* ============================================================
+     ENTER KEY ON URL INPUT
+  ============================================================ */
   document.getElementById('url-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') generateQR();
   });
 
-  /* init stat-ec */
-  document.getElementById('stat-ec').textContent = activeEC;
+  /* ── INIT ── */
+  document.getElementById('stat-ec').textContent   = activeEC;
   document.getElementById('stat-size').textContent = document.getElementById('qr-size').value + 'px';
 </script>
 
