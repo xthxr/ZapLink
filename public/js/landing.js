@@ -79,11 +79,15 @@ function initMobileMenu() {
             menu.classList.remove('translate-x-full');
             document.body.style.overflow = 'hidden';
             syncMenuState(true);
+            const icon = toggle.querySelector('i');
+            if (icon) icon.className = 'fas fa-times text-xl';
+            toggle.setAttribute('aria-label', 'Close mobile menu');
         } else {
             menu.classList.add('translate-x-full');
             document.body.style.overflow = '';
             const icon = toggle.querySelector('i');
             if (icon) icon.className = 'fas fa-bars text-xl';
+            toggle.setAttribute('aria-label', 'Open mobile menu');
         }
     }
 
