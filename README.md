@@ -360,30 +360,1735 @@ piik.me uses Firebase Firestore for scalable, persistent data storage.
 
 ## 🔌 API Reference
 
+All JSON API routes accept and return `application/json` unless noted otherwise. Replace `$BASE_URL` with your deployment origin (for example, `http://localhost:3000` in development or `https://piik.me` in production).
+
 ### Authentication
 
-Protected endpoints require a Firebase Auth token: 
+Protected endpoints require a valid Firebase ID token in the `Authorization` header:
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+Obtain the token from the Firebase client SDK (for example, `await firebase.auth().currentUser.getIdToken()`).
+
+| Status | Response body | When |
+|--------|---------------|------|
+| `401` | `{ "error": "Unauthorized" }` | Missing or non-Bearer `Authorization` header |
+| `401` | `{ "error": "Invalid token" }` | Token verification failed |
+| `503` | `{ "error": "Authentication service unavailable. Please configure Firebase." }` | Firebase Admin is not configured |
+
+### Rate Limiting
+
+All `/api/*` routes pass through a global rate limiter (default: **100 requests per 15 minutes** per IP). The bug-report endpoint has an additional limit of **5 requests per hour** per IP.
+
+When limited, the API responds with `429 Too Many Requests`:
+
+```json
+{
+  "success": false,
+  "error": "Too many requests, please try again later."
+}
+```
+
+### Endpoints Overview
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `GET` | `/api/system/status` | ❌ | Firebase connectivity status |
+| `POST` | `/api/shorten` | ✅ | Create a short link |
+| `GET` | `/api/user/links` | ✅ | List the authenticated user's links |
+| `GET` | `/api/user/analytics` | ✅ | Aggregated analytics for all user links |
+| `GET` | `/api/analytics/:shortCode` | ✅ | Analytics for one link |
+| `GET` | `/api/check-username/:username` | ✅ | Check username availability |
+| `GET` | `/api/check-shortcode/:shortCode` | ✅ | Check short-code availability |
+| `GET` | `/api/user/profile` | ✅ | Get or create user profile |
+| `POST` | `/api/user/username` | ✅ | Set or update username |
+| `GET` | `/api/user/bio-slug` | ✅ | Get bio slug (deprecated) |
+| `GET` | `/api/bio-links` | ✅ | List bio links |
+| `POST` | `/api/bio-links` | ✅ | Create a bio link |
+| `PUT` | `/api/bio-links/:id` | ✅ | Update a bio link |
+| `DELETE` | `/api/bio-links/:id` | ✅ | Delete a bio link |
+| `GET` | `/api/bio-links/check-slug/:slug` | ✅ | Check bio slug availability |
+| `DELETE` | `/api/user` | ✅ | Permanently delete account |
+| `PUT` | `/api/links/:shortCode/deactivate` | ✅ | Soft-deactivate a link |
+| `PUT` | `/api/links/:shortCode/reactivate` | ✅ | Reactivate a deactivated link |
+| `DELETE` | `/api/links/inactive` | ✅ | Permanently delete inactive links |
+| `DELETE` | `/api/links/:shortCode` | ✅ | Permanently delete one link |
+| `POST` | `/api/links/:shortCode/split-test` | ✅ | Configure A/B split test |
+| `DELETE` | `/api/links/:shortCode/split-test` | ✅ | Remove A/B split test |
+| `POST` | `/api/track/impression/:shortCode` | ❌ | Track an analytics-page impression |
+| `POST` | `/api/track/share/:shortCode` | ❌ | Legacy share endpoint (no-op counter) |
+| `POST` | `/api/bug-report` | ✅ | Create a GitHub bug-report issue |
+| `POST` | `/api/import-profile` | ❌ | Import Linktree/Bento HTML |
+| `POST` | `/api/admin/sync-redis` | ✅ | Sync all links to Redis |
+| `GET` | `/:shortCode` | ❌ | Redirect and track click |
+| `GET` | `/:username/:slug` | ❌ | Redirect vanity link and track click |
+| `HEAD` | `/:shortCode` | ❌ | Track impression without redirect |
+
+> **Note:** `POST /api/github/bug` is **not implemented**. Bug reports are submitted to `POST /api/bug-report`.
+
+> **Internal endpoint (not public API):** `POST /api/track-edge` exists as a Vercel serverless function for edge middleware. It requires `X-Internal-Request: true` and is not intended for external clients.
+
+When a `shortCode` contains a slash (for example, `username/my-link`), URL-encode it in API paths: `username%2Fmy-link`.
+
+---
+
+### System
+
+#### `GET /api/system/status`
+
+Returns whether Firebase Admin is connected and which storage mode the server is using.
+
+**Authentication:** None
+
+**Headers:** None required
+
+**Parameters:** None
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/system/status"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const response = await fetch(`${BASE_URL}/api/system/status`);
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "firebase": {
+    "enabled": true,
+    "mode": "firestore",
+    "reason": "Firebase connected successfully"
+  }
+}
+```
+
+**Errors:** None defined beyond standard HTTP failures.
+
+---
+
+### Link Management
+
+#### `POST /api/shorten`
+
+Creates a new short link for the authenticated user. Only `http://` and `https://` destination URLs are accepted.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `url` | string | ✅ | Destination URL to shorten |
+| `customShortCode` | string | ❌ | Vanity code (3–50 chars; letters, numbers, `-`, `_`) |
+| `username` | string | ❌ | Prefix for vanity or random codes (`username/code`) |
+| `utmParams` | object | ❌ | `{ source, medium, campaign, term, content }` appended to the URL |
+| `notes` | string | ❌ | User notes stored on the link |
+| `tags` | string[] | ❌ | Tags stored on the link |
+| `expiresAt` | string | ❌ | ISO date string for link expiry |
+| `maxClicks` | number | ❌ | Maximum clicks before auto-deactivation |
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/shorten" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/page",
+    "customShortCode": "my-link",
+    "utmParams": {
+      "source": "newsletter",
+      "medium": "email",
+      "campaign": "launch"
+    },
+    "notes": "Campaign landing page",
+    "tags": ["marketing", "launch"]
+  }'
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/shorten`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    url: 'https://example.com/page',
+    customShortCode: 'my-link',
+    utmParams: {
+      source: 'newsletter',
+      medium: 'email',
+      campaign: 'launch'
+    }
+  })
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "shortUrl": "https://piik.me/my-link",
+  "shortCode": "my-link",
+  "originalUrl": "https://example.com/page?utm_source=newsletter&utm_medium=email&utm_campaign=launch",
+  "isCustom": true
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `400` | `{ "error": "URL is required" }` | Missing `url` |
+| `400` | `{ "error": "Invalid URL" }` | Malformed URL |
+| `400` | `{ "error": "Only http and https URLs are allowed" }` | Blocked URL scheme |
+| `400` | `{ "error": "Custom short code must be at least 3 characters" }` | Vanity code too short |
+| `409` | `{ "error": "This custom short code is already taken" }` | Duplicate vanity code |
+| `401` / `503` | See [Authentication](#authentication) | Invalid or unavailable auth |
+
+---
+
+#### `GET /api/user/links`
+
+Returns all links owned by the authenticated user, including aggregated analytics for each link. Expired or scheduled-for-deletion inactive links may be removed automatically during this request.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
 ```http
 Authorization: Bearer {firebase-auth-token}
 ```
 
-### Endpoints
+**Parameters:** None
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/shorten` | Create short link |
-| `GET` | `/api/user/links` | Get user's links |
-| `GET` | `/api/analytics/: shortCode` | Get analytics data |
-| `POST` | `/api/track/impression/: shortCode` | Track impression |
-| `POST` | `/api/track/share/:shortCode` | Track share |
-| `GET` | `/: shortCode` | Redirect (auto-tracks click) |
-| `POST` | `/api/github/bug` | Create GitHub issue |
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/user/links" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/user/links`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "links": [
+    {
+      "originalUrl": "https://example.com",
+      "shortCode": "abc1234",
+      "shortUrl": "https://piik.me/abc1234",
+      "userId": "firebase-uid",
+      "userEmail": "user@example.com",
+      "isActive": true,
+      "clicks": 42,
+      "analytics": {
+        "impressions": 100,
+        "clicks": 42,
+        "shares": 5,
+        "devices": { "Mobile": 30, "Desktop": 12 },
+        "browsers": { "Chrome": 25 },
+        "referrers": { "Google": 10 },
+        "countries": { "United States": 20 },
+        "locations": { "New York, New York": 8 }
+      },
+      "id": "abc1234"
+    }
+  ]
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `500` | `{ "error": "Failed to fetch links", "details": "..." }` | Firestore query failure |
+| `401` / `503` | See [Authentication](#authentication) | Invalid or unavailable auth |
+
+---
+
+#### `GET /api/check-shortcode/:shortCode`
+
+Checks whether a short code is available before creating a link.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**URL parameters:** `shortCode` — the code to check (URL-encode slashes)
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/check-shortcode/my-link" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+const shortCode = encodeURIComponent('my-link');
+
+const response = await fetch(`${BASE_URL}/api/check-shortcode/${shortCode}`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{ "available": true }
+```
+
+**Errors:** On lookup failure, the handler returns `{ "available": true }` with status `200`.
+
+---
+
+#### `PUT /api/links/:shortCode/deactivate`
+
+Soft-deactivates a link. The link is scheduled for permanent deletion after 15 days.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+**URL parameters:** `shortCode` (URL-encoded if it contains `/`)
+
+**Request body:** None
+
+**cURL:**
+
+```bash
+curl -X PUT "$BASE_URL/api/links/my-link/deactivate" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+const shortCode = encodeURIComponent('my-link');
+
+const response = await fetch(`${BASE_URL}/api/links/${shortCode}/deactivate`, {
+  method: 'PUT',
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Link deactivated. Will be permanently deleted in 15 days."
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `404` | `{ "error": "Link not found" }` | Unknown short code |
+| `403` | `{ "error": "You do not have permission to deactivate this link" }` | Not the link owner |
+| `500` | `{ "error": "Failed to deactivate link" }` | Server error |
+
+---
+
+#### `PUT /api/links/:shortCode/reactivate`
+
+Reactivates a previously deactivated link.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**URL parameters:** `shortCode` (URL-encoded if it contains `/`)
+
+**cURL:**
+
+```bash
+curl -X PUT "$BASE_URL/api/links/my-link/reactivate" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+const shortCode = encodeURIComponent('my-link');
+
+const response = await fetch(`${BASE_URL}/api/links/${shortCode}/reactivate`, {
+  method: 'PUT',
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Link reactivated successfully"
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `404` | `{ "error": "Link not found" }` | Unknown short code |
+| `403` | `{ "error": "You do not have permission to reactivate this link" }` | Not the link owner |
+| `500` | `{ "error": "Failed to reactivate link" }` | Server error |
+
+---
+
+#### `DELETE /api/links/:shortCode`
+
+Permanently deletes a single link and its analytics data.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**URL parameters:** `shortCode` (URL-encoded if it contains `/`)
+
+**cURL:**
+
+```bash
+curl -X DELETE "$BASE_URL/api/links/my-link" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+const shortCode = encodeURIComponent('my-link');
+
+const response = await fetch(`${BASE_URL}/api/links/${shortCode}`, {
+  method: 'DELETE',
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Link deleted successfully"
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `404` | `{ "error": "Link not found" }` | Unknown short code |
+| `403` | `{ "error": "You do not have permission to delete this link" }` | Not the link owner |
+| `500` | `{ "error": "Failed to delete link", "details": "..." }` | Server error |
+
+---
+
+#### `DELETE /api/links/inactive`
+
+Permanently deletes all inactive links belonging to the authenticated user.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**cURL:**
+
+```bash
+curl -X DELETE "$BASE_URL/api/links/inactive" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/links/inactive`, {
+  method: 'DELETE',
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Successfully deleted 2 inactive links",
+  "count": 2
+}
+```
+
+When there is nothing to delete:
+
+```json
+{
+  "success": true,
+  "message": "No inactive links to delete",
+  "count": 0
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `500` | `{ "error": "Failed to delete inactive links" }` | Server error |
+
+---
+
+#### `POST /api/links/:shortCode/split-test`
+
+Configures an A/B split test on a link. Variants must include unique labels, valid URLs, integer weights from 0–100, and weights that sum to exactly 100.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+**Request body:**
+
+```json
+{
+  "variants": [
+    { "label": "A", "url": "https://example.com/a", "weight": 50 },
+    { "label": "B", "url": "https://example.com/b", "weight": 50 }
+  ]
+}
+```
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/links/my-link/split-test" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "variants": [
+      { "label": "A", "url": "https://example.com/a", "weight": 50 },
+      { "label": "B", "url": "https://example.com/b", "weight": 50 }
+    ]
+  }'
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+const shortCode = encodeURIComponent('my-link');
+
+const response = await fetch(`${BASE_URL}/api/links/${shortCode}/split-test`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    variants: [
+      { label: 'A', url: 'https://example.com/a', weight: 50 },
+      { label: 'B', url: 'https://example.com/b', weight: 50 }
+    ]
+  })
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Split test configured successfully"
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `400` | `{ "error": "A split test requires at least 2 variants." }` | Invalid `variants` array |
+| `400` | `{ "error": "All variant weights must sum to 100. Current total: 90." }` | Weights do not sum to 100 |
+| `404` | `{ "error": "Link not found" }` | Unknown short code |
+| `403` | `{ "error": "You do not have permission to modify this link" }` | Not the link owner |
+| `500` | `{ "error": "Failed to configure split test", "details": "..." }` | Server error |
+
+---
+
+#### `DELETE /api/links/:shortCode/split-test`
+
+Removes split-test configuration from a link.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**cURL:**
+
+```bash
+curl -X DELETE "$BASE_URL/api/links/my-link/split-test" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+const shortCode = encodeURIComponent('my-link');
+
+const response = await fetch(`${BASE_URL}/api/links/${shortCode}/split-test`, {
+  method: 'DELETE',
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Split test removed successfully"
+}
+```
+
+**Errors:** Same ownership and not-found patterns as the split-test `POST` endpoint.
+
+---
+
+### Analytics
+
+#### `GET /api/analytics/:shortCode`
+
+Returns link metadata and aggregated analytics for a single short code. Only the link owner may access the data.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**URL parameters:** `shortCode` (URL-encoded if it contains `/`)
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/analytics/my-link" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+const shortCode = encodeURIComponent('my-link');
+
+const response = await fetch(`${BASE_URL}/api/analytics/${shortCode}`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "link": {
+    "originalUrl": "https://example.com",
+    "shortCode": "my-link",
+    "shortUrl": "https://piik.me/my-link",
+    "userId": "firebase-uid",
+    "isActive": true
+  },
+  "analytics": {
+    "impressions": 120,
+    "clicks": 45,
+    "shares": 3,
+    "devices": { "Mobile": 30, "Desktop": 15 },
+    "browsers": { "Chrome": 28 },
+    "referrers": { "Google": 12 },
+    "countries": { "United States": 20 },
+    "locations": { "San Francisco, California": 6 }
+  }
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `404` | `{ "error": "Link not found" }` | Unknown short code |
+| `403` | `{ "error": "Forbidden" }` | Authenticated user is not the owner |
+| `401` / `503` | See [Authentication](#authentication) | Invalid or unavailable auth |
+
+---
+
+#### `GET /api/user/analytics`
+
+Returns analytics for every link owned by the authenticated user.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/user/analytics" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/user/analytics`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "shortCode": "my-link",
+      "linkData": {
+        "originalUrl": "https://example.com",
+        "shortCode": "my-link",
+        "userId": "firebase-uid"
+      },
+      "analytics": {
+        "impressions": 120,
+        "clicks": 45,
+        "shares": 3
+      }
+    }
+  ]
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `503` | `{ "error": "Firestore not available" }` | Firebase not configured |
+| `500` | `{ "error": "Failed to fetch analytics" }` | Server error |
+
+---
+
+#### `POST /api/track/impression/:shortCode`
+
+Increments the impression counter when an analytics view is opened. Does not require authentication.
+
+**Authentication:** None
+
+**Headers:** None required
+
+**URL parameters:** `shortCode` (URL-encoded if it contains `/`)
+
+**Request body:** None
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/track/impression/my-link"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const shortCode = encodeURIComponent('my-link');
+
+const response = await fetch(`${BASE_URL}/api/track/impression/${shortCode}`, {
+  method: 'POST'
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{ "success": true }
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `404` | `{ "error": "Link not found" }` | No analytics record for the short code |
+
+---
+
+#### `POST /api/track/share/:shortCode`
+
+Legacy compatibility endpoint. Share counts are tracked automatically when links with `utm_source` are clicked; this route does not increment share counters.
+
+**Authentication:** None
+
+**Headers:** None required
+
+**URL parameters:** `shortCode`
+
+**Request body:** None
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/track/share/my-link"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const response = await fetch(`${BASE_URL}/api/track/share/my-link`, {
+  method: 'POST'
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Shares tracked via UTM parameters"
+}
+```
+
+**Errors:** None defined; always returns `200`.
+
+---
+
+### User Profile
+
+#### `GET /api/user/profile`
+
+Fetches the authenticated user's profile, creating a default profile document if one does not exist.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/user/profile" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/user/profile`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "profile": {
+    "userId": "firebase-uid",
+    "email": "user@example.com",
+    "username": null,
+    "usernameChangedAt": null,
+    "canChangeUsername": true
+  }
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `500` | `{ "error": "Failed to fetch profile" }` | Server error |
+
+---
+
+#### `POST /api/user/username`
+
+Sets or updates the authenticated user's username. A username can only be changed once after it has been set.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+**Request body:**
+
+```json
+{ "username": "myusername" }
+```
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/user/username" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "username": "myusername" }'
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/user/username`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ username: 'myusername' })
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "username": "myusername",
+  "canChangeUsername": false
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `400` | `{ "error": "Username is required" }` | Missing `username` |
+| `400` | `{ "error": "Username must be 3-20 characters" }` | Invalid length |
+| `403` | `{ "error": "Username can only be changed once" }` | Username already changed |
+| `409` | `{ "error": "Username is already taken" }` | Duplicate username |
+| `500` | `{ "error": "Failed to update username" }` | Server error |
+
+---
+
+#### `GET /api/check-username/:username`
+
+Checks whether a username is available and valid.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**URL parameters:** `username`
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/check-username/myusername" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/check-username/myusername`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{ "available": true }
+```
+
+Validation failures also return `200`:
+
+```json
+{ "available": false, "error": "Username must be 3-20 characters" }
+```
+
+---
+
+#### `GET /api/user/bio-slug`
+
+**Deprecated** — returns the user's bio slug from their profile or legacy bio-link record.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/user/bio-slug" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/user/bio-slug`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{ "slug": "myusername" }
+```
+
+If no slug exists: `{ "slug": null }`
+
+---
+
+#### `DELETE /api/user`
+
+Permanently deletes the authenticated user's account, all of their links, analytics records, and Firebase Auth user.
+
+**Authentication:** Firebase Bearer token (required)
+
+**cURL:**
+
+```bash
+curl -X DELETE "$BASE_URL/api/user" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/user`, {
+  method: 'DELETE',
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Account permanently deleted"
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `500` | `{ "error": "Failed to delete account" }` | Server error |
+
+---
+
+### Bio Links
+
+#### `GET /api/bio-links`
+
+Lists all bio links owned by the authenticated user.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/bio-links" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/bio-links`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "bioLinks": [
+    {
+      "id": "firestore-doc-id",
+      "userId": "firebase-uid",
+      "name": "Jane Doe",
+      "slug": "janedoe",
+      "description": "Creator & developer",
+      "profilePicture": "",
+      "themeColor": "#06b6d4",
+      "backgroundStyle": "gradient",
+      "links": [],
+      "social": {},
+      "views": 0,
+      "clicks": 0,
+      "verified": false
+    }
+  ]
+}
+```
+
+**Errors:** `500` — `{ "error": "Failed to fetch bio links" }`
+
+---
+
+#### `POST /api/bio-links`
+
+Creates a bio link. Each user may only have one bio link.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | ✅ | Display name |
+| `slug` | string | ✅ | URL slug (`a-z`, `A-Z`, `0-9`, `-`, `_`) |
+| `description` | string | ❌ | Bio text |
+| `profilePicture` | string | ❌ | Image URL |
+| `themeColor` | string | ❌ | Hex color (default `#06b6d4`) |
+| `backgroundStyle` | string | ❌ | Background theme (default `gradient`) |
+| `links` | array | ❌ | Link objects for the bio page |
+| `social` | object | ❌ | Social profile URLs |
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/bio-links" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane Doe",
+    "slug": "janedoe",
+    "description": "Creator & developer",
+    "links": [{ "title": "Website", "url": "https://example.com", "order": 0 }]
+  }'
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/bio-links`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Jane Doe',
+    slug: 'janedoe',
+    description: 'Creator & developer',
+    links: [{ title: 'Website', url: 'https://example.com', order: 0 }]
+  })
+});
+
+const data = await response.json();
+```
+
+**Success (`201`):**
+
+```json
+{
+  "success": true,
+  "id": "firestore-doc-id",
+  "message": "Bio link created successfully"
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `400` | `{ "error": "Name is required" }` | Missing name |
+| `400` | `{ "error": "Invalid slug format" }` | Invalid slug |
+| `409` | `{ "error": "This URL slug is already taken" }` | Duplicate slug |
+| `409` | `{ "error": "You can only create one bio link. Please edit your existing one." }` | User already has a bio link |
+
+---
+
+#### `PUT /api/bio-links/:id`
+
+Updates an existing bio link owned by the authenticated user. Accepts the same body fields as `POST /api/bio-links`.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+**URL parameters:** `id` — Firestore document ID of the bio link
+
+**cURL:**
+
+```bash
+curl -X PUT "$BASE_URL/api/bio-links/BIO_LINK_DOC_ID" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Jane Doe", "slug": "janedoe", "description": "Updated bio" }'
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/bio-links/BIO_LINK_DOC_ID`, {
+  method: 'PUT',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Jane Doe',
+    slug: 'janedoe',
+    description: 'Updated bio'
+  })
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Bio link updated successfully"
+}
+```
+
+**Errors:** `404`, `403`, `409`, and `500` with the same error messages as create.
+
+---
+
+#### `DELETE /api/bio-links/:id`
+
+Deletes a bio link owned by the authenticated user.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**URL parameters:** `id` — Firestore document ID of the bio link
+
+**cURL:**
+
+```bash
+curl -X DELETE "$BASE_URL/api/bio-links/BIO_LINK_DOC_ID" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/bio-links/BIO_LINK_DOC_ID`, {
+  method: 'DELETE',
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Bio link deleted successfully"
+}
+```
+
+---
+
+#### `GET /api/bio-links/check-slug/:slug`
+
+Checks whether a bio-link slug is available.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+```
+
+**URL parameters:** `slug`
+
+**cURL:**
+
+```bash
+curl -X GET "$BASE_URL/api/bio-links/check-slug/janedoe" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/bio-links/check-slug/janedoe`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{ "available": true }
+```
+
+**Errors:** `500` — `{ "error": "Failed to check slug availability" }`
+
+---
+
+### Bug Reports
+
+#### `POST /api/bug-report`
+
+Creates a GitHub issue in the configured repository using the server's `GITHUB_TOKEN`. Requires authentication and is rate-limited to 5 submissions per hour per IP.
+
+**Authentication:** Firebase Bearer token (required)
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+**Request body:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `title` | string | ✅ | Bug title |
+| `description` | string | ✅ | Bug description |
+| `steps` | string | ❌ | Steps to reproduce |
+| `email` | string | ❌ | Reporter email |
+| `userId` | string | ❌ | Reporter Firebase UID |
+| `userEmail` | string | ❌ | Reporter account email |
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/bug-report" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Dashboard fails to load links",
+    "description": "The links list stays empty after login.",
+    "steps": "1. Sign in\n2. Open dashboard",
+    "email": "reporter@example.com"
+  }'
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/bug-report`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    title: 'Dashboard fails to load links',
+    description: 'The links list stays empty after login.',
+    steps: '1. Sign in\n2. Open dashboard',
+    email: 'reporter@example.com',
+    userId: firebase.auth().currentUser.uid,
+    userEmail: firebase.auth().currentUser.email
+  })
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "issueNumber": 42,
+  "issueUrl": "https://github.com/xthxr/Link360/issues/42"
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `400` | `{ "error": "Title and description are required" }` | Missing required fields |
+| `429` | `{ "success": false, "error": "Too many bug reports submitted. Please wait before trying again." }` | Hourly rate limit exceeded |
+| `500` | `{ "error": "Failed to create bug report", "details": "..." }` | GitHub API or server failure |
+| `401` / `503` | See [Authentication](#authentication) | Invalid or unavailable auth |
+
+---
+
+### Profile Import
+
+#### `POST /api/import-profile`
+
+Fetches HTML from an allowed Linktree or Bento profile URL. Used by the bio-link importer.
+
+**Authentication:** None
+
+**Headers:**
+
+```http
+Content-Type: application/json
+```
+
+**Request body:**
+
+```json
+{ "url": "https://linktr.ee/example" }
+```
+
+Allowed URL prefixes: `https://linktr.ee/` and `https://bento.me/`
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/import-profile" \
+  -H "Content-Type: application/json" \
+  -d '{ "url": "https://linktr.ee/example" }'
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const response = await fetch(`${BASE_URL}/api/import-profile`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ url: 'https://linktr.ee/example' })
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "html": "<!DOCTYPE html>..."
+}
+```
+
+**Errors:**
+
+| Status | Body | Cause |
+|--------|------|-------|
+| `400` | `{ "error": "URL is required" }` | Missing `url` |
+| `403` | `{ "error": "Invalid URL", "message": "Only Linktree (linktr.ee) and Bento (bento.me) profiles can be imported" }` | URL not on allow-list |
+| `500` | `{ "error": "Failed to import profile", "details": "..." }` | Fetch failure |
+
+---
+
+### Admin
+
+#### `POST /api/admin/sync-redis`
+
+Syncs all Firestore links to Redis for edge redirects.
+
+**Authentication:** Firebase Bearer token (required). No additional admin-role check is enforced in the current implementation.
+
+**Headers:**
+
+```http
+Authorization: Bearer {firebase-auth-token}
+Content-Type: application/json
+```
+
+**Request body:** None
+
+**cURL:**
+
+```bash
+curl -X POST "$BASE_URL/api/admin/sync-redis" \
+  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const token = await firebase.auth().currentUser.getIdToken();
+
+const response = await fetch(`${BASE_URL}/api/admin/sync-redis`, {
+  method: 'POST',
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const data = await response.json();
+```
+
+**Success (`200`):**
+
+```json
+{
+  "success": true,
+  "message": "Synced 150 links to Redis",
+  "errors": 0
+}
+```
+
+**Errors:** `500` — `{ "error": "Failed to sync to Redis", "details": "..." }`
+
+---
+
+### Redirects
+
+These routes are not JSON APIs but are part of the public link infrastructure.
+
+#### `GET /:shortCode`
+
+Resolves a short link or bio-link slug. Bio links serve `bio.html`; regular links redirect to the destination and track a click asynchronously.
+
+**Authentication:** None
+
+**cURL:**
+
+```bash
+curl -L "$BASE_URL/my-link"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+// fetch follows redirects by default; disable with redirect: 'manual' to inspect the Location header
+const response = await fetch(`${BASE_URL}/my-link`);
+```
+
+**Success:** `302` redirect to destination URL, or `200` HTML for bio links
+
+**Errors:** `404` plain text — `Link not found`
+
+#### `GET /:username/:slug`
+
+Resolves vanity links in `username/slug` format. Redirects to the destination and tracks a click.
+
+**Authentication:** None
+
+**cURL:**
+
+```bash
+curl -L "$BASE_URL/myusername/my-link"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const response = await fetch(`${BASE_URL}/myusername/my-link`);
+```
+
+**Success:** `302` redirect
+
+**Errors:** `404` plain text — `Link not found`
+
+#### `HEAD /:shortCode`
+
+Tracks an impression without performing a redirect. Used for link previews.
+
+**Authentication:** None
+
+**cURL:**
+
+```bash
+curl -I "$BASE_URL/my-link"
+```
+
+**JavaScript (`fetch`):**
+
+```javascript
+const response = await fetch(`${BASE_URL}/my-link`, { method: 'HEAD' });
+```
+
+**Success:** `200` with empty body
+
+---
 
 ### WebSocket Events (Socket.IO)
 
+Connect to the same origin as the app. Clients can subscribe to a short code room:
+
 ```javascript
+socket.emit('subscribe', 'my-link');
+
 socket.on('analyticsUpdate', (data) => {
-  // { shortCode, impressions, clicks, shares, ...  }
+  // { shortCode, click: { timestamp, device, browser, referrer, ... } }
+});
+
+socket.on('analytics:my-link', (payload) => {
+  // { type: 'click' | 'impression', data: { ... increments } }
+});
+
+socket.on('splitTestUpdate', (payload) => {
+  // { shortCode, variantLabel, click: { ... } }
 });
 ```
 
