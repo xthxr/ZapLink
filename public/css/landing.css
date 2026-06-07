@@ -20,6 +20,7 @@
 /* ================================
    RESET & BASE
    ================================ */
+
 *, ::after, ::before {
     box-sizing: border-box;
     margin: 0;
@@ -49,6 +50,7 @@ ul { list-style: none; }
 /* ================================
    CUSTOM COMPONENTS (From Inline Styles)
    ================================ */
+
 .glass-nav-light { 
     background: rgba(255, 255, 255, 0.7); 
     backdrop-filter: blur(16px); 
@@ -72,6 +74,7 @@ ul { list-style: none; }
 }
 
 /* Text Gradients (Fixed VS Code Warnings) */
+
 .text-gradient-light { 
     background: linear-gradient(to right, #000000, #4b5563); 
     -webkit-background-clip: text; 
@@ -105,6 +108,7 @@ ul { list-style: none; }
 /* ================================
    LAYOUT UTILITIES
    ================================ */
+
 .fixed { position: fixed; }
 .absolute { position: absolute; }
 .relative { position: relative; }
@@ -137,6 +141,7 @@ ul { list-style: none; }
 .gap-12 { gap: 3rem; }
 
 /* Sizing */
+
 .w-full { width: 100%; }
 .w-2 { width: 0.5rem; }
 .w-8 { width: 2rem; }
@@ -160,6 +165,7 @@ ul { list-style: none; }
 .max-w-7xl { max-width: 80rem; }
 
 /* Spacing */
+
 .m-0 { margin: 0; }
 .mx-auto { margin-left: auto; margin-right: auto; }
 .mr-2 { margin-right: 0.5rem; }
@@ -197,6 +203,7 @@ ul { list-style: none; }
 .space-y-6 > * + * { margin-top: 1.5rem; } /* ADDED: Fixes the list spacing */
 
 /* Typography */
+
 .text-xs { font-size: 0.75rem; line-height: 1rem; }
 .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
 .text-base { font-size: 1rem; line-height: 1.5rem; }
@@ -224,6 +231,7 @@ ul { list-style: none; }
 .leading-relaxed { line-height: 1.625; }
 
 /* Effects & Borders */
+
 .opacity-5 { opacity: 0.05; }
 .opacity-50 { opacity: 0.5; }
 .blur-\[100px\] { filter: blur(100px); }
@@ -250,6 +258,7 @@ ul { list-style: none; }
 .border-y { border-top-width: 1px; border-bottom-width: 1px; border-style: solid; }
 
 /* Transitions & Animations */
+
 .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
 .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
 .transition-transform { transition-property: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
@@ -266,6 +275,8 @@ ul { list-style: none; }
 /* ================================
    COLORS (LIGHT MODE DEFAULTS)
    ================================ */
+
+
 .bg-white { background-color: #ffffff; }
 .bg-black { background-color: #000000; }
 .bg-gray-900 { background-color: #111827; }
@@ -278,6 +289,7 @@ ul { list-style: none; }
 .bg-green-500 { background-color: #10b981; }
 
 /* Feature Icon Backgrounds */
+
 .bg-blue-100 { background-color: #dbeafe; }
 .bg-purple-100 { background-color: #f3e8ff; }
 .bg-green-100 { background-color: #d1fae5; }
@@ -288,6 +300,7 @@ ul { list-style: none; }
 .text-accent { color: var(--color-accent); }
 
 /* --- NEW CLASSES ADDED HERE --- */
+
 .text-yellow-500 { color: #eab308; }
 .text-gray-200 { color: var(--color-gray-200); }
 /* ------------------------------ */
@@ -298,6 +311,7 @@ ul { list-style: none; }
 .text-gray-900 { color: var(--color-gray-900); }
 
 /* Feature Icon Colors */
+
 .text-blue-600 { color: #2563eb; }
 .text-purple-600 { color: #9333ea; }
 .text-green-600 { color: #059669; }
@@ -309,10 +323,13 @@ ul { list-style: none; }
 /* ================================
    COLORS (DARK MODE OVERRIDES)
    ================================ */
+
+
 html.dark .dark\:hidden { display: none; }
 html.dark .dark\:block { display: block; }
 
 /* Backgrounds */
+
 html.dark .dark\:bg-backgroundDark { background-color: var(--color-bg-dark); }
 html.dark .dark\:bg-surfaceDark { background-color: var(--color-surface-dark); }
 html.dark .dark\:bg-surfaceDark\/30 { background-color: rgba(17, 17, 17, 0.3); }
@@ -323,6 +340,7 @@ html.dark .dark\:bg-white { background-color: #ffffff; }
 html.dark .dark\:bg-transparent { background-color: transparent; }
 
 /* Icon Backgrounds (Dark) */
+
 html.dark .dark\:bg-blue-500\/10 { background-color: rgba(59, 130, 246, 0.1); }
 html.dark .dark\:bg-purple-500\/10 { background-color: rgba(168, 85, 247, 0.1); }
 html.dark .dark\:bg-green-500\/10 { background-color: rgba(16, 185, 129, 0.1); }
@@ -330,6 +348,7 @@ html.dark .dark\:bg-pink-500\/20 { background-color: rgba(236, 72, 153, 0.2); }
 html.dark .dark\:bg-accent\/20 { background-color: rgba(59, 130, 246, 0.2); }
 
 /* Text Colors */
+
 html.dark .dark\:text-white { color: #ffffff; }
 html.dark .dark\:text-black { color: #000000; }
 html.dark .dark\:text-gray-200 { color: var(--color-gray-200); }
@@ -337,12 +356,14 @@ html.dark .dark\:text-gray-300 { color: var(--color-gray-300); }
 html.dark .dark\:text-gray-400 { color: var(--color-gray-400); }
 
 /* Icon Colors (Dark) */
+
 html.dark .dark\:text-blue-500 { color: #3b82f6; }
 html.dark .dark\:text-purple-500 { color: #a855f7; }
 html.dark .dark\:text-green-500 { color: #10b981; }
 html.dark .dark\:text-red-900 { color: #7f1d1d; }
 
 /* Borders & Shadows */
+
 html.dark .dark\:border-white\/10 { border-color: rgba(255, 255, 255, 0.1); }
 html.dark .dark\:border-gray-800 { border-color: var(--color-gray-800); }
 html.dark .dark\:border-gray-900 { border-color: var(--color-gray-900); }
@@ -352,7 +373,10 @@ html.dark .dark\:shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 
 /* ================================
    HOVER STATES
    ================================ */
+
+
 /* Light Mode Hovers */
+
 .hover\:bg-gray-50:hover { background-color: var(--color-gray-50); }
 .hover\:bg-gray-200:hover { background-color: var(--color-gray-200); }
 .hover\:bg-gray-800:hover { background-color: var(--color-gray-800); }
@@ -366,16 +390,19 @@ html.dark .dark\:shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 
 .hover\:grayscale-0:hover { filter: grayscale(0); }
 
 /* Logo Cloud specific hovers */
+
 .hover\:text-\[\#FF9900\]:hover { color: #FF9900; }
 .hover\:text-\[\#61DAFB\]:hover { color: #61DAFB; }
 .hover\:text-\[\#339933\]:hover { color: #339933; }
 .hover\:text-\[\#2496ED\]:hover { color: #2496ED; }
 
 /* Group Hovers */
+
 .group:hover .group-hover\:scale-110 { --tw-scale-x: 1.1; --tw-scale-y: 1.1; transform: scale(1.1); }
 .group:hover .group-hover\:text-accent { color: var(--color-accent); }
 
 /* Dark Mode Hovers */
+
 html.dark .dark\:hover\:text-white:hover { color: #ffffff; }
 html.dark .dark\:hover\:bg-gray-200:hover { background-color: var(--color-gray-200); }
 html.dark .dark\:hover\:bg-gray-800\/50:hover { background-color: rgba(31, 41, 55, 0.5); }
@@ -384,6 +411,8 @@ html.dark .dark\:hover\:bg-surfaceHoverDark:hover { background-color: var(--colo
 /* ================================
    RESPONSIVE DESIGN (Medium Screens +)
    ================================ */
+
+   
 @media (min-width: 768px) {
     .md\:flex { display: flex; }
     .md\:hidden { display: none; }

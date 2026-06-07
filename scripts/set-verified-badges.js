@@ -25,6 +25,7 @@ async function setVerifiedBadges() {
     console.log('Fetching all active bio links ordered by creation date...');
     
     // Get all active bio links ordered by createdAt
+
     const snapshot = await db.collection('bioLinks')
       .where('isActive', '==', true)
       .orderBy('createdAt', 'asc')
@@ -58,4 +59,5 @@ async function setVerifiedBadges() {
 }
 
 // Run the script
+
 setVerifiedBadges();

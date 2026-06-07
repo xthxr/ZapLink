@@ -1,4 +1,5 @@
 /* Version Banner Styles */
+
 .version-banner {
     position: fixed;
     top: 32px;
@@ -94,6 +95,7 @@
 }
 
 /* Changelog Modal Styles */
+
 .changelog-modal .modal-content {
     max-width: 800px;
     max-height: 80vh;
@@ -237,6 +239,7 @@
 }
 
 /* Mobile responsive */
+
 @media (max-width: 768px) {
     .version-banner-content {
         flex-wrap: wrap;
