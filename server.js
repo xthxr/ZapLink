@@ -583,6 +583,39 @@ app.get('/api/analytics/:shortCode', verifyToken, async (req, res) => {
   });
 });
 
+// Get a single link by shortCode with ownership verification
+app.get('/api/links/:shortCode', verifyToken, async (req, res) => {
+  let { shortCode } = req.params;
+  shortCode = decodeURIComponent(shortCode);
+  const userId = req.user.uid;
+
+  try {
+    const firestoreId = toFirestoreId(shortCode);
+    const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
+    const linkDoc = await linkRef.get();
+
+    if (linkDoc.exists) {
+      const linkData = linkDoc.data();
+      if (linkData.userId !== userId) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+      return res.json({ success: true, link: { id: linkDoc.id, ...linkData } });
+    }
+  } catch (error) {
+    console.error('Error reading from Firestore:', error);
+  }
+
+  const linkData = links.get(shortCode);
+  if (!linkData) {
+    return res.status(404).json({ error: 'Link not found' });
+  }
+  if (linkData.userId !== userId) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  res.json({ success: true, link: linkData });
+});
+
 // Check if username is available
 app.get('/api/check-username/:username', verifyToken, async (req, res) => {
   const { username } = req.params;
@@ -944,14 +977,6 @@ app.get('/api/user/links', verifyToken, async (req, res) => {
   console.log(`🔍 Fetching links for user: ${userId}`);
   
   try {
-    // First, let's see ALL documents in the collection for debugging
-    const allDocsSnapshot = await db.collection(COLLECTIONS.LINKS).get();
-    console.log(`Total documents in LINKS collection: ${allDocsSnapshot.docs.length}`);
-    allDocsSnapshot.docs.forEach(doc => {
-      const data = doc.data();
-      console.log(`  Doc ${doc.id}: userId=${data.userId}, shortCode=${data.shortCode}`);
-    });
-    
     // Try with orderBy first
     let linksSnapshot;
     try {

@@ -2928,66 +2928,6 @@ function updateStatChange(elementId, changeData) {
     element.textContent = `${changeData.isPositive ? '+' : '-'}${changeData.value.toFixed(1)}%`;
 }
 
-// Update analytics UI with data
-function updateAnalyticsUI(impressions, clicks, shares, devices, browsers, referrers, clickHistory, devicesObj) {
-    // Update main stats
-    const impressionsEl = document.getElementById('analyticsImpressions');
-    const clicksEl = document.getElementById('analyticsClicks');
-    const ctrEl = document.getElementById('analyticsCTR');
-    const visitorsEl = document.getElementById('analyticsVisitors');
-    
-    if (impressionsEl) impressionsEl.textContent = Number(impressions).toLocaleString();
-    if (clicksEl) clicksEl.textContent = Number(clicks).toLocaleString();
-    
-    // Calculate CTR
-    const ctr = impressions > 0 ? ((clicks / impressions) * 100) : 0;
-    if (ctrEl) ctrEl.textContent = ctr.toFixed(1) + '%';
-    
-    // Calculate unique visitors from click history
-    let uniqueVisitors = clicks;
-    if (clickHistory && clickHistory.length > 0) {
-        const visitorFingerprints = new Set();
-        clickHistory.forEach(click => {
-            const fingerprint = `${click.referrer || 'unknown'}_${click.device || 'unknown'}_${click.browser || 'unknown'}`;
-            visitorFingerprints.add(fingerprint);
-        });
-        uniqueVisitors = visitorFingerprints.size;
-    }
-    if (visitorsEl) visitorsEl.textContent = uniqueVisitors.toLocaleString();
-    
-    // Update percentage changes (hide them when no data)
-    updateStatChange('impressionsChange', null);
-    updateStatChange('clicksChange', null);
-    updateStatChange('ctrChange', null);
-    updateStatChange('visitorsChange', null);
-    
-    // Process devices list
-    const devicesList = Object.entries(devices || {})
-        .sort((a, b) => b[1] - a[1])
-        .map(([device, count]) => ({ device, count }));
-    
-    // Process browsers list
-    const browsersList = Object.entries(browsers || {})
-        .sort((a, b) => b[1] - a[1])
-        .map(([browser, count]) => ({ browser, count }));
-    
-    // Process referrers list (top 5)
-    const topReferrers = Object.entries(referrers || {})
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([source, count]) => ({ source, count }));
-    
-    // Render lists
-    renderDevicesList(devicesList);
-    renderBrowsersList(browsersList);
-    renderReferrersList(topReferrers);
-    
-    // Process clicks over time for chart
-    const clicksOverTimeData = processClicksOverTime(clickHistory || []);
-    renderClicksChart(clicksOverTimeData);
-    renderReferrersChart(topReferrers);
-}
-
 // ================================
 // PROFILE
 // ================================
