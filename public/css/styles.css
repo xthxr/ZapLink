@@ -3,9 +3,11 @@
    ================================ */
 
 /* Import Google Fonts */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 /* Reset & Base */
+
 * {
     margin: 0;
     padding: 0;
@@ -33,20 +35,24 @@ img {
 
 :root {
     /* Font - Modern Sans-Serif Stack */
+
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     
     /* Transitions - Optimized for speed */
+
     --transition-fast: 0.12s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Shadows - Subtle and minimal */
+
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
     --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.12);
     
     /* Borders - Minimal radius */
+
     --radius-sm: 6px;
     --radius-md: 8px;
     --radius-lg: 12px;
@@ -54,12 +60,14 @@ img {
     --radius-full: 9999px;
     
     /* Spacing */
+
     --sidebar-width: 240px;
     --sidebar-collapsed-width: 80px;
     --topbar-height: 64px;
 }
 
 /* Dark Theme - Modern & Sleek */
+
 html[data-theme="dark"] {
     --bg-primary: #09090b;
     --bg-secondary: #121214;
@@ -93,6 +101,7 @@ html[data-theme="dark"] {
 }
 
 /* Light Theme - Clean */
+
 html[data-theme="light"] {
     --bg-primary: #ffffff;
     --bg-secondary: #fafafa;
@@ -465,6 +474,7 @@ html[data-theme="light"] .app-orb {
 }
 
 /* App Background Orbs */
+
 .app-bg {
     position: fixed;
     top: 0;
@@ -739,6 +749,7 @@ html[data-theme="light"] .app-orb {
 }
 
 /* GitHub Button with Star Count */
+
 .github-btn {
     display: inline-flex;
     align-items: center;
@@ -1236,6 +1247,7 @@ html[data-theme="light"] .app-orb {
 }
 
 /* Light theme select arrow */
+
 html[data-theme="light"] .filter-select {
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background: var(--bg-tertiary);
@@ -1931,6 +1943,7 @@ textarea.form-input {
 }
 
 /* Bug Report Modal */
+
 .bug-report-modal {
     max-width: 560px;
 }
@@ -2007,6 +2020,7 @@ textarea.form-input {
 }
 
 /* Login Modal */
+
 .login-modal {
     max-width: 560px;
     background: rgba(11, 17, 32, 0.95);
@@ -2195,7 +2209,9 @@ textarea.form-input {
    ================================ */
 
 @media (max-width: 768px) {
+
     /* Layout */
+
     .page-container {
         padding: 16px;
     }
@@ -2221,6 +2237,7 @@ textarea.form-input {
     
 
     /* Page Header */
+
     .page-header {
         flex-direction: column;
         align-items: flex-start;
@@ -2247,6 +2264,7 @@ textarea.form-input {
     }
 
     /* Stats Grid */
+
     .stats-grid {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -2265,6 +2283,7 @@ textarea.form-input {
     }
 
     /* Filters */
+
     .filters-bar {
         flex-direction: column;
         gap: 12px;
@@ -2295,6 +2314,7 @@ textarea.form-input {
     }
 
     /* Links Container */
+
     .links-container {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -2361,6 +2381,7 @@ textarea.form-input {
     }
 
     /* Modal */
+
     .modal-content {
         margin: 20px;
         max-width: calc(100% - 40px);
@@ -2377,6 +2398,7 @@ textarea.form-input {
     }
 
     /* Forms */
+
     .form-group label {
         font-size: 13px;
     }
@@ -2392,6 +2414,7 @@ textarea.form-input {
     }
 
     /* Analytics */
+
     .analytics-grid {
         grid-template-columns: 1fr;
         gap: 16px;
@@ -2422,6 +2445,7 @@ textarea.form-input {
     }
 
     /* Profile Page */
+
     .profile-sections {
         gap: 16px;
     }
@@ -2442,6 +2466,7 @@ textarea.form-input {
     }
 
     /* Search Box */
+
     .search-container {
         width: 100%;
         max-width: 100%;
@@ -2458,6 +2483,7 @@ textarea.form-input {
     }
 
     /* Sidebar Overlay */
+
     .sidebar-overlay {
         display: none;
         position: fixed;
@@ -2474,6 +2500,7 @@ textarea.form-input {
     }
 
     /* Login Modal */
+
     .login-modal {
         max-width: 100%;
         margin: 0;
@@ -2493,7 +2520,9 @@ textarea.form-input {
    ================================ */
 
 @media (max-width: 480px) {
+
     /* Typography */
+
     .logo-text {
         display: none;
     }
@@ -2503,6 +2532,7 @@ textarea.form-input {
     }
 
     /* Topbar */
+
     .topbar-right {
         gap: 8px;
     }
@@ -2517,6 +2547,7 @@ textarea.form-input {
     }
 
     /* Stats */
+
     .stat-card {
         padding: 12px;
     }
@@ -2544,12 +2575,14 @@ textarea.form-input {
     }
 
     /* Filter Tabs */
+
     .filter-tab {
         padding: 8px 12px;
         font-size: 12px;
     }
 
     /* Buttons */
+
     .btn {
         padding: 10px 16px;
         font-size: 13px;
@@ -2561,6 +2594,7 @@ textarea.form-input {
     }
 
     /* Link Cards */
+
     .link-card {
         padding: 12px;
     }
@@ -2592,6 +2626,7 @@ textarea.form-input {
     }
 
     /* Modal */
+
     .modal-content {
         margin: 10px;
         max-width: calc(100% - 20px);
@@ -2617,6 +2652,7 @@ textarea.form-input {
     }
 
     /* Forms */
+
     .form-group {
         margin-bottom: 16px;
     }
@@ -2628,6 +2664,7 @@ textarea.form-input {
     }
 
     /* Charts */
+
     .chart-container {
         padding: 12px;
     }
@@ -2641,12 +2678,14 @@ textarea.form-input {
     }
 
     /* Analytics Filters */
+
     .analytics-filters select {
         padding: 8px 12px;
         font-size: 13px;
     }
 
     /* Profile */
+
     .profile-section {
         padding: 16px;
     }
@@ -2660,6 +2699,7 @@ textarea.form-input {
     }
 
     /* Login Modal */
+
     .login-header {
         padding: 24px 16px 16px;
     }
@@ -2740,6 +2780,7 @@ textarea.form-input {
     }
     
     /* GitHub button extra small */
+
     .github-btn {
         padding: 0.35rem 0.5rem;
         gap: 0.3rem;
@@ -2776,7 +2817,9 @@ textarea.form-input {
    ================================ */
 
 @media (hover: none) and (pointer: coarse) {
+
     /* Increase touch targets */
+
     .btn,
     .btn-icon,
     .icon-btn {
@@ -2789,6 +2832,7 @@ textarea.form-input {
     }
 
     /* Remove hover effects on touch devices */
+
     .btn:hover,
     .btn-icon:hover,
     .link-card:hover {
@@ -2796,6 +2840,7 @@ textarea.form-input {
     }
 
     /* Improve scrolling */
+
     .links-container,
     .filter-tabs,
     .analytics-grid {
@@ -2819,6 +2864,7 @@ textarea.form-input {
 }
 
 /* Landing Navigation */
+
 .landing-nav {
     position: fixed;
     top: 0;
@@ -2915,6 +2961,7 @@ textarea.form-input {
 }
 
 /* Landing Hero */
+
 .landing-hero {
     min-height: 100vh;
     display: flex;
@@ -3041,6 +3088,7 @@ textarea.form-input {
 }
 
 /* Landing Background */
+
 .landing-bg {
     position: absolute;
     top: 0;
@@ -3094,6 +3142,7 @@ textarea.form-input {
 }
 
 /* Responsive Landing */
+
 @media (max-width: 768px) {
     .landing-nav-container {
         padding: 16px 20px;
@@ -3128,6 +3177,7 @@ textarea.form-input {
 }
 
 /* Landing Suggestions Section */
+
 .landing-suggestions {
     padding: 80px 40px;
     background: rgba(11, 17, 32, 0.5);
@@ -3278,6 +3328,7 @@ textarea.form-input {
 }
 
 /* QR Preview */
+
 .qr-preview-card {
     position: sticky;
     top: 20px;
@@ -3286,6 +3337,7 @@ textarea.form-input {
 }
 
 /* Floating minimized QR preview */
+
 .qr-floating-preview {
     position: fixed;
     top: 50%;
@@ -3473,6 +3525,7 @@ html[data-theme="light"] .qr-floating-preview {
 }
 
 /* Quick Links */
+
 .quick-links-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -3544,6 +3597,7 @@ html[data-theme="light"] .qr-floating-preview {
 }
 
 /* Pattern Grid */
+
 .qr-pattern-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
@@ -3582,6 +3636,7 @@ html[data-theme="light"] .qr-floating-preview {
 }
 
 /* Pattern Previews - Visual representations */
+
 .pattern-square { background: repeating-linear-gradient(0deg, #333 0px, #333 8px, transparent 8px, transparent 16px), repeating-linear-gradient(90deg, #333 0px, #333 8px, transparent 8px, transparent 16px); }
 .pattern-dots { background-image: radial-gradient(circle, #333 30%, transparent 30%); background-size: 12px 12px; }
 .pattern-rounded { background: repeating-linear-gradient(0deg, #333 0px, #333 8px, transparent 8px, transparent 16px), repeating-linear-gradient(90deg, #333 0px, #333 8px, transparent 8px, transparent 16px); border-radius: 6px; }
@@ -3605,6 +3660,7 @@ html[data-theme="light"] .qr-floating-preview {
 }
 
 /* Frame Grid */
+
 .frame-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -3728,6 +3784,7 @@ html[data-theme="light"] .qr-floating-preview {
 }
 
 /* Download Options */
+
 .download-options {
     display: flex;
     flex-direction: column;
@@ -3811,6 +3868,7 @@ html[data-theme="light"] .qr-floating-preview {
 }
 
 /* Responsive QR Generator */
+
 @media (max-width: 1024px) {
     .qr-generator-container {
         grid-template-columns: 1fr;
@@ -3955,6 +4013,7 @@ html[data-theme="light"] .qr-floating-preview {
 }
 
 /* Responsive Table */
+
 @media (max-width: 1200px) {
     .data-table {
         font-size: 13px;
@@ -4114,6 +4173,7 @@ html[data-theme="dark"] .view-toggle-btn.active {
 }
 
 /* Globe container styling */
+
 .analytics-card #globeViz {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
@@ -4123,6 +4183,7 @@ html[data-theme="dark"] .analytics-card #globeViz {
 }
 
 /* Scrollbar styling for locations list */
+
 .globe-locations-grid::-webkit-scrollbar {
     width: 8px;
 }
@@ -4142,6 +4203,7 @@ html[data-theme="dark"] .analytics-card #globeViz {
 }
 
 /* Responsive Globe View */
+
 @media (max-width: 768px) {
     .view-toggle-buttons {
         width: 100%;
@@ -4427,6 +4489,7 @@ html[data-theme="dark"] .analytics-card #globeViz {
 }
 
 /* Analytics page additions */
+
 .split-test-analytics-panel {
     animation: fadeIn 0.4s ease;
 }

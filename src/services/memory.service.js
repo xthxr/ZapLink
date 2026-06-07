@@ -1,6 +1,7 @@
 /**
  * In-memory storage fallback for when Firebase is not configured
  */
+
 class MemoryStore {
   constructor() {
     this.links = new Map();
@@ -8,6 +9,7 @@ class MemoryStore {
   }
 
   // Link methods
+
   async getLink(shortCode) {
     return this.links.get(shortCode) || null;
   }
@@ -32,6 +34,7 @@ class MemoryStore {
   }
 
   // Analytics methods
+
   async getAnalytics(shortCode) {
     return this.analytics.get(shortCode) || { clicks: [] };
   }
@@ -44,6 +47,7 @@ class MemoryStore {
   }
 
   // Clear all data (for testing)
+  
   clear() {
     this.links.clear();
     this.analytics.clear();

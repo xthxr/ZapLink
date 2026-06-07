@@ -36,6 +36,7 @@ function validateVariants(variants) {
     const v = variants[i];
 
     // label ----------------------------------------------------------------
+    
     if (typeof v.label !== 'string' || v.label.trim() === '') {
       return { valid: false, message: `Variant at index ${i}: \`label\` must be a non-empty string.` };
     }
@@ -46,6 +47,7 @@ function validateVariants(variants) {
     labels.add(label.toLowerCase());
 
     // url ------------------------------------------------------------------
+
     if (typeof v.url !== 'string' || v.url.trim() === '') {
       return { valid: false, message: `Variant "${label}": \`url\` must be a non-empty string.` };
     }
@@ -56,6 +58,7 @@ function validateVariants(variants) {
     }
 
     // weight ---------------------------------------------------------------
+
     if (typeof v.weight !== 'number' || !Number.isInteger(v.weight)) {
       return { valid: false, message: `Variant "${label}": \`weight\` must be an integer.` };
     }
@@ -65,6 +68,7 @@ function validateVariants(variants) {
   }
 
   // Weights must sum to exactly 100
+
   const totalWeight = variants.reduce((sum, v) => sum + v.weight, 0);
   if (totalWeight !== 100) {
     return {
@@ -101,6 +105,7 @@ function selectVariantByWeight(variants) {
   }
 
   // Floating-point safety net — should only trigger when weights === 100.00...001
+
   return variants[variants.length - 1];
 }
 
@@ -118,7 +123,9 @@ function selectVariantByWeight(variants) {
  * @returns {Object} Partial Firestore update object.
  */
 function buildVariantClickFields(variantLabel) {
+
   // Sanitise the label so it is safe as a Firestore field key
+
   const safeLabel = String(variantLabel).replace(/[.[\]]/g, '_');
   return {
     [`variantClicks.${safeLabel}`]: { __increment: 1 }, // placeholder — caller must use FieldValue.increment

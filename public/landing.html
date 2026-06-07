@@ -9,15 +9,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Icons -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <!-- Styles -->
+
     <link rel="stylesheet" href="CSS/landing.css">
 
     <!-- Dynamic Favicon for /user page -->
+
     <script src="js/user-favicon.js" defer></script>
     
     <!-- Theme Check (Before Body) -->
+
     <script>
         (function() {
             const savedTheme = localStorage.getItem('theme');
@@ -152,6 +156,7 @@
     </section>
 
     <!-- 4. Benefits & Use Cases -->
+
     <section id="benefits" class="py-32 px-6 bg-gray-50 dark:bg-transparent">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
             <div class="flex-1">
@@ -205,6 +210,7 @@
     </section>
 
     <!-- 5. FAQ -->
+
     <section id="faq" class="py-32 px-6 bg-white dark:bg-surfaceDark/30 border-y border-gray-200 dark:border-gray-900">
         <div class="max-w-3xl mx-auto">
             <h2 class="text-3xl md:text-5xl font-bold mb-16 text-center text-black dark:text-white">Frequently Asked Questions</h2>
@@ -244,6 +250,7 @@
     </section>
 
     <!-- 6. Testimonials -->
+
     <section id="testimonials" class="py-32 px-6 bg-gray-50 dark:bg-transparent">
         <div class="max-w-7xl mx-auto">
             <h2 class="text-3xl md:text-5xl font-bold mb-20 text-center text-black dark:text-white">Trusted by builders</h2>
@@ -283,6 +290,7 @@
     </section>
 
     <!-- 7. Bottom CTA -->
+
     <section class="py-32 px-6 text-center relative overflow-hidden bg-white dark:bg-transparent border-t border-gray-200 dark:border-gray-900">
         <div class="absolute inset-0 bg-accent/5 blur-[100px] rounded-full pointer-events-none"></div>
         <div class="relative z-10">
@@ -326,12 +334,14 @@
 
     <script>
         // 1. Theme Toggle Logic
+
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const htmlElement = document.documentElement;
         const navbar = document.getElementById('navbar');
         const heroGradient = document.getElementById('hero-gradient');
 
         // Function to set classes based on theme
+
         function applyThemeClasses(isDark) {
             if (isDark) {
                 navbar.classList.add('glass-nav-dark');
@@ -347,12 +357,14 @@
         }
 
         // Check local storage on load
+
         if (localStorage.getItem('theme') === 'light') {
             htmlElement.classList.remove('dark');
             applyThemeClasses(false);
         }
 
         // Toggle Event
+
         if (themeToggleBtn) {
             themeToggleBtn.addEventListener('click', () => {
                 htmlElement.classList.toggle('dark');
@@ -363,11 +375,13 @@
         }
 
         // 2. FAQ Accordion Logic
+
         function toggleFaq(element) {
             const answer = element.querySelector('.faq-answer');
             const icon = element.querySelector('.fa-chevron-down');
             
             // Close others
+
             document.querySelectorAll('.faq-answer').forEach(el => {
                 if(el !== answer) {
                     el.classList.remove('open');
@@ -376,6 +390,7 @@
             });
 
             // Toggle current
+            
             answer.classList.toggle('open');
             icon.style.transform = answer.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
