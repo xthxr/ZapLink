@@ -17,6 +17,7 @@ const redisUtils = require('./src/utils/redis.utils');
 const redirectCache = require('./src/utils/redirect-cache.utils');
 const { securityHeaders, apiLimiter, bugReportLimiter } = require('./src/middleware/security.middleware');
 const splitTestService = require('./src/services/splitTest.service');
+const morgan = require('morgan');
 require('dotenv').config();
 
 // Initialize Firebase Admin
@@ -82,6 +83,7 @@ function fromFirestoreId(firestoreId) {
 }
 
 // Middleware
+app.use(morgan('combined'));
 app.use(securityHeaders);
 app.use(apiLimiter);
 // Restrict CORS to the configured application origin.
