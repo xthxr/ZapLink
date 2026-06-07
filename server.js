@@ -1244,6 +1244,54 @@ app.delete('/api/links/:shortCode', verifyToken, async (req, res) => {
   }
 });
 
+// Edit link metadata (title, notes, tags, expiresAt)
+app.patch('/api/links/:shortCode', verifyToken, async (req, res) => {
+  let { shortCode } = req.params;
+  shortCode = decodeURIComponent(shortCode);
+  const userId = req.user.uid;
+  const { title, notes, tags, expiresAt } = req.body;
+
+  if (title === undefined && notes === undefined && tags === undefined && expiresAt === undefined) {
+    return res.status(400).json({ error: 'At least one field (title, notes, tags, expiresAt) must be provided' });
+  }
+
+  try {
+    const firestoreId = toFirestoreId(shortCode);
+    const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
+    const linkDoc = await linkRef.get();
+
+    if (!linkDoc.exists) {
+      return res.status(404).json({ error: 'Link not found' });
+    }
+
+    const linkData = linkDoc.data();
+
+    if (linkData.userId !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to edit this link' });
+    }
+
+    const updateData = {};
+    if (title !== undefined) updateData.title = title;
+    if (notes !== undefined) updateData.notes = notes;
+    if (tags !== undefined) updateData.tags = Array.isArray(tags) ? tags : [];
+    if (expiresAt !== undefined) {
+      updateData.expiresAt = expiresAt
+        ? admin.firestore.Timestamp.fromDate(new Date(expiresAt))
+        : null;
+    }
+
+    await linkRef.update(updateData);
+
+    await redisUtils.deleteLinkFromRedis(shortCode);
+    await redirectCache.delete(shortCode);
+
+    res.json({ success: true, message: 'Link updated successfully' });
+  } catch (error) {
+    console.error('Error updating link:', error);
+    res.status(500).json({ error: 'Failed to update link' });
+  }
+});
+
 // Configure split-test for a link
 app.post('/api/links/:shortCode/split-test', verifyToken, async (req, res) => {
   let { shortCode } = req.params;
