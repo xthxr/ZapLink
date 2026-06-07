@@ -1273,11 +1273,22 @@ app.patch('/api/links/:shortCode', verifyToken, async (req, res) => {
     const updateData = {};
     if (title !== undefined) updateData.title = title;
     if (notes !== undefined) updateData.notes = notes;
-    if (tags !== undefined) updateData.tags = Array.isArray(tags) ? tags : [];
+    if (tags !== undefined) {
+      if (!Array.isArray(tags)) {
+        return res.status(400).json({ error: 'tags must be an array' });
+      }
+      updateData.tags = tags;
+    }
     if (expiresAt !== undefined) {
-      updateData.expiresAt = expiresAt
-        ? admin.firestore.Timestamp.fromDate(new Date(expiresAt))
-        : null;
+      if (expiresAt !== null) {
+        const parsed = new Date(expiresAt);
+        if (isNaN(parsed.getTime())) {
+          return res.status(400).json({ error: 'expiresAt must be a valid ISO date string' });
+        }
+        updateData.expiresAt = admin.firestore.Timestamp.fromDate(parsed);
+      } else {
+        updateData.expiresAt = null;
+      }
     }
 
     await linkRef.update(updateData);
