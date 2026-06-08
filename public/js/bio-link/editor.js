@@ -136,9 +136,9 @@ function renderEditorBioLinkItems() {
                 <i class="fas fa-grip-vertical"></i>
             </div>
             <div class="bio-link-item-content" style="flex: 1; display: grid; gap: 8px;">
-                <input type="text" class="form-input" placeholder="Link Title" value="${item.title || ''}"
+                <input type="text" class="form-input" placeholder="Link Title" value="${sanitizeHTML(item.title || '')}"
                        oninput="updateEditorBioLinkItem(${index}, 'title', this.value)" style="margin: 0;">
-                <input type="url" class="form-input" placeholder="https://example.com" value="${item.url || ''}"
+                <input type="url" class="form-input" placeholder="https://example.com" value="${sanitizeHTML(item.url || '')}"
                        oninput="updateEditorBioLinkItem(${index}, 'url', this.value)" style="margin: 0;">
             </div>
             <button class="btn-icon" onclick="removeEditorBioLinkItem(${index})" title="Remove">

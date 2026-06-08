@@ -5,6 +5,19 @@
 // Load AFTER bio-link.js (uses no bootstrap APIs directly — standalone).
 
 // ================================
+// SHARE URL HELPER
+// ================================
+
+function getShareBioLinkUrl() {
+    const input = document.getElementById('shareBioLinkUrl');
+    if (!input) {
+        showToast('Share URL not available', 'error');
+        return null;
+    }
+    return input.value;
+}
+
+// ================================
 // SHARE MODAL
 // ================================
 
@@ -45,9 +58,15 @@ function closeShareBioLinkModal() {
 }
 
 function copyShareBioLink() {
-    const url = document.getElementById('shareBioLinkUrl').value;
+    const urlInput = document.getElementById('shareBioLinkUrl');
+    if (!urlInput) {
+        showToast('Failed to copy link', 'error');
+        return;
+    }
+    const url = urlInput.value;
     navigator.clipboard.writeText(url).then(() => {
         const btn = document.getElementById('copyShareBtn');
+        if (!btn) return;
         const originalHTML = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
         btn.classList.add('btn-success');
@@ -71,38 +90,44 @@ function copyShareBioLink() {
 // ================================
 
 function shareToWhatsApp() {
-    const url = document.getElementById('shareBioLinkUrl').value;
+    const url = getShareBioLinkUrl();
+    if (!url) return;
     const text = `Check out my bio link: ${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
 function shareToTelegram() {
-    const url = document.getElementById('shareBioLinkUrl').value;
+    const url = getShareBioLinkUrl();
+    if (!url) return;
     const text = `Check out my bio link`;
     window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
 }
 
 function shareToTwitter() {
-    const url = document.getElementById('shareBioLinkUrl').value;
+    const url = getShareBioLinkUrl();
+    if (!url) return;
     const text = `Check out my bio link`;
     window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
 }
 
 function shareToFacebook() {
-    const url = document.getElementById('shareBioLinkUrl').value;
+    const url = getShareBioLinkUrl();
+    if (!url) return;
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
 }
 
 function shareToLinkedIn() {
-    const url = document.getElementById('shareBioLinkUrl').value;
+    const url = getShareBioLinkUrl();
+    if (!url) return;
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
 }
 
 function shareToEmail() {
-    const url = document.getElementById('shareBioLinkUrl').value;
+    const url = getShareBioLinkUrl();
+    if (!url) return;
     const subject = 'Check out my bio link';
     const body = `I'd like to share my bio link with you: ${url}`;
-    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
 }
 
 // ================================
@@ -110,7 +135,16 @@ function shareToEmail() {
 // ================================
 
 async function nativeShare() {
-    const url = document.getElementById('shareBioLinkUrl').value;
+    const input = document.getElementById('shareBioLinkUrl');
+    if (!input) {
+        showToast('Failed to share', 'error');
+        return;
+    }
+    if (!navigator.share) {
+        showToast('Native sharing not supported on this device', 'error');
+        return;
+    }
+    const url = input.value;
     const name = document.getElementById('editorBioName')?.value || 'My Bio Link';
 
     try {

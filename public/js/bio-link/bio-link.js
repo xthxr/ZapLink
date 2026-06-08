@@ -9,6 +9,7 @@ let DOMPurify;
 (function() {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js';
+    script.integrity = 'sha384-cwS6YdhLI7XS60eoDiC+egV0qHp8zI+Cms46R0nbn8JrmoAzV9uFL60etMZhAnSu';
     script.crossOrigin = 'anonymous';
     script.onload = () => {
         DOMPurify = window.DOMPurify;
@@ -17,26 +18,26 @@ let DOMPurify;
     script.onerror = () => {
         console.warn('⚠️  DOMPurify failed to load, using fallback sanitization');
         DOMPurify = {
-            sanitize: (dirty) => {
-                if (typeof dirty !== 'string') return '';
-                return dirty.replace(/[<>"']/g, (char) => {
-                    const entities = {'<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
-                    return entities[char];
-                });
-            }
+            sanitize: (dirty) => escapeHtml(dirty)
         };
     };
     document.head.appendChild(script);
 })();
 
+// --- HTML-encoding helper (shared escape logic) ---
+function escapeHtml(dirty) {
+    if (typeof dirty !== 'string') return '';
+    return dirty.replace(/[<>"']/g, (char) => {
+        const entities = {'<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
+        return entities[char];
+    });
+}
+
 // --- Sanitize helper ---
 function sanitizeHTML(dirty) {
     if (!dirty) return '';
     if (!DOMPurify) {
-        return String(dirty).replace(/[<>"']/g, (char) => {
-            const entities = {'<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
-            return entities[char];
-        });
+        return escapeHtml(String(dirty));
     }
     return DOMPurify.sanitize(dirty, {
         ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'br'],
@@ -45,9 +46,11 @@ function sanitizeHTML(dirty) {
     });
 }
 
-// --- Shared global state ---
+// --- Shared global state (used across bio-link modules) ---
 let bioLinks = [];
+// eslint-disable-next-line no-unused-vars
 let currentBioLink = null;
+// eslint-disable-next-line no-unused-vars
 let bioLinkItems = [];
 
 // --- Authenticated API call helper ---
@@ -64,35 +67,68 @@ async function apiCall(url, options = {}) {
             ...options.headers
         }
     });
-    const data = await response.json();
+    const contentType = response.headers.get('content-type') || '';
+    let data;
+    if (contentType.includes('application/json')) {
+        data = await response.json();
+    } else {
+        data = await response.text();
+    }
     if (!response.ok) {
-        throw new Error(data.error || 'Request failed');
+        throw new Error(data.error || data.message || data || 'Request failed');
     }
     return data;
 }
 
-// --- Firestore timestamp parser ---
+// --- Firestore timestamp parser (recursive) ---
 function parseTimestamps(obj) {
     if (!obj || typeof obj !== 'object') return obj;
-    const result = Array.isArray(obj) ? [...obj] : { ...obj };
-    for (const key of Object.keys(result)) {
-        const val = result[key];
-        if (val && typeof val === 'object' && '_seconds' in val && 'nanoseconds' in val) {
-            result[key] = new Date(val._seconds * 1000 + val.nanoseconds / 1000000);
-        } else if (val && typeof val === 'object' && '_seconds' in val) {
-            result[key] = new Date(val._seconds * 1000);
+    if (obj instanceof Date) return obj;
+    if (Array.isArray(obj)) {
+        return obj.map(item => parseTimestamps(item));
+    }
+    const result = {};
+    for (const key of Object.keys(obj)) {
+        const val = obj[key];
+        if (val && typeof val === 'object') {
+            if ('_seconds' in val && typeof val._seconds === 'number') {
+                // Firestore timestamp → Date
+                result[key] = new Date(val._seconds * 1000 + (val.nanoseconds || 0) / 1000000);
+            } else if (!(val instanceof Date)) {
+                // Recurse into nested objects/arrays
+                result[key] = parseTimestamps(val);
+            } else {
+                result[key] = val;
+            }
+        } else {
+            result[key] = val;
         }
     }
     return result;
 }
 
 // --- Initialize Bio Link module ---
+let initAttempts = 0;
+const MAX_INIT_ATTEMPTS = 10;
+
 function initBioLink() {
     console.log('Initializing Bio Link module');
 
     if (typeof firebase === 'undefined') {
-        console.error('Firebase not loaded');
-        setTimeout(initBioLink, 500);
+        initAttempts++;
+        console.error('Firebase not loaded (attempt ' + initAttempts + '/' + MAX_INIT_ATTEMPTS + ')');
+        if (initAttempts < MAX_INIT_ATTEMPTS) {
+            setTimeout(initBioLink, 500);
+        } else {
+            console.error('Firebase failed to load after ' + MAX_INIT_ATTEMPTS + ' attempts');
+            const container = document.getElementById('bioLinksContainer');
+            const emptyState = document.getElementById('bioLinksEmptyState');
+            if (container) container.style.display = 'none';
+            if (emptyState) {
+                emptyState.style.display = 'flex';
+                emptyState.innerHTML = '<div class="empty-state-icon"><i class="fas fa-exclamation-triangle"></i></div><h3>Service unavailable</h3><p>Please try refreshing the page</p>';
+            }
+        }
         return;
     }
 
@@ -196,15 +232,20 @@ function updateBioLinkStats() {
     const totalClicks = bioLinks.reduce((sum, bl) => sum + (bl.clicks || 0), 0);
     const avgCTR = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : 0;
 
-    document.getElementById('totalBioLinks').textContent = totalBioLinks;
-    document.getElementById('totalBioViews').textContent = totalViews;
-    document.getElementById('totalBioClicks').textContent = totalClicks;
-    document.getElementById('avgBioCTR').textContent = avgCTR + '%';
+    const elTotal = document.getElementById('totalBioLinks');
+    const elViews = document.getElementById('totalBioViews');
+    const elClicks = document.getElementById('totalBioClicks');
+    const elCTR = document.getElementById('avgBioCTR');
+    if (elTotal) elTotal.textContent = totalBioLinks;
+    if (elViews) elViews.textContent = totalViews;
+    if (elClicks) elClicks.textContent = totalClicks;
+    if (elCTR) elCTR.textContent = avgCTR + '%';
 }
 
 // --- Global namespace for the bio-link module ---
 window.bioLinkModule = {
     version: '1.0.0',
+    escapeHtml,
     sanitizeHTML,
     apiCall,
     parseTimestamps,

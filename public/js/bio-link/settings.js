@@ -683,16 +683,23 @@ function fillFormWithImportedData(data) {
     if (data.links && data.links.length > 0) {
         document.getElementById('bioLinksListContainer').innerHTML = '';
 
-        data.links.forEach(link => {
+        data.links.forEach((link) => {
             addBioLinkItem();
             const items = document.querySelectorAll('.bio-link-item');
             const lastItem = items[items.length - 1];
 
             const titleInput = lastItem.querySelector('input[placeholder*="Title"]');
-            const urlInput = lastItem.querySelector('input[placeholder*="URL"]');
+            const urlInput = lastItem.querySelector('input[type="url"]');
 
             if (titleInput && link.title) titleInput.value = link.title;
             if (urlInput && link.url) urlInput.value = link.url;
+
+            // Persist in bioLinkItems so saveBioLink() reads actual values
+            const arrayIdx = bioLinkItems.length - 1;
+            if (bioLinkItems[arrayIdx]) {
+                if (link.title) bioLinkItems[arrayIdx].title = link.title;
+                if (link.url) bioLinkItems[arrayIdx].url = link.url;
+            }
         });
     }
 }
@@ -851,6 +858,7 @@ function showBioProfilePicturePreview(url, fileName) {
     const previewImg = document.getElementById('bioProfilePicturePreviewImg');
     const fileNameSpan = document.getElementById('bioProfilePictureFileName');
 
+    if (!preview || !previewImg || !fileNameSpan) return;
     previewImg.src = url;
     fileNameSpan.textContent = fileName;
     preview.style.display = 'flex';

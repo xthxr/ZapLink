@@ -47,6 +47,32 @@ function updateLivePreview() {
     iframe.srcdoc = htmlContent;
 }
 
+// --- Shared domain→icon mapping ---
+const DOMAIN_ICON_MAP = [
+    { match: (u) => u.includes('youtube.com') || u.includes('youtu.be'), icon: 'fab fa-youtube' },
+    { match: (u) => u.includes('twitter.com') || u.includes('x.com'), icon: 'fab fa-twitter' },
+    { match: (u) => u.includes('instagram.com'), icon: 'fab fa-instagram' },
+    { match: (u) => u.includes('facebook.com'), icon: 'fab fa-facebook' },
+    { match: (u) => u.includes('linkedin.com'), icon: 'fab fa-linkedin' },
+    { match: (u) => u.includes('github.com'), icon: 'fab fa-github' },
+    { match: (u) => u.includes('tiktok.com'), icon: 'fab fa-tiktok' },
+    { match: (u) => u.includes('spotify.com'), icon: 'fab fa-spotify' },
+    { match: (u) => u.includes('discord.'), icon: 'fab fa-discord' },
+    { match: (u) => u.includes('twitch.tv'), icon: 'fab fa-twitch' },
+    { match: (u) => u.includes('medium.com'), icon: 'fab fa-medium' },
+    { match: (u) => u.includes('reddit.com'), icon: 'fab fa-reddit' },
+    { match: (u) => u.includes('dribbble.com'), icon: 'fab fa-dribbble' },
+    { match: (u) => u.includes('behance.net'), icon: 'fab fa-behance' }
+];
+
+function getIconForUrl(url) {
+    const urlLower = url.toLowerCase();
+    for (const entry of DOMAIN_ICON_MAP) {
+        if (entry.match(urlLower)) return entry.icon;
+    }
+    return 'fas fa-link';
+}
+
 // --- Generate bio preview HTML ---
 function generateBioPreviewHTML(bioLink) {
     const themeColor = bioLink.themeColor || '#06b6d4';
@@ -62,22 +88,7 @@ function generateBioPreviewHTML(bioLink) {
     }
 
     function getLinkIcon(url) {
-        const urlLower = url.toLowerCase();
-        if (urlLower.includes('youtube.com') || urlLower.includes('youtu.be')) return 'fab fa-youtube';
-        if (urlLower.includes('twitter.com') || urlLower.includes('x.com')) return 'fab fa-twitter';
-        if (urlLower.includes('instagram.com')) return 'fab fa-instagram';
-        if (urlLower.includes('facebook.com')) return 'fab fa-facebook';
-        if (urlLower.includes('linkedin.com')) return 'fab fa-linkedin';
-        if (urlLower.includes('github.com')) return 'fab fa-github';
-        if (urlLower.includes('tiktok.com')) return 'fab fa-tiktok';
-        if (urlLower.includes('spotify.com')) return 'fab fa-spotify';
-        if (urlLower.includes('discord.')) return 'fab fa-discord';
-        if (urlLower.includes('twitch.tv')) return 'fab fa-twitch';
-        if (urlLower.includes('medium.com')) return 'fab fa-medium';
-        if (urlLower.includes('reddit.com')) return 'fab fa-reddit';
-        if (urlLower.includes('dribbble.com')) return 'fab fa-dribbble';
-        if (urlLower.includes('behance.net')) return 'fab fa-behance';
-        return 'fas fa-link';
+        return getIconForUrl(url);
     }
 
     function hexToRgb(hex) {
@@ -196,19 +207,5 @@ function generateBioPreviewHTML(bioLink) {
 
 // --- Favicon / icon helper for common URLs ---
 function getFaviconForUrl(url) {
-    const urlLower = url.toLowerCase();
-    if (urlLower.includes('youtube.com') || urlLower.includes('youtu.be')) return 'fab fa-youtube';
-    if (urlLower.includes('github.com')) return 'fab fa-github';
-    if (urlLower.includes('twitter.com') || urlLower.includes('x.com')) return 'fab fa-twitter';
-    if (urlLower.includes('linkedin.com')) return 'fab fa-linkedin';
-    if (urlLower.includes('instagram.com')) return 'fab fa-instagram';
-    if (urlLower.includes('facebook.com')) return 'fab fa-facebook';
-    if (urlLower.includes('medium.com')) return 'fab fa-medium';
-    if (urlLower.includes('behance.net')) return 'fab fa-behance';
-    if (urlLower.includes('dribbble.com')) return 'fab fa-dribbble';
-    if (urlLower.includes('spotify.com')) return 'fab fa-spotify';
-    if (urlLower.includes('tiktok.com')) return 'fab fa-tiktok';
-    if (urlLower.includes('discord')) return 'fab fa-discord';
-    if (urlLower.includes('twitch.tv')) return 'fab fa-twitch';
-    return 'fas fa-link';
+    return getIconForUrl(url);
 }

@@ -103,6 +103,78 @@ export default [
     }
   },
 
+  // ── Frontend: Bio-link modules (public/js/bio-link/) ──────────
+  {
+    files: ["public/js/bio-link/*.js"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        // CDN / vendor globals
+        firebase: "readonly",
+        DomPurify: "readonly",
+        // Cross-file shared globals (declared in other JS files)
+        getAuthToken: "readonly",
+        showToast: "readonly",
+        apiCall: "readonly",
+        // Bio-link module globals
+        escapeHtml: "readonly",
+        sanitizeHTML: "readonly",
+        parseTimestamps: "readonly",
+        bioLinks: "writable",
+        currentBioLink: "writable",
+        bioLinkItems: "writable",
+        initBioLink: "readonly",
+        loadBioLinks: "readonly",
+        renderBioLinks: "readonly",
+        updateBioLinkStats: "readonly",
+        // Editor globals
+        editorBioLinkItems: "writable",
+        currentEditorBioLink: "writable",
+        loadBioLinkIntoEditor: "readonly",
+        renderEditorBioLinkItems: "readonly",
+        addEditorBioLinkItem: "readonly",
+        updateEditorBioLinkItem: "readonly",
+        removeEditorBioLinkItem: "readonly",
+        saveEditorBioLink: "readonly",
+        cancelBioLinkEdits: "readonly",
+        showEditorProfilePicturePreview: "readonly",
+        updateLivePreview: "readonly",
+        setupDragAndDrop: "readonly",
+        triggerAutoSave: "readonly",
+        // Settings globals
+        openBioLinkModal: "readonly",
+        closeBioLinkModal: "readonly",
+        addBioLinkItem: "readonly",
+        updateBioLinkItem: "readonly",
+        removeBioLinkItem: "readonly",
+        saveBioLink: "readonly",
+        copyBioLink: "readonly",
+        showBioProfilePicturePreview: "readonly",
+        // Share globals
+        shareBioLink: "readonly",
+        copyShareBioLink: "readonly",
+        getShareBioLinkUrl: "readonly",
+        nativeShare: "readonly",
+        // Preview globals
+        getIconForUrl: "readonly",
+        getFaviconForUrl: "readonly",
+        generateBioPreviewHTML: "readonly",
+        // Reorder globals
+        setupDragAndDrop: "readonly"
+      },
+      ecmaVersion: "latest"
+    },
+    rules: {
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "no-undef": "error",
+      semi: ["warn", "always"],
+      "no-console": "off",
+      "no-empty": "warn",
+      "prefer-const": "warn",
+      "no-var": "warn"
+    }
+  },
+
   // ── Web Worker (globe-worker.js) ──────────────────────────────
   {
     files: ["public/js/globe-worker.js"],
