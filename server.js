@@ -83,7 +83,7 @@ function fromFirestoreId(firestoreId) {
 }
 
 // Middleware
-app.use(morgan('combined'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(securityHeaders);
 app.use(apiLimiter);
 // Restrict CORS to the configured application origin.
