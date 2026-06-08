@@ -159,8 +159,6 @@ export default [
         getIconForUrl: "readonly",
         getFaviconForUrl: "readonly",
         generateBioPreviewHTML: "readonly",
-        // Reorder globals
-        setupDragAndDrop: "readonly"
       },
       ecmaVersion: "latest"
     },

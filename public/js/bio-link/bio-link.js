@@ -27,8 +27,8 @@ let DOMPurify;
 // --- HTML-encoding helper (shared escape logic) ---
 function escapeHtml(dirty) {
     if (typeof dirty !== 'string') return '';
-    return dirty.replace(/[<>"']/g, (char) => {
-        const entities = {'<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
+    return dirty.replace(/[&<>"']/g, (char) => {
+        const entities = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
         return entities[char];
     });
 }
