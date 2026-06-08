@@ -465,7 +465,7 @@ function renderGeographicList(data) {
 
     container.innerHTML = data.map(item => `
         <div class="analytics-item">
-            <span class="analytics-item-label">${item.location}</span>
+            <span class="analytics-item-label">${escapeHtml(item.location)}</span>
             <span class="analytics-item-value">${item.count}</span>
         </div>
     `).join('');
@@ -477,7 +477,7 @@ function renderDevicesList(data) {
 
     container.innerHTML = data.map(item => `
         <div class="analytics-item">
-            <span class="analytics-item-label">${item.device}</span>
+            <span class="analytics-item-label">${escapeHtml(item.device)}</span>
             <span class="analytics-item-value">${item.count}</span>
         </div>
     `).join('') || '<p style="color: var(--text-secondary); text-align: center;">No data available</p>';
@@ -489,7 +489,7 @@ function renderBrowsersList(data) {
 
     container.innerHTML = data.map(item => `
         <div class="analytics-item">
-            <span class="analytics-item-label">${item.browser}</span>
+            <span class="analytics-item-label">${escapeHtml(item.browser)}</span>
             <span class="analytics-item-value">${item.count}</span>
         </div>
     `).join('') || '<p style="color: var(--text-secondary); text-align: center;">No data available</p>';
@@ -501,7 +501,7 @@ function renderReferrersList(data) {
 
     container.innerHTML = data.map(item => `
         <div class="analytics-item">
-            <span class="analytics-item-label">${item.source}</span>
+            <span class="analytics-item-label">${escapeHtml(item.source)}</span>
             <span class="analytics-item-value">${item.count}</span>
         </div>
     `).join('') || '<p style="color: var(--text-secondary); text-align: center;">No data available</p>';

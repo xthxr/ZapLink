@@ -2,6 +2,10 @@
 
 let currentUser = null;
 let authToken = null;
+// Cross-file globals (shared with links/links.js, navigation.js)
+let userLinks = [];
+let userProfile = null;
+let userBioSlug = null;
 
 // Auth UI Elements (may not exist in all pages)
 const loginSection = document.getElementById('loginSection');

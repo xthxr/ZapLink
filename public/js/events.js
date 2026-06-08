@@ -130,11 +130,12 @@ function initializeEventListeners() {
     const customShortCodeSuccess = document.getElementById('customShortCodeSuccess');
     if (customShortCode) {
         customShortCode.addEventListener('input', () => {
-            const value = customShortCode.value;
-            if (shortCodeCounter) shortCodeCounter.textContent = value.length;
-            customShortCode.value = value.replace(/[^a-zA-Z0-9-_]/g, '');
-            if (value.length > 0) {
-                if (typeof validateCustomShortCode === 'function') validateCustomShortCode(value);
+            const rawValue = customShortCode.value;
+            const sanitized = rawValue.replace(/[^a-zA-Z0-9-_]/g, '');
+            customShortCode.value = sanitized;
+            if (shortCodeCounter) shortCodeCounter.textContent = sanitized.length;
+            if (sanitized.length > 0) {
+                if (typeof validateCustomShortCode === 'function') validateCustomShortCode(sanitized);
             } else {
                 if (customShortCodeError) customShortCodeError.style.display = 'none';
                 if (customShortCodeSuccess) customShortCodeSuccess.style.display = 'none';

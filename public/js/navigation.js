@@ -27,12 +27,13 @@ function initializeTheme() {
 }
 
 function setTheme(theme) {
-    currentTheme = 'dark';
+    const selectedTheme = theme || 'dark';
+    currentTheme = selectedTheme;
     const html = document.documentElement;
     if (html) {
-        html.setAttribute('data-theme', 'dark');
+        html.setAttribute('data-theme', selectedTheme);
     }
-    localStorage.setItem('piikme-theme', 'dark');
+    localStorage.setItem('piikme-theme', selectedTheme);
 }
 
 function initializeNavigation() {

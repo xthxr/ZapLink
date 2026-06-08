@@ -267,9 +267,7 @@ async function handleCreateLink() {
         if (data.success) {
             showToast('Link created successfully!', 'success');
             closeCreateLinkModal();
-            setTimeout(() => loadLinks(), 500);
-            setTimeout(() => loadLinks(), 1500);
-            setTimeout(() => loadLinks(), 3000);
+            setTimeout(() => loadLinks(), 1000);
         } else {
             showToast(data.error || 'Failed to create link', 'error');
         }
@@ -400,7 +398,7 @@ function displayLinks(links, filter) {
                     <a href="${link.shortUrl}" class="link-short" target="_blank">${link.shortUrl.replace('https://', '').replace('http://', '')}</a>
                     <button
                         class="btn-icon copy-btn"
-                        onclick="copyLink('${link.shortUrl}', this)"
+                        onclick="copyLink('${link.shortUrl.replace(/'/g, "\\'")}', this)"
                         title="Copy link"
                     >
                         <i class="fas fa-copy"></i>
@@ -422,7 +420,7 @@ ${link.notes ? `
     color: var(--text-secondary);
 ">
     <i class="fas fa-sticky-note"></i>
-    ${link.notes}
+    ${escapeHtml(link.notes)}
 </div>
 ` : ''}
 
@@ -441,7 +439,7 @@ ${link.tags && link.tags.length ? `
                 border-radius: 12px;
                 font-size: 12px;
             ">
-                ${tag}
+                ${escapeHtml(tag)}
             </span>
         `).join('')}
     </div>
@@ -470,10 +468,10 @@ ${link.tags && link.tags.length ? `
                     <button class="link-action-btn" onclick="viewAnalytics('${link.shortCode}')" title="Analytics">
                         <i class="fas fa-chart-line"></i>
                     </button>
-                    <button class="link-action-btn" onclick="showQRCode('${link.shortUrl}', '${link.shortCode}')" title="QR Code">
+                    <button class="link-action-btn" onclick="showQRCode('${link.shortUrl.replace(/'/g, "\\'")}', '${link.shortCode}')" title="QR Code">
                         <i class="fas fa-qrcode"></i>
                     </button>
-                    <button class="link-action-btn" onclick="shareLink('${link.shortUrl}')" title="Share">
+                    <button class="link-action-btn" onclick="shareLink('${link.shortUrl.replace(/'/g, "\\'")}')" title="Share">
                         <i class="fas fa-share-alt"></i>
                     </button>
                     <button class="link-action-btn delete" onclick="deleteLink('${link.shortCode}')" title="Deactivate">
@@ -605,7 +603,7 @@ function showQRCode(shortUrl, shortCode) {
                 <p style="margin-top: 16px; color: var(--text-secondary); font-size: 14px;">${shortUrl.replace('https://', '').replace('http://', '')}</p>
             </div>
             <div class="modal-footer" style="display: flex; gap: 12px; justify-content: flex-end;">
-                <button class="btn btn-secondary" onclick="customizeQR('${shortUrl}')">
+                <button class="btn btn-secondary" onclick="customizeQR('${shortUrl.replace(/'/g, "\\'")}')">
                     <i class="fas fa-palette"></i> Customize
                 </button>
                 <button class="btn btn-primary" onclick="downloadQR('${shortCode}')">

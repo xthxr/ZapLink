@@ -196,7 +196,7 @@ function renderGeoClicksTable(clicks) {
         });
 
         const location = click.location || {};
-        const locationStr = `${location.city || 'Unknown'}, ${location.region || 'Unknown'}`;
+        const locationStr = `${escapeHtml(location.city || 'Unknown')}, ${escapeHtml(location.region || 'Unknown')}`;
         const ipAddress = click.ipAddress || 'N/A';
 
         return `
@@ -204,28 +204,28 @@ function renderGeoClicksTable(clicks) {
                 <td>${index + 1}</td>
                 <td>${formattedDate}</td>
                 <td><strong>${locationStr}</strong></td>
-                <td>${location.city || 'Unknown'}</td>
+                <td>${escapeHtml(location.city || 'Unknown')}</td>
                 <td>
                     <span style="display: inline-flex; align-items: center; gap: 6px;">
-                        ${location.country || 'Unknown'}
+                        ${escapeHtml(location.country || 'Unknown')}
                     </span>
                 </td>
                 <td>
                     <code style="background: var(--bg-secondary); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                        ${ipAddress}
+                        ${escapeHtml(ipAddress)}
                     </code>
                 </td>
                 <td>
                     <span style="display: inline-flex; align-items: center; gap: 6px;">
                         <i class="fas fa-${click.device === 'Mobile' ? 'mobile-alt' : 'desktop'}" style="color: var(--accent-blue);"></i>
-                        ${click.device || 'Unknown'}
+                        ${escapeHtml(click.device || 'Unknown')}
                     </span>
                 </td>
-                <td>${click.browser || 'Unknown'}</td>
+                <td>${escapeHtml(click.browser || 'Unknown')}</td>
                 <td>
                     <span style="display: inline-flex; align-items: center; gap: 6px;">
                         <i class="fas fa-share-alt" style="color: var(--accent-purple); font-size: 11px;"></i>
-                        ${click.referrer || 'Direct'}
+                        ${escapeHtml(click.referrer || 'Direct')}
                     </span>
                 </td>
             </tr>
@@ -276,22 +276,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const headers = ['#', 'Timestamp', 'Location', 'City', 'Region', 'Country', 'IP Address', 'Device', 'Browser', 'Referrer'];
             const csvRows = [headers.join(',')];
 
+            const sanitizeCsv = (val) => /^[=+\-@]/.test(val) ? `\t${val}` : val;
+
             filteredGeoClicks.forEach((click, index) => {
                 const location = click.location || {};
                 const timestamp = new Date(click.timestamp).toISOString();
-                const locationStr = `"${location.city || 'Unknown'}, ${location.region || 'Unknown'}"`;
+                const locationStr = `"${sanitizeCsv(location.city || 'Unknown')}, ${sanitizeCsv(location.region || 'Unknown')}"`;
 
                 const row = [
                     index + 1,
                     timestamp,
                     locationStr,
-                    location.city || 'Unknown',
-                    location.region || 'Unknown',
-                    location.country || 'Unknown',
-                    click.ipAddress || 'N/A',
-                    click.device || 'Unknown',
-                    click.browser || 'Unknown',
-                    click.referrer || 'Direct'
+                    sanitizeCsv(location.city || 'Unknown'),
+                    sanitizeCsv(location.region || 'Unknown'),
+                    sanitizeCsv(location.country || 'Unknown'),
+                    sanitizeCsv(click.ipAddress || 'N/A'),
+                    sanitizeCsv(click.device || 'Unknown'),
+                    sanitizeCsv(click.browser || 'Unknown'),
+                    sanitizeCsv(click.referrer || 'Direct')
                 ];
 
                 csvRows.push(row.join(','));

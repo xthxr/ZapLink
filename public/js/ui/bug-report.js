@@ -23,10 +23,14 @@ function closeBugReport() {
 async function handleBugReport(e) {
     e.preventDefault();
 
-    const bugTitle = document.getElementById('bugTitle').value.trim();
-    const bugDescription = document.getElementById('bugDescription').value.trim();
-    const bugSteps = document.getElementById('bugSteps').value.trim();
-    const bugEmail = document.getElementById('bugEmail').value.trim();
+    const bugTitleEl = document.getElementById('bugTitle');
+    const bugDescEl = document.getElementById('bugDescription');
+    const bugStepsEl = document.getElementById('bugSteps');
+    const bugEmailEl = document.getElementById('bugEmail');
+    const bugTitle = bugTitleEl ? bugTitleEl.value.trim() : '';
+    const bugDescription = bugDescEl ? bugDescEl.value.trim() : '';
+    const bugSteps = bugStepsEl ? bugStepsEl.value.trim() : '';
+    const bugEmail = bugEmailEl ? bugEmailEl.value.trim() : '';
 
     if (!bugTitle || !bugDescription) {
         showToast('Please fill in all required fields', 'error');
