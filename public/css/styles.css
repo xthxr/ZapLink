@@ -4489,3 +4489,40 @@ html[data-theme="dark"] .analytics-card #globeViz {
         height: 200px;
     }
 }
+
+/* Dev Override: Force the editor workspace to show up regardless of Firebase status */
+#bioLinkEditor {
+    display: block !important;
+}
+#landingView, .loading-screen, #authModal {
+    display: none !important;
+}
+body {
+    background: #0f172a !important; /* Changes the pitch black background to a clean slate blue */
+}
+
+/* Container layout for the donut chart */
+#traffic-chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05); /* Translucent glass */
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Glassmorphic interactive tooltip */
+.chart-tooltip {
+    background: rgba(15, 15, 25, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: sans-serif;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}

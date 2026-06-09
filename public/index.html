@@ -224,7 +224,6 @@
                 </div>
             </section>
 
-            <!-- Analytics Page -->
             <section class="page" id="analyticsPage" style="display: none;">
                 <div class="page-header">
                     <div class="header-content">
@@ -244,7 +243,13 @@
                     </div>
                 </div>
 
-                <!-- Analytics Stats -->
+                <div class="analytics-grid" style="margin-bottom: 20px;">
+                    <div class="analytics-card">
+                        <h3>Traffic Source Distribution</h3>
+                        <div id="traffic-chart-container"></div>
+                    </div>
+                </div>
+
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon blue">
@@ -255,17 +260,8 @@
                             <span class="stat-label">Impressions</span>
                             <span class="stat-change" id="impressionsChange" style="display: none;"></span>
                         </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon blue-light">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="analyticsClicks">0</span>
-                            <span class="stat-label">Total Clicks</span>
-                            <span class="stat-change" id="clicksChange" style="display: none;"></span>
-                        </div>
-                    </div>
+                    </div> 
+                    
                     <div class="stat-card">
                         <div class="stat-icon purple">
                             <i class="fas fa-percentage"></i>
@@ -276,6 +272,7 @@
                             <span class="stat-change" id="ctrChange" style="display: none;"></span>
                         </div>
                     </div>
+
                     <div class="stat-card">
                         <div class="stat-icon green">
                             <i class="fas fa-users"></i>

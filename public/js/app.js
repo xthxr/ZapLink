@@ -1,7 +1,7 @@
 // ================================
 // MODERN PIIK.ME - APP LOGIC
 // ================================
-
+import { renderChart } from './charts/traffic-chart.js';
 // State
 let currentPage = 'home';
 let currentTheme = 'dark';
@@ -3499,3 +3499,11 @@ function filterClicksChart(days) {
 
     renderClicksChart(processClicksOverTime(filtered));
 }
+
+socket.on('analyticsUpdate', (newData) => {
+    // Check if traffic data is inside the WebSocket update
+    if (newData && newData.trafficSources) {
+        // Call your function to update the donut chart smoothly
+        renderChart(newData.trafficSources);
+    }
+});
