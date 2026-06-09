@@ -1509,7 +1509,7 @@ function generateBioPreviewHTML(bioLink) {
     <title>${sanitizeHTML(bioLink.name)}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/bio-preview.css">
+    <link rel="stylesheet" href="${window.location.origin}/css/bio-preview.css">
     <style>
         body {
             ${backgroundCSS}
@@ -1545,7 +1545,7 @@ function generateBioPreviewHTML(bioLink) {
             <div class="powered-by">
                 <span>100% free, try</span>
                 <a href="/" target="_blank" style="display: flex; align-items: center; text-decoration: none;">
-                    <img src="/assets/images/logo.png" alt="piik.me" style="width: auto; height: 24px;">
+                    <img src="${window.location.origin}/assets/images/logo.png" alt="piik.me" style="width: auto; height: 24px;">
                 </a>
             </div>
         </div>
