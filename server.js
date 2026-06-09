@@ -17,6 +17,7 @@ const redisUtils = require('./src/utils/redis.utils');
 const redirectCache = require('./src/utils/redirect-cache.utils');
 const { securityHeaders, apiLimiter, bugReportLimiter } = require('./src/middleware/security.middleware');
 const splitTestService = require('./src/services/splitTest.service');
+const morgan = require('morgan');
 require('dotenv').config();
 
 // Validate required environment variables on startup
@@ -102,6 +103,7 @@ function fromFirestoreId(firestoreId) {
 }
 
 // Middleware
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(securityHeaders);
 app.use(apiLimiter);
 // Restrict CORS to the configured application origin.
