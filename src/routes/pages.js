@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const { getDatabase, COLLECTIONS } = require('../../config/firebase.config');
 
 const router = express.Router();
 

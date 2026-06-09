@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDatabase, getFirebaseState, COLLECTIONS, admin } = require('../../config/firebase.config');
+const { getDatabase, COLLECTIONS, admin } = require('../../config/firebase.config');
 const { verifyToken } = require('../middleware/auth.middleware');
 const { toFirestoreId } = require('../utils/url.utils');
 
@@ -8,6 +8,7 @@ const { toFirestoreId } = require('../utils/url.utils');
 router.get('/api/user/profile', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   try {
     const userDoc = await db.collection(COLLECTIONS.USERS).doc(userId).get();
@@ -25,8 +26,9 @@ router.get('/api/user/profile', verifyToken, async (req, res) => {
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
-    await db.collection(COLLECTIONS.USERS).doc(userId).set(newProfile);
-    res.json({ profile: newProfile });
+    await db.collection(COLLECTIONS.USERS).doc(userId).set(newProfile, { merge: true });
+    const createdDoc = await db.collection(COLLECTIONS.USERS).doc(userId).get();
+    res.json({ profile: createdDoc.exists ? createdDoc.data() : newProfile });
   } catch (error) {
     console.error('Error fetching user profile:', error);
     res.status(500).json({ error: 'Failed to fetch profile' });
@@ -38,6 +40,7 @@ router.post('/api/user/username', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   const { username } = req.body;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   if (!username) {
     return res.status(400).json({ error: 'Username is required' });
@@ -90,6 +93,7 @@ router.post('/api/user/username', verifyToken, async (req, res) => {
 router.get('/api/check-username/:username', verifyToken, async (req, res) => {
   const { username } = req.params;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   if (username.length < 3 || username.length > 20) {
     return res.json({ available: false, error: 'Username must be 3-20 characters' });
@@ -116,6 +120,7 @@ router.get('/api/check-username/:username', verifyToken, async (req, res) => {
 router.get('/api/check-shortcode/:shortCode', verifyToken, async (req, res) => {
   const { shortCode } = req.params;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   try {
     const firestoreId = toFirestoreId(shortCode);

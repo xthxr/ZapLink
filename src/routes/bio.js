@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { getDatabase, getFirebaseState, COLLECTIONS, admin } = require('../../config/firebase.config');
+const { getDatabase, COLLECTIONS, admin } = require('../../config/firebase.config');
 const { verifyToken } = require('../middleware/auth.middleware');
 
 // ============ Check bio slug availability ============
 router.get('/api/bio-links/check-slug/:slug', verifyToken, async (req, res) => {
   const { slug } = req.params;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   try {
     const existingSlug = await db.collection(COLLECTIONS.BIO_LINKS)
@@ -23,6 +24,7 @@ router.get('/api/bio-links/check-slug/:slug', verifyToken, async (req, res) => {
 router.get('/api/bio-links', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   try {
     const snapshot = await db.collection(COLLECTIONS.BIO_LINKS)
@@ -52,6 +54,7 @@ router.post('/api/bio-links', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   const { name, slug, description, profilePicture, themeColor, backgroundStyle, links, social } = req.body;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Name is required' });
@@ -108,6 +111,7 @@ router.put('/api/bio-links/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
   const { name, slug, description, profilePicture, themeColor, backgroundStyle, links, social } = req.body;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Name is required' });
@@ -162,6 +166,7 @@ router.delete('/api/bio-links/:id', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   const { id } = req.params;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   try {
     const bioLinkRef = db.collection(COLLECTIONS.BIO_LINKS).doc(id);
@@ -188,6 +193,7 @@ router.delete('/api/bio-links/:id', verifyToken, async (req, res) => {
 router.get('/api/user/bio-slug', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   try {
     const userDoc = await db.collection(COLLECTIONS.USERS).doc(userId).get();
@@ -195,7 +201,7 @@ router.get('/api/user/bio-slug', verifyToken, async (req, res) => {
       return res.json({ slug: userDoc.data().username });
     }
 
-    const bioLinksSnapshot = await db.collection('bioLinks')
+    const bioLinksSnapshot = await db.collection(COLLECTIONS.BIO_LINKS)
       .where('userId', '==', userId)
       .limit(1)
       .get();

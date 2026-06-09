@@ -16,6 +16,8 @@ router.post('/api/links/:shortCode/split-test', verifyToken, async (req, res) =>
   }
 
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
+
   try {
     const firestoreId = toFirestoreId(shortCode);
     const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
@@ -48,6 +50,8 @@ router.delete('/api/links/:shortCode/split-test', verifyToken, async (req, res) 
   const userId = req.user.uid;
 
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
+
   try {
     const firestoreId = toFirestoreId(shortCode);
     const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);

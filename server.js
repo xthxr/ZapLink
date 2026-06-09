@@ -99,7 +99,7 @@ if (!env.isServerless) {
 
   // 24-hour pre-expiry notification check (runs every hour)
   const { getDatabase, COLLECTIONS } = require('./config/firebase.config');
-  const memoryStore = require('./src/services/memory.service');
+  // const memoryStore = require('./src/services/memory.service');
 
   setInterval(async () => {
     const db = getDatabase();

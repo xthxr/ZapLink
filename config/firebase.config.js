@@ -43,7 +43,7 @@ function initializeFirebase() {
 
     console.log('✅ Firebase Admin initialized');
     return true;
-  } catch (error) {
+  } catch (_) {
     console.log('⚠️ Firebase Admin not configured. Using in-memory storage.');
     console.log('   See docs/FIREBASE_SETUP.md for setup instructions.');
     return false;

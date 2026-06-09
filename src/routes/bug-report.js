@@ -10,11 +10,17 @@ router.post('/api/bug-report', async (req, res) => {
     return res.status(400).json({ error: 'Name, email, and message are required' });
   }
 
+  // Basic email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.trim())) {
+    return res.status(400).json({ error: 'Invalid email format' });
+  }
+
   try {
     const db = getDatabase();
     if (!db) {
-      console.log('Bug report logged (Firestore unavailable):', { name, email, subject });
-      return res.json({ success: true, message: 'Bug report received (logged locally)' });
+      console.log('Bug report logged (Firestore unavailable):', { subject, type });
+      return res.json({ success: true, note: 'Bug report received (logged locally)' });
     }
 
     const bugReport = {

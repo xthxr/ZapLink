@@ -1,4 +1,5 @@
 const { getAuth, getDatabase, getFirebaseState, COLLECTIONS } = require('../../config/firebase.config');
+const { toFirestoreId } = require('../utils/url.utils');
 
 /**
  * Middleware to verify Firebase authentication token
@@ -51,7 +52,6 @@ async function requireLinkOwnership(req, res, next) {
   const decodedShortCode = decodeURIComponent(shortCode);
   const userId = req.user.uid;
 
-  const { toFirestoreId } = require('../utils/url.utils');
   const firestoreId = toFirestoreId(decodedShortCode);
 
   const db = getDatabase();

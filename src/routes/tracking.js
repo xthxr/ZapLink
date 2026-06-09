@@ -244,8 +244,8 @@ async function recordClickAsync(req, shortCode) {
     await db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId).set({
       clicks: admin.firestore.FieldValue.increment(1),
       [`devices.${deviceType}`]: admin.firestore.FieldValue.increment(1),
-      [`browsers.${browserType.replace(/[.#$\/\[\]]/g, '_')}`]: admin.firestore.FieldValue.increment(1),
-      [`referrers.${referrerSource.replace(/[.#$\/\[\]]/g, '_')}`]: admin.firestore.FieldValue.increment(1),
+      [`browsers.${browserType.replace(/[.#$/[\]]/g, '_')}`]: admin.firestore.FieldValue.increment(1),
+      [`referrers.${referrerSource.replace(/[.#$/[\]]/g, '_')}`]: admin.firestore.FieldValue.increment(1),
       [`dailyClicks.${dayKey}`]: admin.firestore.FieldValue.increment(1),
       clickHistory: admin.firestore.FieldValue.arrayUnion({
         type: 'click',

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDatabase, getFirebaseState, COLLECTIONS } = require('../../config/firebase.config');
+const { getDatabase, COLLECTIONS } = require('../../config/firebase.config');
 const { verifyToken } = require('../middleware/auth.middleware');
 const { toFirestoreId } = require('../utils/url.utils');
 const { getAggregatedAnalytics } = require('../utils/analytics');
@@ -51,6 +51,10 @@ router.get('/api/analytics/:shortCode', verifyToken, async (req, res) => {
   const { shortCode } = req.params;
   const userId = req.user.uid;
   const db = getDatabase();
+
+  if (!db) {
+    return res.status(503).json({ error: 'Database not available' });
+  }
 
   try {
     const firestoreId = toFirestoreId(shortCode);

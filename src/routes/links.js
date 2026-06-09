@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDatabase, getFirebaseState, COLLECTIONS, admin } = require('../../config/firebase.config');
+const { getDatabase, COLLECTIONS, admin } = require('../../config/firebase.config');
 const { verifyToken } = require('../middleware/auth.middleware');
 const { generateShortCode, parseUTMParams, addUTMParams, getBaseUrl, toFirestoreId, validateCustomShortCode } = require('../utils/url.utils');
 const { getAggregatedAnalytics, normalizeRedirectLink } = require('../utils/analytics');
@@ -98,7 +98,13 @@ router.post('/api/shorten', verifyToken, async (req, res) => {
     maxClicks: maxClicks ? parseInt(maxClicks) : null,
     clickCount: 0,
     notifiedExpiry: false,
-    isExpired: false
+    isExpired: false,
+    healthCheck: healthData && healthData.success !== undefined ? {
+      status: healthData.healthStatus,
+      statusCode: healthData.statusCode,
+      responseTime: healthData.responseTime,
+      checkedAt: healthData.checkedAt
+    } : null
   };
 
   const analyticsData = {
@@ -217,6 +223,8 @@ router.put('/api/links/:shortCode/deactivate', verifyToken, async (req, res) => 
 
   try {
     const db = getDatabase();
+    if (!db) return res.status(503).json({ error: 'Database not available' });
+
     const firestoreId = toFirestoreId(shortCode);
     const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
     const linkDoc = await linkRef.get();
@@ -248,6 +256,8 @@ router.put('/api/links/:shortCode/reactivate', verifyToken, async (req, res) => 
 
   try {
     const db = getDatabase();
+    if (!db) return res.status(503).json({ error: 'Database not available' });
+
     const firestoreId = toFirestoreId(shortCode);
     const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
     const linkDoc = await linkRef.get();
@@ -272,6 +282,8 @@ router.delete('/api/links/inactive', verifyToken, async (req, res) => {
 
   try {
     const db = getDatabase();
+    if (!db) return res.status(503).json({ error: 'Database not available' });
+
     const inactiveLinksQuery = await db.collection(COLLECTIONS.LINKS)
       .where('userId', '==', userId)
       .where('isActive', '==', false)
@@ -326,6 +338,8 @@ router.delete('/api/links/:shortCode', verifyToken, async (req, res) => {
 
   try {
     const db = getDatabase();
+    if (!db) return res.status(503).json({ error: 'Database not available' });
+
     const firestoreId = toFirestoreId(shortCode);
     const linkRef = db.collection(COLLECTIONS.LINKS).doc(firestoreId);
     const linkDoc = await linkRef.get();

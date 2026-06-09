@@ -14,6 +14,7 @@ router.post('/api/import/profile', verifyToken, async (req, res) => {
   }
 
   const db = getDatabase();
+  if (!db) return res.status(503).json({ error: 'Database not available' });
 
   try {
     let importedCount = 0;
@@ -22,6 +23,9 @@ router.post('/api/import/profile', verifyToken, async (req, res) => {
       // Import Linktree-style links
       if (Array.isArray(data.links)) {
         for (const link of data.links) {
+          if (!link.url) continue;
+          try { new URL(link.url); } catch (_) { continue; }
+
           const shortCode = generateShortCode();
           const linkData = {
             originalUrl: link.url,
@@ -44,6 +48,9 @@ router.post('/api/import/profile', verifyToken, async (req, res) => {
       // Import Bitly-style links
       if (Array.isArray(data.links)) {
         for (const link of data.links) {
+          if (!link.long_url) continue;
+          try { new URL(link.long_url); } catch (_) { continue; }
+
           const shortCode = link.custom_slug || generateShortCode();
           const linkData = {
             originalUrl: link.long_url,
@@ -65,6 +72,9 @@ router.post('/api/import/profile', verifyToken, async (req, res) => {
     } else if (service === 'rebrandly') {
       if (Array.isArray(data.links)) {
         for (const link of data.links) {
+          if (!link.destination) continue;
+          try { new URL(link.destination); } catch (_) { continue; }
+
           const shortCode = link.slashtag || generateShortCode();
           const linkData = {
             originalUrl: link.destination,
