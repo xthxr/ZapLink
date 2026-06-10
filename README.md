@@ -10,8 +10,9 @@
 [![Firebase](https://img.shields.io/badge/Firebase-Firestore-orange.svg)](https://firebase.google.com)
 [![Socket.IO](https://img.shields.io/badge/Socket.IO-Real--time-black.svg)](https://socket.io)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-black.svg)](https://vercel.com)
+[![CI](https://github.com/xthxr/piik.me/actions/workflows/ci.yml/badge.svg)](https://github.com/xthxr/piik.me/actions/workflows/ci.yml)
 
-**A professional-grade, open-source platform for creating trackable short links, personalized bio pages, and real-time analytics with instant QR code generation — a better alternative to bitly. com**
+**A professional-grade, open-source platform for creating trackable short links, personalized bio pages, and real-time analytics with instant QR code generation — a better alternative to Bitly.**
 
 [Features](#-features) • [Quick Start](#-quick-start) • [Tech Stack](#-technology-stack) • [API Reference](#-api-reference) • [Contributing](#-contributing)
 
@@ -221,7 +222,7 @@ piik.me is built with modern, production-ready technologies:
 
    # Firebase Admin SDK (from service account JSON)
    FIREBASE_PROJECT_ID=your_project_id
-   FIREBASE_CLIENT_EMAIL=your_client_email@your_project. iam.gserviceaccount.com
+   FIREBASE_CLIENT_EMAIL=your_client_email@your-project.iam.gserviceaccount.com
    FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
    ```
 
@@ -250,16 +251,20 @@ piik.me is built with modern, production-ready technologies:
 The project follows a clean, modular architecture optimized for maintainability and contributor-friendliness:
 
 ```
-zaplink/
+piik.me/
 ├── config/               # Configuration files
 │   └── firebase.config.js    # Firebase Admin SDK initialization
 ├── docs/                 # Documentation
 │   ├── ARCHITECTURE.md       # System architecture
+│   ├── CLEANUP_SUMMARY.md    # Cleanup notes
 │   ├── CODE_OF_CONDUCT.md    # Community guidelines
 │   ├── FIREBASE_SETUP.md     # Firebase setup guide
+│   ├── FUTURE_IMPROVEMENTS.md # Planned improvements
 │   ├── PROJECT_STRUCTURE.md  # Detailed structure docs
-│   └── SECURITY.md           # Security policies
+│   ├── SECURITY.md           # Security policies
+│   └── STRUCTURE_VISUAL.md   # Visual structure reference
 ├── public/               # Frontend assets (served statically)
+│   ├── api/                 # Edge/API helpers
 │   ├── assets/              # Icons and images
 │   ├── css/                 # Stylesheets
 │   ├── js/                  # Client-side JavaScript modules
@@ -268,25 +273,33 @@ zaplink/
 │   │   ├── bio-link.js      # Bio link functionality
 │   │   ├── qr-generator.js  # QR code generation
 │   │   └── firebase-config.js # Firebase client config
-│   ├── index.html           # Main dashboard
 │   ├── bio.html             # Bio link page
+│   ├── expired.html         # Expired link page
+│   ├── index.html           # Main dashboard
 │   └── landing.html         # Landing page
 ├── scripts/              # Utility scripts
+│   ├── README.md            # Script usage notes
 │   └── set-verified-badges.js # Badge management
 ├── src/                  # Server-side source code
+│   ├── controllers/         # Request controllers
 │   ├── middleware/          # Express middleware
-│   │   └── auth.middleware.js # Token verification
-│   ├── routes/              # API routes (modular)
+│   ├── routes/              # API routes
 │   ├── services/            # Business logic
-│   │   └── memory.service.js # In-memory storage
 │   └── utils/               # Helper functions
-│       └── url.utils.js     # URL utilities
 ├── .env.example          # Environment template
+├── CHANGELOG.md          # Release notes
+├── CODE_OF_CONDUCT.md    # Community guidelines
 ├── CONTRIBUTING.md       # Contribution guide
-├── LICENSE               # MIT License
-├── package.json          # Dependencies
+├── DEVELOPMENT.md        # Development guide
+├── FAQ.md                # Frequently asked questions
+├── LICENSE               # GPL-3.0 License
+├── package.json          # Dependencies and scripts
 ├── README.md             # This file
+├── ROADMAP.md            # Project roadmap
+├── SECURITY.md           # Security policy
 ├── server.js             # Express server entry point
+├── SUPPORT.md            # Support information
+├── TESTING.md            # Testing guide
 └── vercel.json           # Deployment config
 ```
 
@@ -373,10 +386,10 @@ Authorization: Bearer {firebase-auth-token}
 |--------|----------|-------------|
 | `POST` | `/api/shorten` | Create short link |
 | `GET` | `/api/user/links` | Get user's links |
-| `GET` | `/api/analytics/: shortCode` | Get analytics data |
-| `POST` | `/api/track/impression/: shortCode` | Track impression |
+| `GET` | `/api/analytics/:shortCode` | Get analytics data |
+| `POST` | `/api/track/impression/:shortCode` | Track impression |
 | `POST` | `/api/track/share/:shortCode` | Track share |
-| `GET` | `/: shortCode` | Redirect (auto-tracks click) |
+| `GET` | `/:shortCode` | Redirect (auto-tracks click) |
 | `POST` | `/api/github/bug` | Create GitHub issue |
 
 ### WebSocket Events (Socket.IO)
@@ -497,23 +510,14 @@ Thanks to all the amazing people who contribute to **piik.me** 🚀
 
 ## 📄 License
 
-piik.me is open-source software licensed under the **MIT License**.
+piik.me is open-source software licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
 
 ```
-MIT License
-
-Copyright (c) 2024-2025 piik.me
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software. 
+GNU GENERAL PUBLIC LICENSE
+Version 3, 29 June 2007
 ```
+
+See [LICENSE](LICENSE) for the full GPL-3.0 license text.
 
 ---
 
@@ -522,7 +526,7 @@ copies or substantial portions of the Software.
 Built with amazing open-source technologies: 
 
 - [Firebase](https://firebase.google.com) - Backend infrastructure
-- [Express. js](https://expressjs.com) - Web framework
+- [Express.js](https://expressjs.com) - Web framework
 - [Socket.IO](https://socket.io) - Real-time communication
 - [Three.js](https://threejs.org) - 3D graphics
 - [Globe.gl](https://globe.gl) - Globe visualizations
