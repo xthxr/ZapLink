@@ -8,16 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
-    <!-- Styles -->
     <link rel="stylesheet" href="CSS/landing.css">
 
-    <!-- Dynamic Favicon for /user page -->
     <script src="js/user-favicon.js" defer></script>
     
-    <!-- Theme Check (Before Body) -->
     <script>
         (function() {
             const savedTheme = localStorage.getItem('theme');
@@ -139,19 +135,24 @@
                         <div class="w-full bg-accent h-[90%] rounded-t-sm"></div>
                     </div>
                 </div>
-                
-                <div class="bg-gray-50 dark:bg-surfaceDark border border-gray-200 dark:border-white/10 card-border rounded-3xl p-10 flex flex-col justify-between">
+
+                <!-- QR Card — /qr-generator route pe jaata hai, login ke baad -->
+                <a href="/home?redirect=qr-generator" class="bg-gray-50 dark:bg-surfaceDark border border-gray-200 dark:border-white/10 card-border rounded-3xl p-10 flex flex-col justify-between group hover:border-pink-500/50 dark:hover:border-pink-500/50 transition-all duration-300 no-underline" style="text-decoration:none;">
                     <div>
-                        <div class="w-14 h-14 bg-pink-100 dark:bg-pink-500/20 text-pink-500 rounded-xl flex items-center justify-center mb-8 text-2xl"><i class="fas fa-qrcode"></i></div>
+                        <div class="w-14 h-14 bg-pink-100 dark:bg-pink-500/20 text-pink-500 rounded-xl flex items-center justify-center mb-8 text-2xl group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
                         <h3 class="text-2xl font-bold mb-4 text-black dark:text-white">Custom QR</h3>
-                        <p class="text-gray-600 dark:text-gray-400">Generate beautiful, scannable QR codes that match your brand identity perfectly.</p>
+                        <p class="text-gray-600 dark:text-gray-400 mb-8">Generate beautiful, scannable QR codes for URLs, WiFi, vCards and more. Customize colors and download instantly.</p>
+                        <span class="inline-flex items-center gap-2 text-sm font-semibold text-pink-500 group-hover:gap-3 transition-all duration-200">
+                            Try QR Generator <i class="fas fa-arrow-right text-xs"></i>
+                        </span>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- 4. Benefits & Use Cases -->
     <section id="benefits" class="py-32 px-6 bg-gray-50 dark:bg-transparent">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
             <div class="flex-1">
@@ -204,7 +205,6 @@
         </div>
     </section>
 
-    <!-- 5. FAQ -->
     <section id="faq" class="py-32 px-6 bg-white dark:bg-surfaceDark/30 border-y border-gray-200 dark:border-gray-900">
         <div class="max-w-3xl mx-auto">
             <h2 class="text-3xl md:text-5xl font-bold mb-16 text-center text-black dark:text-white">Frequently Asked Questions</h2>
@@ -239,11 +239,20 @@
                         <div class="pt-4 border-t border-gray-200 dark:border-gray-800 mt-4">Our analytics run in real-time. We provide highly accurate, granular data on geography, devices, and referrers.</div>
                     </div>
                 </div>
+
+                <div class="border border-gray-200 dark:border-white/10 card-border bg-gray-50 dark:bg-surfaceDark rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-lg text-black dark:text-white">Can I generate QR codes for WiFi and contacts?</h4>
+                        <i class="fas fa-chevron-down text-accent transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer mt-0 text-gray-600 dark:text-gray-400 text-base">
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-800 mt-4">Yes! Our <a href="/home?redirect=qr-generator" class="text-pink-500 hover:underline">QR Generator</a> supports URLs, plain text, WiFi networks, vCards (contact cards), and email — all for free, with custom colors and PNG/SVG download.</div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- 6. Testimonials -->
     <section id="testimonials" class="py-32 px-6 bg-gray-50 dark:bg-transparent">
         <div class="max-w-7xl mx-auto">
             <h2 class="text-3xl md:text-5xl font-bold mb-20 text-center text-black dark:text-white">Trusted by builders</h2>
@@ -282,16 +291,20 @@
         </div>
     </section>
 
-    <!-- 7. Bottom CTA -->
     <section class="py-32 px-6 text-center relative overflow-hidden bg-white dark:bg-transparent border-t border-gray-200 dark:border-gray-900">
         <div class="absolute inset-0 bg-accent/5 blur-[100px] rounded-full pointer-events-none"></div>
         <div class="relative z-10">
             <h2 class="text-4xl md:text-6xl font-bold mb-6 text-black dark:text-white">Ready to upgrade your links?</h2>
             <p class="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">Join thousands of developers and creators taking control of their infrastructure today.</p>
             
-           <button id="pricingGetStartedBtn" class="bg-accent text-white font-bold px-10 py-5 rounded-xl hover:bg-blue-600 transition-colors inline-block shadow-xl shadow-accent/20 transform hover:scale-105">
-                Create Your Free Account
-            </button>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button id="pricingGetStartedBtn" class="bg-accent text-white font-bold px-10 py-5 rounded-xl hover:bg-blue-600 transition-colors inline-block shadow-xl shadow-accent/20 transform hover:scale-105">
+                    Create Your Free Account
+                </button>
+                <a href="/home?redirect=qr-generator" class="inline-flex items-center gap-2 border border-pink-500/40 text-pink-500 font-semibold px-8 py-5 rounded-xl hover:bg-pink-500/10 transition-all">
+                    <i class="fas fa-qrcode"></i> Try QR Generator Free
+                </a>
+            </div>
         </div>
     </section>
 
@@ -306,6 +319,7 @@
                 <ul class="space-y-4 text-gray-500">
                     <li><a href="#features" class="hover:text-accent transition-colors">Features</a></li>
                     <li><a href="#how-it-works" class="hover:text-accent transition-colors">How it Works</a></li>
+                    <li><a href="/home?redirect=qr-generator" class="hover:text-pink-500 transition-colors flex items-center gap-1.5"><i class="fas fa-qrcode text-xs text-pink-500/60"></i> QR Generator</a></li>
                     <li><a href="#faq" class="hover:text-accent transition-colors">FAQ</a></li>
                 </ul>
             </div>
@@ -325,13 +339,11 @@
     </footer>
 
     <script>
-        // 1. Theme Toggle Logic
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const htmlElement = document.documentElement;
         const navbar = document.getElementById('navbar');
         const heroGradient = document.getElementById('hero-gradient');
 
-        // Function to set classes based on theme
         function applyThemeClasses(isDark) {
             if (isDark) {
                 navbar.classList.add('glass-nav-dark');
@@ -346,13 +358,11 @@
             }
         }
 
-        // Check local storage on load
         if (localStorage.getItem('theme') === 'light') {
             htmlElement.classList.remove('dark');
             applyThemeClasses(false);
         }
 
-        // Toggle Event
         if (themeToggleBtn) {
             themeToggleBtn.addEventListener('click', () => {
                 htmlElement.classList.toggle('dark');
@@ -367,12 +377,10 @@
             });
         }
 
-        // 2. FAQ Accordion Logic
         function toggleFaq(element) {
             const answer = element.querySelector('.faq-answer');
             const icon = element.querySelector('.fa-chevron-down');
             
-            // Close others
             document.querySelectorAll('.faq-answer').forEach(el => {
                 if(el !== answer) {
                     el.classList.remove('open');
@@ -380,7 +388,6 @@
                 }
             });
 
-            // Toggle current
             answer.classList.toggle('open');
             icon.style.transform = answer.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
