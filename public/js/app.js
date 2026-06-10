@@ -520,6 +520,12 @@ function initializeEventListeners() {
     
     // Initialize custom styled selects
     initializeCustomSelects();
+    document.querySelectorAll('.date-range-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const days = btn.dataset.days === 'all' ? 'all' : parseInt(btn.dataset.days);
+        filterClicksChart(days);
+    });
+});
 }
 
 // ================================
@@ -1247,30 +1253,39 @@ async function loadLinks() {
 }
 
 function displayLinks(links, filter) {
-    // Add "Delete All Inactive" button if viewing inactive links
-    let headerHTML = '';
+    linksContainer.innerHTML = '';
+    
+    // Add "Delete All Inactive" header if viewing inactive
     if (filter === 'inactive' && links.length > 0) {
-        headerHTML = `
-            <div style="margin-bottom: 20px; padding: 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h4 style="margin: 0 0 4px 0; color: var(--accent-red); font-size: 14px; font-weight: 600;">
-                        <i class="fas fa-exclamation-triangle"></i> Inactive Links
-                    </h4>
-                    <p style="margin: 0; color: var(--text-secondary); font-size: 13px;">
-                        These links will be permanently deleted after 15 days of deactivation
-                    </p>
-                </div>
-                <button class="btn btn-danger" onclick="permanentlyDeleteInactiveLinks()">
-                    <i class="fas fa-trash"></i> Delete All Inactive
-                </button>
-            </div>
-        `;
+        const header = document.createElement('div');
+        header.style.cssText = 'margin-bottom: 20px; padding: 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;';
+        const headerInner = document.createElement('div');
+        const h4 = document.createElement('h4');
+        h4.style.cssText = 'margin: 0 0 4px 0; color: var(--accent-red); font-size: 14px; font-weight: 600;';
+        const warnIcon = document.createElement('i');
+        warnIcon.className = 'fas fa-exclamation-triangle';
+        h4.appendChild(warnIcon);
+        h4.appendChild(document.createTextNode(' Inactive Links'));
+        const headerP = document.createElement('p');
+        headerP.style.cssText = 'margin: 0; color: var(--text-secondary); font-size: 13px;';
+        headerP.textContent = 'These links will be permanently deleted after 15 days of deactivation';
+        headerInner.appendChild(h4);
+        headerInner.appendChild(headerP);
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn btn-danger';
+        delBtn.addEventListener('click', permanentlyDeleteInactiveLinks);
+        const trashIcon = document.createElement('i');
+        trashIcon.className = 'fas fa-trash';
+        delBtn.appendChild(trashIcon);
+        delBtn.appendChild(document.createTextNode(' Delete All Inactive'));
+        header.appendChild(headerInner);
+        header.appendChild(delBtn);
+        linksContainer.appendChild(header);
     }
     
-    const linksHTML = links.map(link => {
+    links.forEach(link => {
         const isInactive = link.isActive === false;
         
-        // Handle scheduledDeletion date - could be Firestore Timestamp or server timestamp object
         let daysRemaining = null;
         if (link.scheduledDeletion) {
             let deletionDate;
@@ -1284,106 +1299,232 @@ function displayLinks(links, filter) {
             daysRemaining = Math.ceil((deletionDate - new Date()) / (1000 * 60 * 60 * 24));
         }
         
-        return `
-        <div class="link-card ${isInactive ? 'inactive-link' : ''}" data-link-id="${link.shortCode}">
-            <div class="link-icon ${isInactive ? 'inactive' : ''}">
-                <i class="fas fa-${isInactive ? 'ban' : 'link'}"></i>
-            </div>
-            <div class="link-content">
-                <div class="link-url">
-                    <a href="${link.shortUrl}" class="link-short" target="_blank">${link.shortUrl.replace('https://', '').replace('http://', '')}</a>
-                    <button 
-    class="btn-icon copy-btn"
-    onclick="copyLink('${link.shortUrl}', this)"
-    title="Copy link"
->
-    <i class="fas fa-copy"></i>
-</button>
-                    ${isInactive ? `<span class="inactive-badge">Inactive</span>` : ''}
-                    ${link.splitTest ? `<span class="split-test-badge" style="background: linear-gradient(135deg, var(--accent-purple), #8b5cf6); color: white; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-left: 6px; display: inline-flex; align-items: center; gap: 4px;"><i class="fas fa-flask" style="font-size: 9px;"></i> Split Test</span>` : ''}
-                </div>
-                ${link.splitTest && Array.isArray(link.variants) && link.variants.length > 0 ? `
-                    <div class="link-destination split-test-variants-summary" style="display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px; font-size: 12px; color: var(--text-secondary);">
-                        ${link.variants.map(v => `<span class="variant-summary-tag"><strong style="color: var(--accent-purple);">${v.label}</strong> (${v.weight}%): <span style="opacity: 0.8;">${v.url}</span></span>`).join('')}
-                    </div>
-                ` : `
-                   <div class="link-destination">${link.originalUrl}</div>
-
-${link.notes ? `
-<div class="link-notes" style="
-    margin-top: 8px;
-    font-size: 13px;
-    color: var(--text-secondary);
-">
-    <i class="fas fa-sticky-note"></i>
-    ${link.notes}
-</div>
-` : ''}
-
-${link.tags && link.tags.length ? `
-    <div class="link-tags" style="
-        margin-top: 8px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-    ">
-        ${link.tags.map(tag => `
-            <span style="
-                background: var(--accent-color);
-                color: white;
-                padding: 2px 8px;
-                border-radius: 12px;
-                font-size: 12px;
-            ">
-                ${tag}
-            </span>
-        `).join('')}
-    </div>
-` : ''}
-                `}
-                <div class="link-meta">
-                <span class="health-badge health-${link.healthStatus || 'unknown'}">
-                <i class="fas fa-heartbeat"></i>${link.healthStatus || 'unknown'}
-                </span>
-                <span><i class="fas fa-calendar"></i> ${formatDate(link.createdAt)}</span>
-                    ${link.utmParams && !link.splitTest ? '<span><i class="fas fa-tags"></i> UTM Enabled</span>' : ''}
-                    ${isInactive && daysRemaining ? `<span style="color: var(--accent-red);"><i class="fas fa-clock"></i> Deletes in ${daysRemaining} days</span>` : ''}
-                </div>
-            </div>
-            <div class="link-stats">
-                <div class="link-stat">
-                    <span class="link-stat-value">${link.clicks || 0}</span>
-                    <span class="link-stat-label">Clicks</span>
-                </div>
-            </div>
-            <div class="link-actions">
-                ${!isInactive ? `
-                    <button class="link-action-btn" onclick="openSplitTestModal('${link.shortCode}')" title="Split Test">
-                        <i class="fas fa-flask"></i>
-                    </button>
-                    <button class="link-action-btn" onclick="viewAnalytics('${link.shortCode}')" title="Analytics">
-                        <i class="fas fa-chart-line"></i>
-                    </button>
-                    <button class="link-action-btn" onclick="showQRCode('${link.shortUrl}', '${link.shortCode}')" title="QR Code">
-                        <i class="fas fa-qrcode"></i>
-                    </button>
-                    <button class="link-action-btn" onclick="shareLink('${link.shortUrl}')" title="Share">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button class="link-action-btn delete" onclick="deleteLink('${link.shortCode}')" title="Deactivate">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                ` : `
-                    <button class="link-action-btn" onclick="reactivateLink('${link.shortCode}')" title="Reactivate">
-                        <i class="fas fa-redo"></i>
-                    </button>
-                `}
-            </div>
-        </div>
-    `;
-    }).join('');
-    
-    linksContainer.innerHTML = headerHTML + linksHTML;
+        const card = document.createElement('div');
+        card.className = `link-card${isInactive ? ' inactive-link' : ''}`;
+        card.setAttribute('data-link-id', link.shortCode);
+        
+        // Icon
+        const iconDiv = document.createElement('div');
+        iconDiv.className = `link-icon${isInactive ? ' inactive' : ''}`;
+        const icon = document.createElement('i');
+        icon.className = `fas fa-${isInactive ? 'ban' : 'link'}`;
+        iconDiv.appendChild(icon);
+        card.appendChild(iconDiv);
+        
+        // Content
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'link-content';
+        
+        // URL row
+        const urlDiv = document.createElement('div');
+        urlDiv.className = 'link-url';
+        
+        const linkA = document.createElement('a');
+        linkA.href = link.shortUrl;
+        linkA.className = 'link-short';
+        linkA.target = '_blank';
+        linkA.textContent = link.shortUrl.replace('https://', '').replace('http://', '');
+        urlDiv.appendChild(linkA);
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'btn-icon copy-btn';
+        copyBtn.title = 'Copy link';
+        copyBtn.addEventListener('click', function() { copyLink(link.shortUrl, this); });
+        const copyIcon = document.createElement('i');
+        copyIcon.className = 'fas fa-copy';
+        copyBtn.appendChild(copyIcon);
+        urlDiv.appendChild(copyBtn);
+        
+        if (isInactive) {
+            const badge = document.createElement('span');
+            badge.className = 'inactive-badge';
+            badge.textContent = 'Inactive';
+            urlDiv.appendChild(badge);
+        }
+        if (link.splitTest) {
+            const stBadge = document.createElement('span');
+            stBadge.className = 'split-test-badge';
+            stBadge.style.cssText = 'background: linear-gradient(135deg, var(--accent-purple), #8b5cf6); color: white; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-left: 6px; display: inline-flex; align-items: center; gap: 4px;';
+            const flaskIcon = document.createElement('i');
+            flaskIcon.className = 'fas fa-flask';
+            flaskIcon.style.cssText = 'font-size: 9px;';
+            stBadge.appendChild(flaskIcon);
+            stBadge.appendChild(document.createTextNode(' Split Test'));
+            urlDiv.appendChild(stBadge);
+        }
+        contentDiv.appendChild(urlDiv);
+        
+        // Destination / Variants
+        if (link.splitTest && Array.isArray(link.variants) && link.variants.length > 0) {
+            const destDiv = document.createElement('div');
+            destDiv.className = 'link-destination split-test-variants-summary';
+            destDiv.style.cssText = 'display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px; font-size: 12px; color: var(--text-secondary);';
+            link.variants.forEach(v => {
+                const tag = document.createElement('span');
+                tag.className = 'variant-summary-tag';
+                const strong = document.createElement('strong');
+                strong.style.cssText = 'color: var(--accent-purple);';
+                strong.textContent = v.label;
+                tag.appendChild(strong);
+                tag.appendChild(document.createTextNode(` (${v.weight}%): `));
+                const urlSpan = document.createElement('span');
+                urlSpan.style.opacity = '0.8';
+                urlSpan.textContent = v.url;
+                tag.appendChild(urlSpan);
+                destDiv.appendChild(tag);
+            });
+            contentDiv.appendChild(destDiv);
+        } else {
+            const destDiv = document.createElement('div');
+            destDiv.className = 'link-destination';
+            destDiv.textContent = link.originalUrl;
+            contentDiv.appendChild(destDiv);
+            
+            // Notes
+            if (link.notes) {
+                const notesDiv = document.createElement('div');
+                notesDiv.className = 'link-notes';
+                notesDiv.style.cssText = 'margin-top: 8px; font-size: 13px; color: var(--text-secondary);';
+                const noteIcon = document.createElement('i');
+                noteIcon.className = 'fas fa-sticky-note';
+                notesDiv.appendChild(noteIcon);
+                notesDiv.appendChild(document.createTextNode(' ' + link.notes));
+                contentDiv.appendChild(notesDiv);
+            }
+            
+            // Tags
+            if (link.tags && link.tags.length) {
+                const tagsDiv = document.createElement('div');
+                tagsDiv.className = 'link-tags';
+                tagsDiv.style.cssText = 'margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;';
+                link.tags.forEach(tag => {
+                    const tagSpan = document.createElement('span');
+                    tagSpan.style.cssText = 'background: var(--accent-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;';
+                    tagSpan.textContent = tag;
+                    tagsDiv.appendChild(tagSpan);
+                });
+                contentDiv.appendChild(tagsDiv);
+            }
+        }
+        
+        // Meta row
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'link-meta';
+        
+        const healthSpan = document.createElement('span');
+        healthSpan.className = `health-badge health-${link.healthStatus || 'unknown'}`;
+        const heartIcon = document.createElement('i');
+        heartIcon.className = 'fas fa-heartbeat';
+        healthSpan.appendChild(heartIcon);
+        healthSpan.appendChild(document.createTextNode(link.healthStatus || 'unknown'));
+        metaDiv.appendChild(healthSpan);
+        
+        const dateSpan = document.createElement('span');
+        const calIcon = document.createElement('i');
+        calIcon.className = 'fas fa-calendar';
+        dateSpan.appendChild(calIcon);
+        dateSpan.appendChild(document.createTextNode(' ' + formatDate(link.createdAt)));
+        metaDiv.appendChild(dateSpan);
+        
+        if (link.utmParams && !link.splitTest) {
+            const utmSpan = document.createElement('span');
+            const tagsIcon = document.createElement('i');
+            tagsIcon.className = 'fas fa-tags';
+            utmSpan.appendChild(tagsIcon);
+            utmSpan.appendChild(document.createTextNode(' UTM Enabled'));
+            metaDiv.appendChild(utmSpan);
+        }
+        if (isInactive && daysRemaining) {
+            const delSpan = document.createElement('span');
+            delSpan.style.cssText = 'color: var(--accent-red);';
+            const clockIcon = document.createElement('i');
+            clockIcon.className = 'fas fa-clock';
+            delSpan.appendChild(clockIcon);
+            delSpan.appendChild(document.createTextNode(` Deletes in ${daysRemaining} days`));
+            metaDiv.appendChild(delSpan);
+        }
+        contentDiv.appendChild(metaDiv);
+        card.appendChild(contentDiv);
+        
+        // Stats
+        const statsDiv = document.createElement('div');
+        statsDiv.className = 'link-stats';
+        const statDiv = document.createElement('div');
+        statDiv.className = 'link-stat';
+        const statVal = document.createElement('span');
+        statVal.className = 'link-stat-value';
+        statVal.textContent = link.clicks || 0;
+        const statLabel = document.createElement('span');
+        statLabel.className = 'link-stat-label';
+        statLabel.textContent = 'Clicks';
+        statDiv.appendChild(statVal);
+        statDiv.appendChild(statLabel);
+        statsDiv.appendChild(statDiv);
+        card.appendChild(statsDiv);
+        
+        // Actions
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'link-actions';
+        
+        if (!isInactive) {
+            const splitTestBtn = document.createElement('button');
+            splitTestBtn.className = 'link-action-btn';
+            splitTestBtn.title = 'Split Test';
+            splitTestBtn.addEventListener('click', function() { openSplitTestModal(link.shortCode); });
+            const flaskI = document.createElement('i');
+            flaskI.className = 'fas fa-flask';
+            splitTestBtn.appendChild(flaskI);
+            actionsDiv.appendChild(splitTestBtn);
+            
+            const analyticsBtn = document.createElement('button');
+            analyticsBtn.className = 'link-action-btn';
+            analyticsBtn.title = 'Analytics';
+            analyticsBtn.addEventListener('click', function() { viewAnalytics(link.shortCode); });
+            const chartI = document.createElement('i');
+            chartI.className = 'fas fa-chart-line';
+            analyticsBtn.appendChild(chartI);
+            actionsDiv.appendChild(analyticsBtn);
+            
+            const qrBtn = document.createElement('button');
+            qrBtn.className = 'link-action-btn';
+            qrBtn.title = 'QR Code';
+            qrBtn.addEventListener('click', function() { showQRCode(link.shortUrl, link.shortCode); });
+            const qrI = document.createElement('i');
+            qrI.className = 'fas fa-qrcode';
+            qrBtn.appendChild(qrI);
+            actionsDiv.appendChild(qrBtn);
+            
+            const shareBtn = document.createElement('button');
+            shareBtn.className = 'link-action-btn';
+            shareBtn.title = 'Share';
+            shareBtn.addEventListener('click', function() { shareLink(link.shortUrl); });
+            const shareI = document.createElement('i');
+            shareI.className = 'fas fa-share-alt';
+            shareBtn.appendChild(shareI);
+            actionsDiv.appendChild(shareBtn);
+            
+            const deactivateBtn = document.createElement('button');
+            deactivateBtn.className = 'link-action-btn delete';
+            deactivateBtn.title = 'Deactivate';
+            deactivateBtn.addEventListener('click', function() { deleteLink(link.shortCode); });
+            const trashI = document.createElement('i');
+            trashI.className = 'fas fa-trash';
+            deactivateBtn.appendChild(trashI);
+            actionsDiv.appendChild(deactivateBtn);
+        } else {
+            const reactivateBtn = document.createElement('button');
+            reactivateBtn.className = 'link-action-btn';
+            reactivateBtn.title = 'Reactivate';
+            reactivateBtn.addEventListener('click', function() { reactivateLink(link.shortCode); });
+            const redoI = document.createElement('i');
+            redoI.className = 'fas fa-redo';
+            reactivateBtn.appendChild(redoI);
+            actionsDiv.appendChild(reactivateBtn);
+        }
+        card.appendChild(actionsDiv);
+        
+        linksContainer.appendChild(card);
+    });
 }
 
 function updateStats(links) {
@@ -2566,6 +2707,7 @@ async function loadAnalyticsData(linkFilter) {
             const timeB = new Date(b.timestamp).getTime();
             return timeA - timeB;
         });
+        window._lastClicksOverTimeData = allClickHistory;
         
         // Calculate unique visitors from click history (approximate by counting unique referrer+device combinations)
         const visitorFingerprints = new Set();
@@ -2648,6 +2790,11 @@ async function loadAnalyticsData(linkFilter) {
         
         // Render charts and lists
         renderClicksChart(clicksOverTimeData);
+        const buttons = document.querySelectorAll('.date-range-btn');
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.days === 'all');
+});
+
         renderReferrersChart(topReferrers);
         renderGeographicList(geographicList);
         renderDevicesList(devicesList);
@@ -2770,18 +2917,15 @@ function processClicksOverTime(clickHistory) {
 }
 
 function renderClicksChart(chartData) {
-    // Implement with Chart.js
     const ctx = document.getElementById('clicksChart');
     if (!ctx) return;
-    
-    // Destroy existing chart if any
+
     if (window.clicksChartInstance) {
         window.clicksChartInstance.destroy();
     }
-    
+
     const { labels, data, granularity } = chartData;
-    
-    // Create new chart
+
     window.clicksChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -2798,16 +2942,8 @@ function renderClicksChart(chartData) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
         }
     });
 }
@@ -2851,54 +2987,113 @@ function renderReferrersChart(data) {
 function renderGeographicList(data) {
     const container = document.getElementById('geographicList');
     if (!container) return;
+    container.innerHTML = '';
     
     if (!data || data.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No data available</p>';
+        const p = document.createElement('p');
+        p.style.cssText = 'color: var(--text-secondary); text-align: center;';
+        p.textContent = 'No data available';
+        container.appendChild(p);
         return;
     }
     
-    container.innerHTML = data.map(item => `
-        <div class="analytics-item">
-            <span class="analytics-item-label">${item.location}</span>
-            <span class="analytics-item-value">${item.count}</span>
-        </div>
-    `).join('');
+    data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'analytics-item';
+        const label = document.createElement('span');
+        label.className = 'analytics-item-label';
+        label.textContent = item.location;
+        const value = document.createElement('span');
+        value.className = 'analytics-item-value';
+        value.textContent = item.count;
+        div.appendChild(label);
+        div.appendChild(value);
+        container.appendChild(div);
+    });
 }
 
 function renderDevicesList(data) {
     const container = document.getElementById('devicesList');
     if (!container) return;
+    container.innerHTML = '';
     
-    container.innerHTML = data.map(item => `
-        <div class="analytics-item">
-            <span class="analytics-item-label">${item.device}</span>
-            <span class="analytics-item-value">${item.count}</span>
-        </div>
-    `).join('') || '<p style="color: var(--text-secondary); text-align: center;">No data available</p>';
+    if (!data || data.length === 0) {
+        const p = document.createElement('p');
+        p.style.cssText = 'color: var(--text-secondary); text-align: center;';
+        p.textContent = 'No data available';
+        container.appendChild(p);
+        return;
+    }
+    
+    data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'analytics-item';
+        const label = document.createElement('span');
+        label.className = 'analytics-item-label';
+        label.textContent = item.device;
+        const value = document.createElement('span');
+        value.className = 'analytics-item-value';
+        value.textContent = item.count;
+        div.appendChild(label);
+        div.appendChild(value);
+        container.appendChild(div);
+    });
 }
 
 function renderBrowsersList(data) {
     const container = document.getElementById('browsersList');
     if (!container) return;
+    container.innerHTML = '';
     
-    container.innerHTML = data.map(item => `
-        <div class="analytics-item">
-            <span class="analytics-item-label">${item.browser}</span>
-            <span class="analytics-item-value">${item.count}</span>
-        </div>
-    `).join('') || '<p style="color: var(--text-secondary); text-align: center;">No data available</p>';
+    if (!data || data.length === 0) {
+        const p = document.createElement('p');
+        p.style.cssText = 'color: var(--text-secondary); text-align: center;';
+        p.textContent = 'No data available';
+        container.appendChild(p);
+        return;
+    }
+    
+    data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'analytics-item';
+        const label = document.createElement('span');
+        label.className = 'analytics-item-label';
+        label.textContent = item.browser;
+        const value = document.createElement('span');
+        value.className = 'analytics-item-value';
+        value.textContent = item.count;
+        div.appendChild(label);
+        div.appendChild(value);
+        container.appendChild(div);
+    });
 }
 
 function renderReferrersList(data) {
     const container = document.getElementById('referrersList');
     if (!container) return;
+    container.innerHTML = '';
     
-    container.innerHTML = data.map(item => `
-        <div class="analytics-item">
-            <span class="analytics-item-label">${item.source}</span>
-            <span class="analytics-item-value">${item.count}</span>
-        </div>
-    `).join('') || '<p style="color: var(--text-secondary); text-align: center;">No data available</p>';
+    if (!data || data.length === 0) {
+        const p = document.createElement('p');
+        p.style.cssText = 'color: var(--text-secondary); text-align: center;';
+        p.textContent = 'No data available';
+        container.appendChild(p);
+        return;
+    }
+    
+    data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'analytics-item';
+        const label = document.createElement('span');
+        label.className = 'analytics-item-label';
+        label.textContent = item.source;
+        const value = document.createElement('span');
+        value.className = 'analytics-item-value';
+        value.textContent = item.count;
+        div.appendChild(label);
+        div.appendChild(value);
+        container.appendChild(div);
+    });
 }
 
 // Calculate percentage change between current and previous period
@@ -2926,66 +3121,6 @@ function updateStatChange(elementId, changeData) {
     element.style.display = 'block';
     element.className = `stat-change ${changeData.isPositive ? 'positive' : 'negative'}`;
     element.textContent = `${changeData.isPositive ? '+' : '-'}${changeData.value.toFixed(1)}%`;
-}
-
-// Update analytics UI with data
-function updateAnalyticsUI(impressions, clicks, shares, devices, browsers, referrers, clickHistory, devicesObj) {
-    // Update main stats
-    const impressionsEl = document.getElementById('analyticsImpressions');
-    const clicksEl = document.getElementById('analyticsClicks');
-    const ctrEl = document.getElementById('analyticsCTR');
-    const visitorsEl = document.getElementById('analyticsVisitors');
-    
-    if (impressionsEl) impressionsEl.textContent = Number(impressions).toLocaleString();
-    if (clicksEl) clicksEl.textContent = Number(clicks).toLocaleString();
-    
-    // Calculate CTR
-    const ctr = impressions > 0 ? ((clicks / impressions) * 100) : 0;
-    if (ctrEl) ctrEl.textContent = ctr.toFixed(1) + '%';
-    
-    // Calculate unique visitors from click history
-    let uniqueVisitors = clicks;
-    if (clickHistory && clickHistory.length > 0) {
-        const visitorFingerprints = new Set();
-        clickHistory.forEach(click => {
-            const fingerprint = `${click.referrer || 'unknown'}_${click.device || 'unknown'}_${click.browser || 'unknown'}`;
-            visitorFingerprints.add(fingerprint);
-        });
-        uniqueVisitors = visitorFingerprints.size;
-    }
-    if (visitorsEl) visitorsEl.textContent = uniqueVisitors.toLocaleString();
-    
-    // Update percentage changes (hide them when no data)
-    updateStatChange('impressionsChange', null);
-    updateStatChange('clicksChange', null);
-    updateStatChange('ctrChange', null);
-    updateStatChange('visitorsChange', null);
-    
-    // Process devices list
-    const devicesList = Object.entries(devices || {})
-        .sort((a, b) => b[1] - a[1])
-        .map(([device, count]) => ({ device, count }));
-    
-    // Process browsers list
-    const browsersList = Object.entries(browsers || {})
-        .sort((a, b) => b[1] - a[1])
-        .map(([browser, count]) => ({ browser, count }));
-    
-    // Process referrers list (top 5)
-    const topReferrers = Object.entries(referrers || {})
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([source, count]) => ({ source, count }));
-    
-    // Render lists
-    renderDevicesList(devicesList);
-    renderBrowsersList(browsersList);
-    renderReferrersList(topReferrers);
-    
-    // Process clicks over time for chart
-    const clicksOverTimeData = processClicksOverTime(clickHistory || []);
-    renderClicksChart(clicksOverTimeData);
-    renderReferrersChart(topReferrers);
 }
 
 // ================================
@@ -3189,64 +3324,99 @@ function renderGeoClicksTable(clicks) {
     
     countBadge.textContent = `${clicks.length} click${clicks.length !== 1 ? 's' : ''}`;
     
+    tbody.innerHTML = '';
+    
     if (clicks.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                    <i class="fas fa-map-marked-alt" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                    <p>No geographic data available for the selected filter</p>
-                </td>
-            </tr>
-        `;
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 9;
+        td.style.cssText = 'text-align: center; padding: 40px; color: var(--text-secondary);';
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-map-marked-alt';
+        icon.style.cssText = 'font-size: 48px; margin-bottom: 16px; opacity: 0.3;';
+        const p = document.createElement('p');
+        p.textContent = 'No geographic data available for the selected filter';
+        td.appendChild(icon);
+        td.appendChild(p);
+        tr.appendChild(td);
+        tbody.appendChild(tr);
         return;
     }
     
-    tbody.innerHTML = clicks.map((click, index) => {
+    clicks.forEach((click, index) => {
         const timestamp = new Date(click.timestamp);
         const formattedDate = timestamp.toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            month: 'short', day: 'numeric', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
         });
         
         const location = click.location || {};
         const locationStr = `${location.city || 'Unknown'}, ${location.region || 'Unknown'}`;
         const ipAddress = click.ipAddress || 'N/A';
         
-        return `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${formattedDate}</td>
-                <td><strong>${locationStr}</strong></td>
-                <td>${location.city || 'Unknown'}</td>
-                <td>
-                    <span style="display: inline-flex; align-items: center; gap: 6px;">
-                        ${location.country || 'Unknown'}
-                    </span>
-                </td>
-                <td>
-                    <code style="background: var(--bg-secondary); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                        ${ipAddress}
-                    </code>
-                </td>
-                <td>
-                    <span style="display: inline-flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-${click.device === 'Mobile' ? 'mobile-alt' : 'desktop'}" style="color: var(--accent-blue);"></i>
-                        ${click.device || 'Unknown'}
-                    </span>
-                </td>
-                <td>${click.browser || 'Unknown'}</td>
-                <td>
-                    <span style="display: inline-flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-share-alt" style="color: var(--accent-purple); font-size: 11px;"></i>
-                        ${click.referrer || 'Direct'}
-                    </span>
-                </td>
-            </tr>
-        `;
-    }).join('');
+        const tr = document.createElement('tr');
+        
+        function makeTd(content, isStrong) {
+            const td = document.createElement('td');
+            if (isStrong) {
+                const strong = document.createElement('strong');
+                strong.textContent = content;
+                td.appendChild(strong);
+            } else {
+                td.textContent = content;
+            }
+            return td;
+        }
+        
+        // #: index
+        tr.appendChild(makeTd(String(index + 1)));
+        // Date
+        tr.appendChild(makeTd(formattedDate));
+        // Location
+        tr.appendChild(makeTd(locationStr, true));
+        // City
+        tr.appendChild(makeTd(location.city || 'Unknown'));
+        // Country
+        const countryTd = document.createElement('td');
+        const countrySpan = document.createElement('span');
+        countrySpan.style.cssText = 'display: inline-flex; align-items: center; gap: 6px;';
+        countrySpan.textContent = location.country || 'Unknown';
+        countryTd.appendChild(countrySpan);
+        tr.appendChild(countryTd);
+        // IP
+        const ipTd = document.createElement('td');
+        const ipCode = document.createElement('code');
+        ipCode.style.cssText = 'background: var(--bg-secondary); padding: 4px 8px; border-radius: 4px; font-size: 12px;';
+        ipCode.textContent = ipAddress;
+        ipTd.appendChild(ipCode);
+        tr.appendChild(ipTd);
+        // Device
+        const deviceTd = document.createElement('td');
+        const deviceSpan = document.createElement('span');
+        deviceSpan.style.cssText = 'display: inline-flex; align-items: center; gap: 6px;';
+        const deviceIcon = document.createElement('i');
+        deviceIcon.className = `fas fa-${click.device === 'Mobile' ? 'mobile-alt' : 'desktop'}`;
+        deviceIcon.style.cssText = 'color: var(--accent-blue);';
+        deviceSpan.appendChild(deviceIcon);
+        deviceSpan.appendChild(document.createTextNode(click.device || 'Unknown'));
+        deviceTd.appendChild(deviceSpan);
+        tr.appendChild(deviceTd);
+        // Browser
+        tr.appendChild(makeTd(click.browser || 'Unknown'));
+        // Referrer
+        const refTd = document.createElement('td');
+        const refSpan = document.createElement('span');
+        refSpan.style.cssText = 'display: inline-flex; align-items: center; gap: 6px;';
+        const refIcon = document.createElement('i');
+        refIcon.className = 'fas fa-share-alt';
+        refIcon.style.cssText = 'color: var(--accent-purple); font-size: 11px;';
+        refSpan.appendChild(refIcon);
+        refSpan.appendChild(document.createTextNode(click.referrer || 'Direct'));
+        refTd.appendChild(refSpan);
+        tr.appendChild(refTd);
+        
+        tbody.appendChild(tr);
+    });
 }
 
 // Search functionality
@@ -3543,3 +3713,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function filterClicksChart(days) {
+    const raw = window._lastClicksOverTimeData;
+    if (!raw || raw.length === 0) return;
+
+    let filtered = raw;
+    if (days !== 'all') {
+        const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+        filtered = raw.filter(click => 
+            new Date(click.timestamp).getTime() >= cutoff
+        );
+    }
+
+    document.querySelectorAll('.date-range-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.days === String(days));
+    });
+
+    renderClicksChart(processClicksOverTime(filtered));
+}
