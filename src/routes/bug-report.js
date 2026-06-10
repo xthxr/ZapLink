@@ -11,6 +11,9 @@ router.post('/api/bug-report', async (req, res) => {
   }
 
   // Basic email validation
+  if (typeof email !== 'string') {
+    return res.status(400).json({ error: 'Email must be a string' });
+  }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email.trim())) {
     return res.status(400).json({ error: 'Invalid email format' });

@@ -88,6 +88,10 @@ router.delete('/api/user/account', verifyToken, async (req, res) => {
   const userId = req.user.uid;
   const db = getDatabase();
 
+  if (!db) {
+    return res.status(503).json({ error: 'Database not available' });
+  }
+
   try {
     // Delete all user's links
     const linksSnapshot = await db.collection(COLLECTIONS.LINKS)

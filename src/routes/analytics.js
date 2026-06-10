@@ -27,13 +27,13 @@ router.get('/api/user/analytics', verifyToken, async (req, res) => {
     const analyticsPromises = linksData.map(async (link) => {
       const firestoreId = toFirestoreId(link.shortCode);
       try {
-        const analyticsDoc = await db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId).get();
+        const aggregatedStats = await getAggregatedAnalytics(firestoreId);
         return {
           shortCode: link.shortCode,
           linkData: link,
-          analytics: analyticsDoc.exists ? analyticsDoc.data() : null
+          analytics: Object.keys(aggregatedStats).length > 0 ? aggregatedStats : null
         };
-      } catch (err) {
+      } catch (_err) {
         return { shortCode: link.shortCode, linkData: link, analytics: null };
       }
     });

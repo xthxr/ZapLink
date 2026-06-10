@@ -1,8 +1,28 @@
-const express = require('express');
+﻿const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 require('dotenv').config();
+
+// Validate required environment variables on startup
+function validateEnv() {
+  const required = ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'SESSION_SECRET'];
+  const missing = required.filter(key => !process.env[key]);
+  if (missing.length > 0) {
+    console.error('FATAL: Missing required environment variables:');
+    missing.forEach(key => console.error(`  - ${key}`));
+    console.error('\nThe server cannot start without these variables.');
+    console.error('Copy .env.example to .env and fill in the values.');
+    process.exit(1);
+  }
+  if (process.env.SESSION_SECRET.length < 32) {
+    console.error('FATAL: SESSION_SECRET must be at least 32 characters long for security.');
+    console.error('Generate a secure random string (e.g., using openssl rand -hex 32).');
+    process.exit(1);
+  }
+}
+
+validateEnv();
 
 // ---------------------------------------------------------------------------
 // Project config & services
@@ -64,12 +84,12 @@ app.use('/', require('./src/routes/import'));
 app.use('/', require('./src/routes/admin'));
 
 // ---------------------------------------------------------------------------
-// Static SPA page routes (exact path matches — must be before catch-all)
+// Static SPA page routes (exact path matches â€” must be before catch-all)
 // ---------------------------------------------------------------------------
 app.use('/', require('./src/routes/pages'));
 
 // ---------------------------------------------------------------------------
-// Tracking & redirect router (catch-all routes — register LAST)
+// Tracking & redirect router (catch-all routes â€” register LAST)
 // ---------------------------------------------------------------------------
 const { createTrackingRouter } = require('./src/routes/tracking');
 const trackingRouter = createTrackingRouter({ io });
@@ -118,7 +138,7 @@ if (!env.isServerless) {
         if (link.expiresAt && link.expiresAt.toDate) {
           const expiry = link.expiresAt.toDate();
           if (expiry <= in24h && expiry > now) {
-            console.log(`⏰ Link expiring soon: ${link.shortCode} (${link.userEmail})`);
+            console.log(`â° Link expiring soon: ${link.shortCode} (${link.userEmail})`);
             await doc.ref.update({ notifiedExpiry: true });
             // TODO: plug in Nodemailer here to email link.userEmail
           }
@@ -131,9 +151,9 @@ if (!env.isServerless) {
 
   const PORT = env.PORT;
   server.listen(PORT, () => {
-    console.log(`🚀 piik.me server running on http://localhost:${PORT}`);
+    console.log(`ðŸš€ piik.me server running on http://localhost:${PORT}`);
     const fbState = getFirebaseState();
-    console.log(`📊 Firebase: ${fbState.enabled ? '✅ enabled' : '⚠️ ' + fbState.reason} (mode: ${fbState.mode})`);
+    console.log(`ðŸ“Š Firebase: ${fbState.enabled ? 'âœ… enabled' : 'âš ï¸ ' + fbState.reason} (mode: ${fbState.mode})`);
   });
 }
 
