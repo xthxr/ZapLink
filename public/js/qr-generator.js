@@ -13,13 +13,34 @@ const QRGenerator = {
     init() {
         this.cacheDom();
         this.bindEvents();
-        this.loadUserLinks();
         this.createFloatingPreview();
         this.initScrollBehavior();
+        this._initAuthListener();
+    },
+
+    _initAuthListener() {
+        if (typeof firebase === 'undefined' || !firebase.auth) {
+            setTimeout(() => this._initAuthListener(), 500);
+            return;
+        }
+
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                this.loadUserLinks();
+            } else {
+                if (this.quickLinksGrid) {
+                    this.quickLinksGrid.innerHTML = `
+                        <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
+                            <i class="fas fa-lock" style="font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block;"></i>
+                            <p>Please log in to see your links</p>
+                        </div>
+                    `;
+                }
+            }
+        });
     },
 
     createFloatingPreview() {
-        // Create floating preview container
         const floatingPreview = document.createElement('div');
         floatingPreview.className = 'qr-floating-preview';
         floatingPreview.id = 'floatingQRPreview';
@@ -38,8 +59,7 @@ const QRGenerator = {
         document.body.appendChild(floatingPreview);
         this.floatingCanvas = document.getElementById('floatingQRCanvas');
         this.floatingPreview = floatingPreview;
-        
-        // Make it draggable and resizable
+
         this.initDraggable();
         this.initResizable();
     },
@@ -59,7 +79,6 @@ const QRGenerator = {
         document.addEventListener('mousemove', drag);
         document.addEventListener('mouseup', dragEnd);
 
-        // Touch events for mobile
         header.addEventListener('touchstart', dragStart);
         document.addEventListener('touchmove', drag);
         document.addEventListener('touchend', dragEnd);
@@ -84,7 +103,7 @@ const QRGenerator = {
         function drag(e) {
             if (isDragging) {
                 e.preventDefault();
-                
+
                 if (e.type === 'touchmove') {
                     currentX = e.touches[0].clientX - initialX;
                     currentY = e.touches[0].clientY - initialY;
@@ -124,7 +143,6 @@ const QRGenerator = {
         document.addEventListener('mousemove', resize);
         document.addEventListener('mouseup', stopResize);
 
-        // Touch events
         resizeHandle.addEventListener('touchstart', initResize);
         document.addEventListener('touchmove', resize);
         document.addEventListener('touchend', stopResize);
@@ -132,7 +150,7 @@ const QRGenerator = {
         function initResize(e) {
             isResizing = true;
             preview.classList.add('resizing');
-            
+
             if (e.type === 'touchstart') {
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
@@ -140,17 +158,17 @@ const QRGenerator = {
                 startX = e.clientX;
                 startY = e.clientY;
             }
-            
+
             startWidth = preview.offsetWidth;
             startHeight = preview.offsetHeight;
-            
+
             e.preventDefault();
             e.stopPropagation();
         }
 
         function resize(e) {
             if (!isResizing) return;
-            
+
             let clientX, clientY;
             if (e.type === 'touchmove') {
                 clientX = e.touches[0].clientX;
@@ -159,18 +177,15 @@ const QRGenerator = {
                 clientX = e.clientX;
                 clientY = e.clientY;
             }
-            
+
             const width = startWidth + (clientX - startX);
             const height = startHeight + (clientY - startY);
-            
-            // Maintain aspect ratio by using the larger dimension
             const size = Math.max(width, height);
-            
-            // Apply min/max constraints
+
             if (size >= 150 && size <= 400) {
                 preview.style.width = size + 'px';
             }
-            
+
             e.preventDefault();
         }
 
@@ -190,10 +205,8 @@ const QRGenerator = {
         const handleScroll = () => {
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 const previewRect = qrPreviewCard.getBoundingClientRect();
-                
-                // Show floating preview when main preview goes out of view
+
                 if (previewRect.top < -100 && this.currentLink) {
                     this.floatingPreview.classList.add('show');
                     this.updateFloatingPreview();
@@ -207,8 +220,8 @@ const QRGenerator = {
     },
 
     cacheDom() {
-    this.qrSizeSlider = document.getElementById('qrSizeSlider') || null;
-    this.qrSizeValue = document.getElementById('qrSizeValue') || null;
+        this.qrSizeSlider = document.getElementById('qrSizeSlider') || null;
+        this.qrSizeValue = document.getElementById('qrSizeValue') || null;
         this.qrLinkInput = document.getElementById('qrLinkInput');
         this.generateBtn = document.getElementById('generateQRBtn');
         this.qrPlaceholder = document.getElementById('qrPlaceholder');
@@ -228,31 +241,27 @@ const QRGenerator = {
 
     bindEvents() {
         if (!this.generateBtn || !this.qrLinkInput) return;
-        
-        // Generate QR Code
+
         this.generateBtn.addEventListener('click', () => this.generateQR());
         this.qrLinkInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.generateQR();
         });
+
         this.qrSizeSlider?.addEventListener('input', (e) => {
             this.currentSize = parseInt(e.target.value);
-
             if (this.qrSizeValue) {
                 this.qrSizeValue.textContent = `${this.currentSize}px`;
-    }
+            }
+            if (this.currentLink) {
+                this.generateQR();
+            }
+        });
 
-    if (this.currentLink) {
-        this.generateQR();
-    }
-});
-
-        // Brand name overlay
         this.qrBrandInput.addEventListener('input', (e) => {
             this.currentBrandName = e.target.value;
             if (this.currentLink) this.generateQR();
         });
 
-        // Pattern selection
         document.querySelectorAll('.pattern-option').forEach(option => {
             option.addEventListener('click', (e) => {
                 document.querySelectorAll('.pattern-option').forEach(o => o.classList.remove('active'));
@@ -262,7 +271,6 @@ const QRGenerator = {
             });
         });
 
-        // Frame selection
         document.querySelectorAll('.frame-option').forEach(option => {
             option.addEventListener('click', (e) => {
                 document.querySelectorAll('.frame-option').forEach(o => o.classList.remove('active'));
@@ -272,7 +280,6 @@ const QRGenerator = {
             });
         });
 
-        // Color pickers
         this.qrColorPicker.addEventListener('input', (e) => {
             this.currentColor = e.target.value;
             this.qrColorHex.value = e.target.value.toUpperCase();
@@ -288,7 +295,6 @@ const QRGenerator = {
             }
         });
 
-        // Color presets
         document.querySelectorAll('.color-preset').forEach(preset => {
             preset.addEventListener('click', (e) => {
                 const color = preset.dataset.color;
@@ -299,7 +305,6 @@ const QRGenerator = {
             });
         });
 
-        // Background color for JPG
         this.bgColorPicker.addEventListener('input', (e) => {
             this.currentBgColor = e.target.value;
             this.bgColorHex.value = e.target.value.toUpperCase();
@@ -313,19 +318,16 @@ const QRGenerator = {
             }
         });
 
-        // Transparent background toggle
         this.transparentBg.addEventListener('change', (e) => {
             if (this.currentLink) this.generateQR();
         });
 
-        // Format selection
         document.querySelectorAll('.format-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.currentFormat = btn.dataset.format;
-                
-                // Show/hide options based on format
+
                 if (this.currentFormat === 'jpg') {
                     this.downloadBgOptions.style.display = 'block';
                     this.transparentOption.style.display = 'none';
@@ -337,7 +339,6 @@ const QRGenerator = {
             });
         });
 
-        // Download button
         this.downloadBtn.addEventListener('click', () => this.downloadQR());
     },
 
@@ -350,35 +351,28 @@ const QRGenerator = {
 
         this.currentLink = link;
         if (this.qrPlaceholder) {
-    this.qrPlaceholder.style.display = 'none';
-}
+            this.qrPlaceholder.style.display = 'none';
+        }
 
         try {
-            // Check if QRCodeStyling library is loaded
             if (typeof QRCodeStyling === 'undefined') {
                 throw new Error('QR Code Styling library not loaded. Please refresh the page.');
             }
 
-            // Clear previous QR code
             const container = document.querySelector('.qr-canvas-wrapper');
             container.innerHTML = '';
 
-            // Set container background
             const bgColor = this.transparentBg?.checked ? '#ffffffda' : this.currentBgColor;
             container.style.backgroundColor = bgColor;
-           container.style.width = `${this.currentSize}px`;
-           container.style.height = `${this.currentSize}px`;
+            container.style.width = `${this.currentSize}px`;
+            container.style.height = `${this.currentSize}px`;
             container.style.display = 'inline-block';
             container.style.borderRadius = '24px';
             container.style.overflow = 'hidden';
 
-            // Get pattern-specific options
             const patternOptions = this.getPatternOptions();
-            
-            // Get frame options
             const frameOptions = this.getFrameOptions();
 
-            // Build QR code configuration
             const qrOptions = {
                 width: this.currentSize,
                 height: this.currentSize,
@@ -407,51 +401,41 @@ const QRGenerator = {
                     type: patternOptions.cornersDotType
                 },
                 backgroundOptions: {
-                    color: 'transparent' // Always transparent - let container handle background
+                    color: 'transparent'
                 }
             };
 
-            // Add brand name as text overlay if provided
             if (this.currentBrandName) {
-                // Create a data URL for brand text image
                 qrOptions.image = await this.createBrandImage(this.currentBrandName);
             }
 
-            // Create QR code
             this.qrCodeStyling = new QRCodeStyling(qrOptions);
-
-            // Append to canvas wrapper (will create SVG)
             this.qrCodeStyling.append(container);
 
-            // Style the SVG to match canvas appearance
             const svg = container.querySelector('svg');
             if (svg) {
                 svg.style.display = 'block';
-                svg.style.borderRadius = '24px'; // Match container border-radius
+                svg.style.borderRadius = '24px';
                 svg.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
                 svg.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
                 svg.style.width = `${this.currentSize}px`;
                 svg.style.height = `${this.currentSize}px`;
-                // Let the QR library handle the background color
             }
 
-            // Apply frame if selected
             if (this.currentFrame !== 'none') {
                 this.applyFrameToSVG(container, frameOptions);
             }
 
             this.downloadBtn.disabled = false;
-            
-            // Update floating preview
             setTimeout(() => this.updateFloatingPreview(), 100);
 
         } catch (error) {
             console.error('QR generation error:', error);
             this.showNotification(error.message || 'Failed to generate QR code', 'error');
             if (this.qrPlaceholder) {
-    this.qrPlaceholder.style.display = 'block';
-    this.qrPlaceholder.textContent = 'Failed to generate QR code. Please try again.';
-}
+                this.qrPlaceholder.style.display = 'block';
+                this.qrPlaceholder.textContent = 'Failed to generate QR code. Please try again.';
+            }
         }
     },
 
@@ -561,29 +545,25 @@ const QRGenerator = {
             canvas.height = 200;
             const ctx = canvas.getContext('2d');
 
-            // Draw white circle background
             ctx.fillStyle = '#ffffff';
             ctx.beginPath();
             ctx.arc(100, 100, 90, 0, Math.PI * 2);
             ctx.fill();
 
-            // Draw border
             ctx.strokeStyle = this.currentColor;
             ctx.lineWidth = 4;
             ctx.stroke();
 
-            // Draw text
             ctx.fillStyle = this.currentColor;
             ctx.font = 'bold 24px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            
-            // Wrap text if too long
+
             const maxWidth = 160;
             const words = text.split(' ');
             let line = '';
             let y = 100;
-            
+
             if (words.length > 1) {
                 y = 85;
                 words.forEach((word, i) => {
@@ -615,14 +595,12 @@ const QRGenerator = {
         const frameColor = frameOptions.color;
         const frameText = frameOptions.text;
 
-        // Scale values based on size
         const scale = size / 400;
         const padding = 5 * scale;
-        const strokeWidth = 10 * scale; // Increased from 8 to 10 for better visibility
+        const strokeWidth = 10 * scale;
         const fontSize = 16 * scale;
         const textY = 25 * scale;
 
-        // Add clip-path for rounded corners (24px radius)
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
         clipPath.setAttribute('id', 'rounded-corners');
@@ -639,7 +617,6 @@ const QRGenerator = {
 
         svg.setAttribute('clip-path', 'url(#rounded-corners)');
 
-        // Add frame rectangle on top
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         rect.setAttribute('x', padding.toString());
         rect.setAttribute('y', padding.toString());
@@ -653,7 +630,6 @@ const QRGenerator = {
         rect.setAttribute('stroke-linejoin', 'round');
         svg.appendChild(rect);
 
-        // Add frame text if provided
         if (frameText) {
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', (size / 2).toString());
@@ -672,25 +648,23 @@ const QRGenerator = {
     },
 
     updateFloatingPreview() {
-        // Copy main SVG to floating canvas
         if (this.qrCodeStyling && this.floatingCanvas) {
             const container = document.querySelector('.qr-canvas-wrapper');
             const svg = container.querySelector('svg');
-            
+
             if (svg) {
-                // Convert SVG to canvas for floating preview
                 const svgData = new XMLSerializer().serializeToString(svg);
                 const img = new Image();
                 const blob = new Blob([svgData], { type: 'image/svg+xml' });
                 const url = URL.createObjectURL(blob);
-                
+
                 img.onload = () => {
                     const ctx = this.floatingCanvas.getContext('2d');
                     ctx.clearRect(0, 0, 400, 400);
                     ctx.drawImage(img, 0, 0, 400, 400);
                     URL.revokeObjectURL(url);
                 };
-                
+
                 img.src = url;
             }
         }
@@ -706,28 +680,20 @@ const QRGenerator = {
             const extension = this.currentFormat;
             const fileName = `qr-code-${Date.now()}.${extension}`;
 
-            // Get pattern-specific options
             const patternOptions = this.getPatternOptions();
-            
-            // Get frame options
             const frameOptions = this.getFrameOptions();
 
-            // Determine background color based on format and settings
             let backgroundColor;
             if (extension === 'jpg') {
-                // JPG doesn't support transparency, always use the selected background color
                 backgroundColor = this.currentBgColor;
             } else {
-                // PNG/SVG: use transparent if checkbox is checked, otherwise use background color
                 backgroundColor = this.transparentBg?.checked ? 'transparent' : this.currentBgColor;
             }
 
-            // Create download QR with proper settings
-           const qrSize = this.currentSize;
-            const canvasSize = extension === 'svg'
-            ? this.currentSize
-            : this.currentSize * 2;
+            const qrSize = this.currentSize;
+            const canvasSize = extension === 'svg' ? this.currentSize : this.currentSize * 2;
             const scale = canvasSize / 400;
+
             const downloadOptions = {
                 width: qrSize,
                 height: qrSize,
@@ -760,40 +726,32 @@ const QRGenerator = {
                 }
             };
 
-            // Add brand name if provided
             if (this.currentBrandName) {
                 downloadOptions.image = await this.createBrandImage(this.currentBrandName);
             }
 
-            // Create new QR instance for download
             const downloadQR = new QRCodeStyling(downloadOptions);
-            
-            // Create temporary container
+
             const tempContainer = document.createElement('div');
             tempContainer.style.position = 'absolute';
             tempContainer.style.left = '-9999px';
             document.body.appendChild(tempContainer);
-            
-            // Generate QR in temp container
+
             downloadQR.append(tempContainer);
-            
-            // Wait for SVG to be rendered
+
             await new Promise(resolve => setTimeout(resolve, 100));
-            
-            // Apply frame if selected
+
             if (this.currentFrame !== 'none') {
                 this.applyFrameToSVG(tempContainer, frameOptions, qrSize);
             }
-            
-            // Get the SVG element
+
             const svg = tempContainer.querySelector('svg');
-            
+
             if (extension === 'svg') {
-                // Download SVG directly
                 const svgData = new XMLSerializer().serializeToString(svg);
                 const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
-                
+
                 const link = document.createElement('a');
                 link.href = url;
                 link.download = fileName;
@@ -802,21 +760,20 @@ const QRGenerator = {
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
             } else {
-                // Convert SVG to Canvas for PNG/JPG
                 const svgData = new XMLSerializer().serializeToString(svg);
                 const img = new Image();
                 const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
-                
+
                 await new Promise((resolve, reject) => {
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         canvas.width = canvasSize;
                         canvas.height = canvasSize;
                         const ctx = canvas.getContext('2d');
-                        
+
                         ctx.drawImage(img, 0, 0, canvasSize, canvasSize);
-                        
+
                         canvas.toBlob((blob) => {
                             const url = URL.createObjectURL(blob);
                             const link = document.createElement('a');
@@ -828,18 +785,16 @@ const QRGenerator = {
                             URL.revokeObjectURL(url);
                             resolve();
                         }, extension === 'jpg' ? 'image/jpeg' : 'image/png', 0.95);
-                        
+
                         URL.revokeObjectURL(url);
                     };
-                    
+
                     img.onerror = reject;
                     img.src = url;
                 });
             }
-            
-            // Clean up
+
             document.body.removeChild(tempContainer);
-            
             this.showNotification('QR Code downloaded successfully!', 'success');
 
         } catch (error) {
@@ -849,38 +804,28 @@ const QRGenerator = {
     },
 
     async loadUserLinks() {
-        // Load user's recent links for quick generation
         try {
-            // Check if Firebase is initialized
-            if (typeof firebase === 'undefined' || !firebase.auth || !firebase.firestore) {
-                console.log('Firebase not ready, waiting...');
-                setTimeout(() => this.loadUserLinks(), 500);
-                return;
-            }
-
             const user = firebase.auth().currentUser;
-            if (!user) {
-                console.log('No user logged in');
-                this.quickLinksGrid.innerHTML = '';
-                const p = document.createElement('p');
-                p.className = 'text-muted';
-                p.textContent = 'Please log in to see your links';
-                this.quickLinksGrid.appendChild(p);
-                return;
+            if (!user) return;
+
+            if (this.quickLinksGrid) {
+                this.quickLinksGrid.innerHTML = `
+                    <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 12px; display: block;"></i>
+                        <p>Loading your links...</p>
+                    </div>
+                `;
             }
 
-            // Fetch user links via API
             const token = await user.getIdToken();
             const response = await fetch('/api/user/links', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
             if (!response.ok) {
-                this.quickLinksGrid.innerHTML = '';
-                const p = document.createElement('p');
-                p.className = 'text-muted';
-                p.textContent = 'Failed to load links';
-                this.quickLinksGrid.appendChild(p);
+                if (this.quickLinksGrid) {
+                    this.quickLinksGrid.innerHTML = '<p class="text-muted" style="padding: 16px;">Failed to load links</p>';
+                }
                 return;
             }
 
@@ -888,96 +833,61 @@ const QRGenerator = {
             const links = result.links || [];
 
             if (links.length === 0) {
-                this.quickLinksGrid.innerHTML = '';
-                const emptyDiv = document.createElement('div');
-                emptyDiv.style.cssText = 'text-align: center; padding: 24px; color: var(--text-secondary);';
-                const icon = document.createElement('i');
-                icon.className = 'fas fa-link';
-                icon.style.cssText = 'font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block;';
-                const p1 = document.createElement('p');
-                p1.textContent = 'No links yet!';
-                const p2 = document.createElement('p');
-                p2.style.cssText = 'font-size: 14px; margin-top: 8px;';
-                p2.textContent = 'Create a link to generate QR codes';
-                emptyDiv.appendChild(icon);
-                emptyDiv.appendChild(p1);
-                emptyDiv.appendChild(p2);
-                this.quickLinksGrid.appendChild(emptyDiv);
+                if (this.quickLinksGrid) {
+                    this.quickLinksGrid.innerHTML = `
+                        <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
+                            <i class="fas fa-link" style="font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block;"></i>
+                            <p>No links yet!</p>
+                            <p style="font-size: 14px; margin-top: 8px;">Create a link to generate QR codes</p>
+                        </div>
+                    `;
+                }
                 return;
             }
-            
+
             const recentLinks = links.slice(0, 6);
 
             this.quickLinksGrid.innerHTML = '';
             recentLinks.forEach(link => {
                 const btn = document.createElement('button');
                 btn.className = 'quick-link-btn';
-                
-                const shortUrl = `${window.location.origin}/${link.shortCode}`;
+
+                const shortUrl = link.shortUrl || `${window.location.origin}/${link.shortCode}`;
                 const displayUrl = this.truncateUrl(link.originalUrl, 35);
-                
-                const headerDiv = document.createElement('div');
-                headerDiv.className = 'quick-link-header';
-                
-                const shortSpan = document.createElement('span');
-                shortSpan.className = 'link-short';
-                shortSpan.style.cssText = 'font-weight: 600; color: var(--accent-cyan);';
-                shortSpan.textContent = `/${link.shortCode}`;
-                
-                const clicksSpan = document.createElement('span');
-                clicksSpan.className = 'link-clicks';
-                clicksSpan.style.cssText = 'color: var(--text-tertiary); font-size: 12px;';
-                const mouseIcon = document.createElement('i');
-                mouseIcon.className = 'fas fa-mouse-pointer';
-                clicksSpan.appendChild(mouseIcon);
-                clicksSpan.appendChild(document.createTextNode(` ${link.clicks || 0}`));
-                
-                headerDiv.appendChild(shortSpan);
-                headerDiv.appendChild(clicksSpan);
-                
-                const originalSpan = document.createElement('span');
-                originalSpan.className = 'link-original';
-                originalSpan.style.cssText = 'font-size: 13px; color: var(--text-secondary); display: block; margin-top: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;';
-                originalSpan.textContent = displayUrl;
-                
-                btn.appendChild(headerDiv);
-                btn.appendChild(originalSpan);
-                
+
+                btn.innerHTML = `
+                    <div class="quick-link-header">
+                        <span class="link-short" style="font-weight: 600; color: var(--accent-cyan);">/${link.shortCode}</span>
+                        <span class="link-clicks" style="color: var(--text-tertiary); font-size: 12px;">
+                            <i class="fas fa-mouse-pointer"></i> ${link.clicks || 0}
+                        </span>
+                    </div>
+                    <span class="link-original" style="font-size: 13px; color: var(--text-secondary); display: block; margin-top: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${link.originalUrl}">${displayUrl}</span>
+                `;
+
                 btn.addEventListener('click', () => {
                     this.qrLinkInput.value = shortUrl;
                     this.generateQR();
                     document.querySelector('.qr-preview-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 });
-                
+
                 this.quickLinksGrid.appendChild(btn);
             });
 
         } catch (error) {
             console.error('Error loading links:', error);
-            this.quickLinksGrid.innerHTML = '';
-            const errorDiv = document.createElement('div');
-            errorDiv.style.cssText = 'text-align: center; padding: 24px; color: var(--text-secondary);';
-            const errIcon = document.createElement('i');
-            errIcon.className = 'fas fa-exclamation-triangle';
-            errIcon.style.cssText = 'font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block; color: var(--accent-orange);';
-            const p1 = document.createElement('p');
-            p1.textContent = 'Error loading links';
-            const p2 = document.createElement('p');
-            p2.style.cssText = 'font-size: 14px; margin-top: 8px;';
-            p2.textContent = error.message;
-            const retryBtn = document.createElement('button');
-            retryBtn.className = 'btn btn-sm btn-secondary';
-            retryBtn.style.marginTop = '12px';
-            retryBtn.addEventListener('click', () => window.QRGenerator.loadUserLinks());
-            const redoIcon = document.createElement('i');
-            redoIcon.className = 'fas fa-redo';
-            retryBtn.appendChild(redoIcon);
-            retryBtn.appendChild(document.createTextNode(' Retry'));
-            errorDiv.appendChild(errIcon);
-            errorDiv.appendChild(p1);
-            errorDiv.appendChild(p2);
-            errorDiv.appendChild(retryBtn);
-            this.quickLinksGrid.appendChild(errorDiv);
+            if (this.quickLinksGrid) {
+                this.quickLinksGrid.innerHTML = `
+                    <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block; color: var(--accent-orange);"></i>
+                        <p>Error loading links</p>
+                        <p style="font-size: 14px; margin-top: 8px;">${error.message}</p>
+                        <button class="btn btn-sm btn-secondary" onclick="window.QRGenerator.loadUserLinks()" style="margin-top: 12px;">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
         }
     },
 
@@ -987,8 +897,9 @@ const QRGenerator = {
     },
 
     showNotification(message, type = 'info') {
-        // Use existing notification system if available
-        if (window.showNotification) {
+        if (typeof showToast === 'function') {
+            showToast(message, type);
+        } else if (window.showNotification) {
             window.showNotification(message, type);
         } else {
             alert(message);
@@ -996,7 +907,6 @@ const QRGenerator = {
     }
 };
 
-// Initialize when QR Generator page is shown
 if (typeof window !== 'undefined') {
     window.QRGenerator = QRGenerator;
 }
