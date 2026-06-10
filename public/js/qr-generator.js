@@ -861,7 +861,11 @@ const QRGenerator = {
             const user = firebase.auth().currentUser;
             if (!user) {
                 console.log('No user logged in');
-                this.quickLinksGrid.innerHTML = '<p class="text-muted">Please log in to see your links</p>';
+                this.quickLinksGrid.innerHTML = '';
+                const p = document.createElement('p');
+                p.className = 'text-muted';
+                p.textContent = 'Please log in to see your links';
+                this.quickLinksGrid.appendChild(p);
                 return;
             }
 
@@ -872,7 +876,11 @@ const QRGenerator = {
             });
 
             if (!response.ok) {
-                this.quickLinksGrid.innerHTML = '<p class="text-muted">Failed to load links</p>';
+                this.quickLinksGrid.innerHTML = '';
+                const p = document.createElement('p');
+                p.className = 'text-muted';
+                p.textContent = 'Failed to load links';
+                this.quickLinksGrid.appendChild(p);
                 return;
             }
 
@@ -880,13 +888,21 @@ const QRGenerator = {
             const links = result.links || [];
 
             if (links.length === 0) {
-                this.quickLinksGrid.innerHTML = `
-                    <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
-                        <i class="fas fa-link" style="font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block;"></i>
-                        <p>No links yet!</p>
-                        <p style="font-size: 14px; margin-top: 8px;">Create a link to generate QR codes</p>
-                    </div>
-                `;
+                this.quickLinksGrid.innerHTML = '';
+                const emptyDiv = document.createElement('div');
+                emptyDiv.style.cssText = 'text-align: center; padding: 24px; color: var(--text-secondary);';
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-link';
+                icon.style.cssText = 'font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block;';
+                const p1 = document.createElement('p');
+                p1.textContent = 'No links yet!';
+                const p2 = document.createElement('p');
+                p2.style.cssText = 'font-size: 14px; margin-top: 8px;';
+                p2.textContent = 'Create a link to generate QR codes';
+                emptyDiv.appendChild(icon);
+                emptyDiv.appendChild(p1);
+                emptyDiv.appendChild(p2);
+                this.quickLinksGrid.appendChild(emptyDiv);
                 return;
             }
             
@@ -900,20 +916,36 @@ const QRGenerator = {
                 const shortUrl = `${window.location.origin}/${link.shortCode}`;
                 const displayUrl = this.truncateUrl(link.originalUrl, 35);
                 
-                btn.innerHTML = `
-                    <div class="quick-link-header">
-                        <span class="link-short" style="font-weight: 600; color: var(--accent-cyan);">/${link.shortCode}</span>
-                        <span class="link-clicks" style="color: var(--text-tertiary); font-size: 12px;">
-                            <i class="fas fa-mouse-pointer"></i> ${link.clicks || 0}
-                        </span>
-                    </div>
-                    <span class="link-original" style="font-size: 13px; color: var(--text-secondary); display: block; margin-top: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${link.originalUrl}">${displayUrl}</span>
-                `;
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'quick-link-header';
+                
+                const shortSpan = document.createElement('span');
+                shortSpan.className = 'link-short';
+                shortSpan.style.cssText = 'font-weight: 600; color: var(--accent-cyan);';
+                shortSpan.textContent = `/${link.shortCode}`;
+                
+                const clicksSpan = document.createElement('span');
+                clicksSpan.className = 'link-clicks';
+                clicksSpan.style.cssText = 'color: var(--text-tertiary); font-size: 12px;';
+                const mouseIcon = document.createElement('i');
+                mouseIcon.className = 'fas fa-mouse-pointer';
+                clicksSpan.appendChild(mouseIcon);
+                clicksSpan.appendChild(document.createTextNode(` ${link.clicks || 0}`));
+                
+                headerDiv.appendChild(shortSpan);
+                headerDiv.appendChild(clicksSpan);
+                
+                const originalSpan = document.createElement('span');
+                originalSpan.className = 'link-original';
+                originalSpan.style.cssText = 'font-size: 13px; color: var(--text-secondary); display: block; margin-top: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;';
+                originalSpan.textContent = displayUrl;
+                
+                btn.appendChild(headerDiv);
+                btn.appendChild(originalSpan);
                 
                 btn.addEventListener('click', () => {
                     this.qrLinkInput.value = shortUrl;
                     this.generateQR();
-                    // Smooth scroll to preview
                     document.querySelector('.qr-preview-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 });
                 
@@ -922,16 +954,30 @@ const QRGenerator = {
 
         } catch (error) {
             console.error('Error loading links:', error);
-            this.quickLinksGrid.innerHTML = `
-                <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block; color: var(--accent-orange);"></i>
-                    <p>Error loading links</p>
-                    <p style="font-size: 14px; margin-top: 8px;">${error.message}</p>
-                    <button class="btn btn-sm btn-secondary" onclick="window.QRGenerator.loadUserLinks()" style="margin-top: 12px;">
-                        <i class="fas fa-redo"></i> Retry
-                    </button>
-                </div>
-            `;
+            this.quickLinksGrid.innerHTML = '';
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = 'text-align: center; padding: 24px; color: var(--text-secondary);';
+            const errIcon = document.createElement('i');
+            errIcon.className = 'fas fa-exclamation-triangle';
+            errIcon.style.cssText = 'font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block; color: var(--accent-orange);';
+            const p1 = document.createElement('p');
+            p1.textContent = 'Error loading links';
+            const p2 = document.createElement('p');
+            p2.style.cssText = 'font-size: 14px; margin-top: 8px;';
+            p2.textContent = error.message;
+            const retryBtn = document.createElement('button');
+            retryBtn.className = 'btn btn-sm btn-secondary';
+            retryBtn.style.marginTop = '12px';
+            retryBtn.addEventListener('click', () => window.QRGenerator.loadUserLinks());
+            const redoIcon = document.createElement('i');
+            redoIcon.className = 'fas fa-redo';
+            retryBtn.appendChild(redoIcon);
+            retryBtn.appendChild(document.createTextNode(' Retry'));
+            errorDiv.appendChild(errIcon);
+            errorDiv.appendChild(p1);
+            errorDiv.appendChild(p2);
+            errorDiv.appendChild(retryBtn);
+            this.quickLinksGrid.appendChild(errorDiv);
         }
     },
 
