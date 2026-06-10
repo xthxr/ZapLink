@@ -283,26 +283,61 @@ function closeBioLinkModal() {
 function renderBioLinkItems() {
     const container = document.getElementById('bioLinksListContainer');
     if (!container) return;
-
+    
+    container.innerHTML = '';
+    
     if (bioLinkItems.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-tertiary); font-size: 14px; text-align: center; padding: 12px;">No links added yet. Click "Add Link" to get started.</p>';
+        const p = document.createElement('p');
+        p.style.cssText = 'color: var(--text-tertiary); font-size: 14px; text-align: center; padding: 12px;';
+        p.textContent = 'No links added yet. Click "Add Link" to get started.';
+        container.appendChild(p);
         return;
     }
-
-    container.innerHTML = bioLinkItems.map((item, index) => `
-        <div class="bio-link-item" data-index="${index}">
-            <div class="bio-link-item-handle">
-                <i class="fas fa-grip-vertical"></i>
-            </div>
-            <div class="bio-link-item-content">
-                <input type="text" class="form-input" placeholder="Link Title" value="${sanitizeHTML(item.title || '')}" onchange="updateBioLinkItem(${index}, 'title', this.value)">
-                <input type="url" class="form-input" placeholder="https://example.com" value="${sanitizeHTML(item.url || '')}" onchange="updateBioLinkItem(${index}, 'url', this.value)">
-            </div>
-            <button class="btn-icon" onclick="removeBioLinkItem(${index})" title="Remove">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `).join('');
+    
+    bioLinkItems.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'bio-link-item';
+        itemDiv.setAttribute('data-index', index);
+        
+        const handle = document.createElement('div');
+        handle.className = 'bio-link-item-handle';
+        const gripIcon = document.createElement('i');
+        gripIcon.className = 'fas fa-grip-vertical';
+        handle.appendChild(gripIcon);
+        
+        const content = document.createElement('div');
+        content.className = 'bio-link-item-content';
+        
+        const titleInput = document.createElement('input');
+        titleInput.type = 'text';
+        titleInput.className = 'form-input';
+        titleInput.placeholder = 'Link Title';
+        titleInput.value = item.title || '';
+        titleInput.addEventListener('change', function() { updateBioLinkItem(index, 'title', this.value); });
+        
+        const urlInput = document.createElement('input');
+        urlInput.type = 'url';
+        urlInput.className = 'form-input';
+        urlInput.placeholder = 'Link URL';
+        urlInput.value = item.url || '';
+        urlInput.addEventListener('change', function() { updateBioLinkItem(index, 'url', this.value); });
+        
+        content.appendChild(titleInput);
+        content.appendChild(urlInput);
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-icon';
+        removeBtn.title = 'Remove';
+        removeBtn.addEventListener('click', function() { removeBioLinkItem(index); });
+        const timesIcon = document.createElement('i');
+        timesIcon.className = 'fas fa-times';
+        removeBtn.appendChild(timesIcon);
+        
+        itemDiv.appendChild(handle);
+        itemDiv.appendChild(content);
+        itemDiv.appendChild(removeBtn);
+        container.appendChild(itemDiv);
+    });
 }
 
 // Add new bio link item
@@ -1242,28 +1277,67 @@ function renderEditorBioLinkItems() {
     const container = document.getElementById('editorBioLinkItems');
     if (!container) return;
     
+    container.innerHTML = '';
+    
     if (editorBioLinkItems.length === 0) {
-        container.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 20px;">No links yet. Click "Add Link" to get started.</p>';
+        const p = document.createElement('p');
+        p.style.cssText = 'color: #9ca3af; text-align: center; padding: 20px;';
+        p.textContent = 'No links yet. Click "Add Link" to get started.';
+        container.appendChild(p);
         updateLivePreview();
         return;
     }
     
-    container.innerHTML = editorBioLinkItems.map((item, index) => `
-        <div class="bio-link-item" draggable="true" data-index="${index}" style="display: flex; gap: 12px; padding: 16px; background: #0a0a0a; border-radius: 12px; border: 1px solid #2a2a2a; cursor: move; transition: all 0.2s ease;">
-            <div class="bio-link-item-handle" style="cursor: grab; color: #707070; display: flex; align-items: center;">
-                <i class="fas fa-grip-vertical"></i>
-            </div>
-            <div class="bio-link-item-content" style="flex: 1; display: grid; gap: 8px;">
-                <input type="text" class="form-input" placeholder="Link Title" value="${item.title || ''}"
-                       oninput="updateEditorBioLinkItem(${index}, 'title', this.value)" style="margin: 0;">
-                <input type="url" class="form-input" placeholder="https://example.com" value="${item.url || ''}"
-                       oninput="updateEditorBioLinkItem(${index}, 'url', this.value)" style="margin: 0;">
-            </div>
-            <button class="btn-icon" onclick="removeEditorBioLinkItem(${index})" title="Remove">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
-    `).join('');
+    editorBioLinkItems.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'bio-link-item';
+        itemDiv.draggable = true;
+        itemDiv.setAttribute('data-index', index);
+        itemDiv.style.cssText = 'display: flex; gap: 12px; padding: 16px; background: #0a0a0a; border-radius: 12px; border: 1px solid #2a2a2a; cursor: move; transition: all 0.2s ease;';
+        
+        const handle = document.createElement('div');
+        handle.className = 'bio-link-item-handle';
+        handle.style.cssText = 'cursor: grab; color: #707070; display: flex; align-items: center;';
+        const gripIcon = document.createElement('i');
+        gripIcon.className = 'fas fa-grip-vertical';
+        handle.appendChild(gripIcon);
+        
+        const content = document.createElement('div');
+        content.className = 'bio-link-item-content';
+        content.style.cssText = 'flex: 1; display: grid; gap: 8px;';
+        
+        const titleInput = document.createElement('input');
+        titleInput.type = 'text';
+        titleInput.className = 'form-input';
+        titleInput.placeholder = 'Link Title';
+        titleInput.value = item.title || '';
+        titleInput.style.margin = '0';
+        titleInput.addEventListener('input', function() { updateEditorBioLinkItem(index, 'title', this.value); });
+        
+        const urlInput = document.createElement('input');
+        urlInput.type = 'url';
+        urlInput.className = 'form-input';
+        urlInput.placeholder = 'https://example.com';
+        urlInput.value = item.url || '';
+        urlInput.style.margin = '0';
+        urlInput.addEventListener('input', function() { updateEditorBioLinkItem(index, 'url', this.value); });
+        
+        content.appendChild(titleInput);
+        content.appendChild(urlInput);
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-icon';
+        removeBtn.title = 'Remove';
+        removeBtn.addEventListener('click', function() { removeEditorBioLinkItem(index); });
+        const trashIcon = document.createElement('i');
+        trashIcon.className = 'fas fa-trash';
+        removeBtn.appendChild(trashIcon);
+        
+        itemDiv.appendChild(handle);
+        itemDiv.appendChild(content);
+        itemDiv.appendChild(removeBtn);
+        container.appendChild(itemDiv);
+    });
     
     // Setup drag and drop
     setupDragAndDrop();

@@ -4,6 +4,8 @@
 // Camera-based QR code scanner using BarcodeDetector API with jsQR fallback.
 // Load AFTER qr-generator.js (QRGenerator must exist).
 
+/* global QRGenerator, BarcodeDetector */
+
 let _scannerActive = false;
 let _scannerStream = null;
 let _scannerAnimation = null;
@@ -105,6 +107,7 @@ QRGenerator.closeScanner = function () {
 // --- Start camera ---
 QRGenerator._startCamera = async function (facingMode) {
     if (typeof facingMode === 'undefined') facingMode = 'environment';
+    if (!_scannerActive) return;
 
     this._stopCamera();
 
@@ -113,9 +116,13 @@ QRGenerator._startCamera = async function (facingMode) {
             video: { facingMode, width: { ideal: 640 }, height: { ideal: 640 } }
         });
 
+        if (!_scannerActive) { this._stopCamera(); return; }
+
         if (_scannerVideo) {
             _scannerVideo.srcObject = _scannerStream;
             await _scannerVideo.play();
+
+            if (!_scannerActive) { this._stopCamera(); return; }
 
             // Try BarcodeDetector first
             if ('BarcodeDetector' in window) {
@@ -126,6 +133,7 @@ QRGenerator._startCamera = async function (facingMode) {
             }
         }
     } catch (err) {
+        if (!_scannerActive) return;
         console.error('Camera error:', err);
         const statusEl = document.getElementById('qrScannerStatus');
         if (statusEl) {
@@ -165,6 +173,8 @@ QRGenerator._switchCamera = function () {
 };
 
 // --- Scan using native BarcodeDetector API ---
+QRGenerator._barcodeDetectFails = 0;
+QRGenerator._barcodeDetectMaxFails = 100;
 QRGenerator._scanWithBarcodeDetector = function () {
     if (!_scannerActive || !_scannerVideo) return;
 
@@ -180,8 +190,18 @@ QRGenerator._scanWithBarcodeDetector = function () {
                 this._onQRScanned(code);
                 return;
             }
+            // Successful detection with no barcodes — reset fail counter
+            this._barcodeDetectFails = 0;
         } catch (err) {
-            // Detector not ready yet — retry
+            // Detector not ready yet — track failures
+            this._barcodeDetectFails++;
+
+            // If BarcodeDetector keeps failing, fall back to jsQR
+            if (this._barcodeDetectFails >= this._barcodeDetectMaxFails) {
+                this._stopCamera();
+                this._loadJsQRAndScan();
+                return;
+            }
         }
 
         const statusEl = document.getElementById('qrScannerStatus');
@@ -197,29 +217,40 @@ QRGenerator._scanWithBarcodeDetector = function () {
 };
 
 // --- Fallback: load jsQR and scan ---
+QRGenerator._jsqrLoading = false;
 QRGenerator._loadJsQRAndScan = function () {
-    // Check if jsQR is already loaded
-    if (typeof window.jsQR === 'undefined') {
-        const statusEl = document.getElementById('qrScannerStatus');
-        if (statusEl) {
-            statusEl.textContent = 'Loading scanner library...';
-        }
-
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
-        script.onload = () => {
-            this._scanWithJsQR();
-        };
-        script.onerror = () => {
-            if (statusEl) {
-                statusEl.textContent = 'Scanner library failed to load. Try a different browser.';
-                statusEl.style.color = '#ef4444';
-            }
-        };
-        document.head.appendChild(script);
-    } else {
+    // Guard against duplicate loading while script is in-flight
+    if (typeof window.jsQR === 'function') {
         this._scanWithJsQR();
+        return;
     }
+
+    if (this._jsqrLoading) {
+        // Already loading — retry after a short delay
+        setTimeout(() => this._loadJsQRAndScan(), 500);
+        return;
+    }
+
+    this._jsqrLoading = true;
+    const statusEl = document.getElementById('qrScannerStatus');
+    if (statusEl) {
+        statusEl.textContent = 'Loading scanner library...';
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+    script.onload = () => {
+        this._jsqrLoading = false;
+        this._scanWithJsQR();
+    };
+    script.onerror = () => {
+        this._jsqrLoading = false;
+        if (statusEl) {
+            statusEl.textContent = 'Scanner library failed to load. Try a different browser.';
+            statusEl.style.color = '#ef4444';
+        }
+    };
+    document.head.appendChild(script);
 };
 
 // --- Scan using jsQR ---

@@ -150,14 +150,22 @@ The backend is organized into modules for better maintainability:
 
 2. **Make Your Changes** - Follow coding standards below
 
-3. **Test Locally**
+3. **Lint Your Code**
+
+   ```bash
+   npm run lint
+   ```
+   
+   ESLint is configured with flat config (`eslint.config.js`). The CI pipeline runs linting on every push and PR — it will fail on errors. Fix all errors before committing. Warnings are acceptable.
+
+4. **Test Locally**
 
    ```bash
    npm run dev
    # Test your changes thoroughly
    ```
 
-4. **Commit Your Changes**
+5. **Commit Your Changes**
 
    ```bash
    git commit -m "feat: add amazing feature"

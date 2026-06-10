@@ -4,6 +4,25 @@
 // Download QR code as PNG / SVG / JPG.
 // Load AFTER qr-generator.js (QRGenerator must exist).
 
+// --- Wait for SVG to render in container (deterministic, no arbitrary timeout) ---
+QRGenerator._waitForSvgReady = function (container, maxRetries) {
+    if (typeof maxRetries === 'undefined') maxRetries = 20;
+    return new Promise((resolve, reject) => {
+        let retries = 0;
+        const check = () => {
+            const svg = container.querySelector('svg');
+            if (svg && svg.querySelector('rect')) {
+                resolve();
+            } else if (retries++ < maxRetries) {
+                requestAnimationFrame(check);
+            } else {
+                resolve(); // timeout — proceed anyway
+            }
+        };
+        requestAnimationFrame(check);
+    });
+};
+
 // --- Download QR code ---
 QRGenerator.downloadQR = async function () {
     if (!this.currentLink || !this.qrCodeStyling) {
@@ -60,7 +79,7 @@ QRGenerator.downloadQR = async function () {
         document.body.appendChild(tempContainer);
 
         downloadQR.append(tempContainer);
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await this._waitForSvgReady(tempContainer);
 
         if (this.currentFrame !== 'none') {
             this.applyFrameToSVG(tempContainer, frameOptions, qrSize);
