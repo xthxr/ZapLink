@@ -807,25 +807,28 @@ const QRGenerator = {
         try {
             const user = firebase.auth().currentUser;
             if (!user) return;
+            if (!this.quickLinksGrid) return;
 
-            if (this.quickLinksGrid) {
-                this.quickLinksGrid.innerHTML = `
+            const uid = user.uid;
+
+            this.quickLinksGrid.innerHTML = `
                     <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
                         <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 12px; display: block;"></i>
                         <p>Loading your links...</p>
                     </div>
                 `;
-            }
 
             const token = await user.getIdToken();
             const response = await fetch('/api/user/links', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
+            // Auth state may have changed while the request was in flight.
+            // Discard the response if the signed-in user is now different (or gone).
+            if (firebase.auth().currentUser?.uid !== uid) return;
+
             if (!response.ok) {
-                if (this.quickLinksGrid) {
-                    this.quickLinksGrid.innerHTML = '<p class="text-muted" style="padding: 16px;">Failed to load links</p>';
-                }
+                this.quickLinksGrid.innerHTML = '<p class="text-muted" style="padding: 16px;">Failed to load links</p>';
                 return;
             }
 
@@ -833,15 +836,13 @@ const QRGenerator = {
             const links = result.links || [];
 
             if (links.length === 0) {
-                if (this.quickLinksGrid) {
-                    this.quickLinksGrid.innerHTML = `
-                        <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
-                            <i class="fas fa-link" style="font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block;"></i>
-                            <p>No links yet!</p>
-                            <p style="font-size: 14px; margin-top: 8px;">Create a link to generate QR codes</p>
-                        </div>
-                    `;
-                }
+                this.quickLinksGrid.innerHTML = `
+                    <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
+                        <i class="fas fa-link" style="font-size: 32px; opacity: 0.3; margin-bottom: 12px; display: block;"></i>
+                        <p>No links yet!</p>
+                        <p style="font-size: 14px; margin-top: 8px;">Create a link to generate QR codes</p>
+                    </div>
+                `;
                 return;
             }
 
