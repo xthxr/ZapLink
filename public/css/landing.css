@@ -1432,3 +1432,56 @@ html.light-theme #benefits .icon-developer {
 html.light-theme #benefits .icon-creator {
     color: #ec4899 !important;
 }
+
+/* =========================================
+   FIX: ICON BADGES & ACCENT COLORS IN LIGHT THEME
+   ========================================= */
+
+/* --- 1. Analytics Card (Blue Icon & Badge) --- */
+html.light-theme .landing-card .bg-blue-100 i,
+html:not(.dark) .landing-card .bg-blue-100 i {
+    color: #2563eb !important;
+    /* Vibrant brand blue */
+}
+
+html.light-theme .bg-blue-100,
+html:not(.dark) .bg-blue-100 {
+    background: rgba(219, 234, 254, 0.7) !important;
+    /* Soft light blue tint */
+    border: 1px solid rgba(147, 197, 253, 0.5) !important;
+}
+
+
+/* --- 2. QR Card (Pink / Purple / Berry Icon & Badge) --- */
+/* Target both pink and purple variants just in case your HTML utilizes either */
+html.light-theme .landing-card .bg-pink-100 i,
+html:not(.dark) .landing-card .bg-pink-100 i,
+html.light-theme .landing-card .bg-purple-100 i,
+html:not(.dark) .landing-card .bg-purple-100 i {
+    color: #db2777 !important;
+    /* Vibrant brand berry/pink */
+}
+
+html.light-theme .bg-pink-100,
+html:not(.dark) .bg-pink-100 {
+    background: rgba(252, 231, 243, 0.7) !important;
+    /* Fixed missing # and converted to proper hex format */
+    border: 1px solid rgba(251, 207, 232, 0.6) !important;
+}
+
+html.light-theme .bg-purple-100,
+html:not(.dark) .bg-purple-100 {
+    background: rgba(243, 232, 255, 0.7) !important;
+    border: 1px solid rgba(233, 213, 255, 0.6) !important;
+}
+
+
+/* --- 3. Large Decorative Background Watermark --- */
+html.light-theme .landing-card .text-gray-700\/10,
+html:not(.dark) .landing-card .text-gray-700\/10,
+html.light-theme .landing-card i[class*="opacity-"],
+html:not(.dark) .landing-card i[class*="opacity-"] {
+    color: #0f172a !important;
+    opacity: 0.04 !important;
+    /* Keeps the massive background chart logo extremely subtle */
+}
