@@ -93,14 +93,60 @@ ul { list-style: none; }
     transform: translateY(-4px); 
 }
 
-.faq-answer { 
-    max-height: 0; 
-    overflow: hidden; 
-    transition: max-height 0.3s ease-out; 
+.footer-section {
+    position: relative;
+    overflow: hidden;
 }
-.faq-answer.open { 
-    max-height: 500px; 
+.footer-divider-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 1rem;
 }
+.footer-divider {
+    width: 100%;
+    max-width: 80rem;
+    height: 1px;
+    margin: 0 auto;
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.18), rgba(255, 255, 255, 0.08), rgba(59, 130, 246, 0.18));
+    opacity: 0.72;
+    border-radius: 9999px;
+    box-shadow: 0 0 18px rgba(59, 130, 246, 0.08);
+}
+html.dark .footer-divider {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.22));
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.06);
+    opacity: 0.84;
+}
+.footer-link {
+    color: inherit;
+    position: relative;
+    display: inline-block;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+.footer-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.35), rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.35));
+    opacity: 0;
+    transform: translateY(3px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+}
+.footer-link:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+html.dark .footer-link::after {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.35));
+}
+html.dark .footer-link:hover {
+    color: #ffffff;
+}
+
 
 /* ================================
    LAYOUT UTILITIES
