@@ -7,7 +7,9 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [
     "utm",
@@ -45,6 +47,18 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.1",
     "globals": "^17.6.0",
-    "nodemon": "^3.0.1"
+    "jest": "^30.4.2",
+    "nodemon": "^3.0.1",
+    "supertest": "^7.2.2"
+  },
+  "jest": {
+  "testEnvironment": "node",
+  "testMatch": ["**/src/__tests__/**/*.test.js"],
+  "coverageDirectory": "coverage",
+  "collectCoverageFrom": [
+    "src/**/*.js",
+    "!src/__tests__/**"
+  ]
   }
 }
+
