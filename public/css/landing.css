@@ -1230,16 +1230,18 @@ html.light-theme h4,
 html:not(.dark) h1,
 html:not(.dark) h2,
 html:not(.dark) h3,
-html:not(.dark) h4,
-html.light-theme .text-black,
-html:not(.dark) .text-black {
+html:not(.dark) h4 {
     color: #020617 !important;
-    /* Deepest ink black for maximum premium look */
     font-weight: 800 !important;
     letter-spacing: -0.02em !important;
 }
 
-/* Base Body/Paragraph Text (High contrast, clean slate) */
+html.light-theme .text-black,
+html:not(.dark) .text-black {
+   color: #020617 !important;
+}
+
+/* Secondary/Muted Description Text (The secret to hierarchy: Slate-600) */
 html.light-theme p,
 html:not(.dark) p,
 html.light-theme .text-gray-800,
@@ -1247,25 +1249,28 @@ html:not(.dark) .text-gray-800,
 html.light-theme .text-gray-700,
 html:not(.dark) .text-gray-700 {
     color: #0f172a !important;
-    /* Slate-900 */
+    /* Slate-700: Perfectly readable, but sits elegantly behind headings */
 }
 
-/* Secondary/Muted Description Text (The secret to hierarchy: Slate-600) */
 html.light-theme .text-gray-600,
-html:not(.dark) .text-gray-600,
+html:not(.dark) .text-gray-600 {
+    color: #334155 !important;
+}
+
 html.light-theme .text-gray-500,
-html:not(.dark) .text-gray-500,
+html:not(.dark) .text-gray-500 {
+    color: #475569 !important;
+}
+
 html.light-theme .text-gray-400,
 html:not(.dark) .text-gray-400 {
-    color: #334155 !important;
-    /* Slate-700: Perfectly readable, but sits elegantly behind headings */
+    color: #64748b !important;
 }
 
 /* Crisp Dark Minimalist Icons */
 html.light-theme .landing-card i,
 html:not(.dark) .landing-card i {
     color: #0f172a !important;
-    /* Solid dark slate finish for accessibility */
     filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.8)) !important;
 }
 
