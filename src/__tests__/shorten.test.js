@@ -42,7 +42,7 @@ describe('URL Shortening API', () => {
     expect(res.statusCode).toBe(401);
   });
 
-  it('POST /api/shorten without body returns 401', async () => {
+  it('POST /api/shorten without auth header returns 401', async () => {
     const res = await request(app).post('/api/shorten');
     expect(res.statusCode).toBe(401);
   });
