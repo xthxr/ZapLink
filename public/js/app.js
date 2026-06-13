@@ -1,5 +1,5 @@
-// ================================
-// BOOTSTRAP — App Initialization
+﻿// ================================
+// BOOTSTRAP â€” App Initialization
 // ================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -88,7 +88,7 @@ function initializeLandingPage() {
             const suggestion = suggestionInput.value.trim();
 
             if (suggestion) {
-                const discussionUrl = `https://github.com/xthxr/Link360/discussions/new?category=ideas&title=${encodeURIComponent(suggestion)}`;
+                const discussionUrl = 'https://github.com/xthxr/Link360/discussions/new?category=ideas&title=' + encodeURIComponent(suggestion);
                 window.open(discussionUrl, '_blank');
                 suggestionInput.value = '';
                 showToast('Opening GitHub Discussions...', 'success');
@@ -96,3 +96,23 @@ function initializeLandingPage() {
         });
     }
 }
+
+window.filterClicksChart = function filterClicksChart(days) {
+    const raw = window._lastClicksOverTimeData;
+    if (!raw || raw.length === 0) return;
+
+    let filtered = raw;
+    if (days !== 'all') {
+        const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+        filtered = raw.filter(click => 
+            new Date(click.timestamp).getTime() >= cutoff
+        );
+    }
+
+    document.querySelectorAll('.date-range-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.days === String(days));
+    });
+
+    renderClicksChart(processClicksOverTime(filtered));
+};
+

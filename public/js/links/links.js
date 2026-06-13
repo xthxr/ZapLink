@@ -353,26 +353,48 @@ function displayLinks(links, filter) {
     const linksContainer = document.getElementById('linksContainer');
     if (!linksContainer) return;
 
-    let headerHTML = '';
+    linksContainer.innerHTML = '';
+
     if (filter === 'inactive' && links.length > 0) {
-        headerHTML = `
-            <div style="margin-bottom: 20px; padding: 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h4 style="margin: 0 0 4px 0; color: var(--accent-red); font-size: 14px; font-weight: 600;">
-                        <i class="fas fa-exclamation-triangle"></i> Inactive Links
-                    </h4>
-                    <p style="margin: 0; color: var(--text-secondary); font-size: 13px;">
-                        These links will be permanently deleted after 15 days of deactivation
-                    </p>
-                </div>
-                <button class="btn btn-danger" onclick="permanentlyDeleteInactiveLinks()">
-                    <i class="fas fa-trash"></i> Delete All Inactive
-                </button>
-            </div>
-        `;
+        const headerDiv = document.createElement('div');
+        headerDiv.style.cssText = 'margin-bottom: 20px; padding: 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;';
+
+        const headerLeft = document.createElement('div');
+
+        const headerTitle = document.createElement('h4');
+        headerTitle.style.cssText = 'margin: 0 0 4px 0; color: var(--accent-red); font-size: 14px; font-weight: 600;';
+
+        const warningIcon = document.createElement('i');
+        warningIcon.className = 'fas fa-exclamation-triangle';
+        headerTitle.appendChild(warningIcon);
+        headerTitle.appendChild(document.createTextNode(' Inactive Links'));
+
+        headerLeft.appendChild(headerTitle);
+
+        const headerDesc = document.createElement('p');
+        headerDesc.style.cssText = 'margin: 0; color: var(--text-secondary); font-size: 13px;';
+        headerDesc.textContent = 'These links will be permanently deleted after 15 days of deactivation';
+        headerLeft.appendChild(headerDesc);
+
+        headerDiv.appendChild(headerLeft);
+
+        const deleteAllBtn = document.createElement('button');
+        deleteAllBtn.className = 'btn btn-danger';
+        deleteAllBtn.addEventListener('click', function () {
+            window.permanentlyDeleteInactiveLinks();
+        });
+
+        const trashIcon = document.createElement('i');
+        trashIcon.className = 'fas fa-trash';
+        deleteAllBtn.appendChild(trashIcon);
+        deleteAllBtn.appendChild(document.createTextNode(' Delete All Inactive'));
+
+        headerDiv.appendChild(deleteAllBtn);
+
+        linksContainer.appendChild(headerDiv);
     }
 
-    const linksHTML = links.map(link => {
+    links.forEach(link => {
         const isInactive = link.isActive === false;
 
         let daysRemaining = null;
@@ -388,106 +410,286 @@ function displayLinks(links, filter) {
             daysRemaining = Math.ceil((deletionDate - new Date()) / (1000 * 60 * 60 * 24));
         }
 
-        return `
-        <div class="link-card ${isInactive ? 'inactive-link' : ''}" data-link-id="${link.shortCode}">
-            <div class="link-icon ${isInactive ? 'inactive' : ''}">
-                <i class="fas fa-${isInactive ? 'ban' : 'link'}"></i>
-            </div>
-            <div class="link-content">
-                <div class="link-url">
-                    <a href="${link.shortUrl}" class="link-short" target="_blank">${link.shortUrl.replace('https://', '').replace('http://', '')}</a>
-                    <button
-                        class="btn-icon copy-btn"
-                        onclick="copyLink('${link.shortUrl.replace(/'/g, "\\'")}', this)"
-                        title="Copy link"
-                    >
-                        <i class="fas fa-copy"></i>
-                    </button>
-                    ${isInactive ? `<span class="inactive-badge">Inactive</span>` : ''}
-                    ${link.splitTest ? `<span class="split-test-badge" style="background: linear-gradient(135deg, var(--accent-purple), #8b5cf6); color: white; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-left: 6px; display: inline-flex; align-items: center; gap: 4px;"><i class="fas fa-flask" style="font-size: 9px;"></i> Split Test</span>` : ''}
-                </div>
-                ${link.splitTest && Array.isArray(link.variants) && link.variants.length > 0 ? `
-                    <div class="link-destination split-test-variants-summary" style="display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px; font-size: 12px; color: var(--text-secondary);">
-                        ${link.variants.map(v => `<span class="variant-summary-tag"><strong style="color: var(--accent-purple);">${v.label}</strong> (${v.weight}%): <span style="opacity: 0.8;">${v.url}</span></span>`).join('')}
-                    </div>
-                ` : `
-                   <div class="link-destination">${link.originalUrl}</div>
+        // --- Link card container ---
+        const card = document.createElement('div');
+        card.className = 'link-card' + (isInactive ? ' inactive-link' : '');
+        card.setAttribute('data-link-id', link.shortCode);
 
-${link.notes ? `
-<div class="link-notes" style="
-    margin-top: 8px;
-    font-size: 13px;
-    color: var(--text-secondary);
-">
-    <i class="fas fa-sticky-note"></i>
-    ${escapeHtml(link.notes)}
-</div>
-` : ''}
+        // --- Link icon ---
+        const linkIcon = document.createElement('div');
+        linkIcon.className = 'link-icon' + (isInactive ? ' inactive' : '');
 
-${link.tags && link.tags.length ? `
-    <div class="link-tags" style="
-        margin-top: 8px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-    ">
-        ${link.tags.map(tag => `
-            <span style="
-                background: var(--accent-color);
-                color: white;
-                padding: 2px 8px;
-                border-radius: 12px;
-                font-size: 12px;
-            ">
-                ${escapeHtml(tag)}
-            </span>
-        `).join('')}
-    </div>
-` : ''}
-                `}
-                <div class="link-meta">
-                <span class="health-badge health-${link.healthStatus || 'unknown'}">
-                <i class="fas fa-heartbeat"></i>${link.healthStatus || 'unknown'}
-                </span>
-                <span><i class="fas fa-calendar"></i> ${formatDate(link.createdAt)}</span>
-                    ${link.utmParams && !link.splitTest ? '<span><i class="fas fa-tags"></i> UTM Enabled</span>' : ''}
-                    ${isInactive && daysRemaining ? `<span style="color: var(--accent-red);"><i class="fas fa-clock"></i> Deletes in ${daysRemaining} days</span>` : ''}
-                </div>
-            </div>
-            <div class="link-stats">
-                <div class="link-stat">
-                    <span class="link-stat-value">${link.clicks || 0}</span>
-                    <span class="link-stat-label">Clicks</span>
-                </div>
-            </div>
-            <div class="link-actions">
-                ${!isInactive ? `
-                    <button class="link-action-btn" onclick="openSplitTestModal('${link.shortCode}')" title="Split Test">
-                        <i class="fas fa-flask"></i>
-                    </button>
-                    <button class="link-action-btn" onclick="viewAnalytics('${link.shortCode}')" title="Analytics">
-                        <i class="fas fa-chart-line"></i>
-                    </button>
-                    <button class="link-action-btn" onclick="showQRCode('${link.shortUrl.replace(/'/g, "\\'")}', '${link.shortCode}')" title="QR Code">
-                        <i class="fas fa-qrcode"></i>
-                    </button>
-                    <button class="link-action-btn" onclick="shareLink('${link.shortUrl.replace(/'/g, "\\'")}')" title="Share">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button class="link-action-btn delete" onclick="deleteLink('${link.shortCode}')" title="Deactivate">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                ` : `
-                    <button class="link-action-btn" onclick="reactivateLink('${link.shortCode}')" title="Reactivate">
-                        <i class="fas fa-redo"></i>
-                    </button>
-                `}
-            </div>
-        </div>
-    `;
-    }).join('');
+        const iconEl = document.createElement('i');
+        iconEl.className = 'fas fa-' + (isInactive ? 'ban' : 'link');
+        linkIcon.appendChild(iconEl);
 
-    linksContainer.innerHTML = headerHTML + linksHTML;
+        card.appendChild(linkIcon);
+
+        // --- Link content ---
+        const linkContent = document.createElement('div');
+        linkContent.className = 'link-content';
+
+        // URL row
+        const linkUrlDiv = document.createElement('div');
+        linkUrlDiv.className = 'link-url';
+
+        const linkAnchor = document.createElement('a');
+        linkAnchor.href = link.shortUrl;
+        linkAnchor.className = 'link-short';
+        linkAnchor.target = '_blank';
+        linkAnchor.textContent = link.shortUrl.replace('https://', '').replace('http://', '');
+        linkUrlDiv.appendChild(linkAnchor);
+
+        // Copy button
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'btn-icon copy-btn';
+        copyBtn.title = 'Copy link';
+        copyBtn.addEventListener('click', function () {
+            window.copyLink(link.shortUrl);
+        });
+
+        const copyIcon = document.createElement('i');
+        copyIcon.className = 'fas fa-copy';
+        copyBtn.appendChild(copyIcon);
+        linkUrlDiv.appendChild(copyBtn);
+
+        // Inactive badge
+        if (isInactive) {
+            const inactiveBadge = document.createElement('span');
+            inactiveBadge.className = 'inactive-badge';
+            inactiveBadge.textContent = 'Inactive';
+            linkUrlDiv.appendChild(inactiveBadge);
+        }
+
+        // Split test badge
+        if (link.splitTest) {
+            const splitTestBadge = document.createElement('span');
+            splitTestBadge.style.cssText = 'background: linear-gradient(135deg, var(--accent-purple), #8b5cf6); color: white; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-left: 6px; display: inline-flex; align-items: center; gap: 4px;';
+
+            const flaskIconBadge = document.createElement('i');
+            flaskIconBadge.className = 'fas fa-flask';
+            flaskIconBadge.style.cssText = 'font-size: 9px;';
+            splitTestBadge.appendChild(flaskIconBadge);
+            splitTestBadge.appendChild(document.createTextNode(' Split Test'));
+
+            linkUrlDiv.appendChild(splitTestBadge);
+        }
+
+        linkContent.appendChild(linkUrlDiv);
+
+        // Destination / variants area
+        if (link.splitTest && Array.isArray(link.variants) && link.variants.length > 0) {
+            const variantsSummary = document.createElement('div');
+            variantsSummary.className = 'link-destination split-test-variants-summary';
+            variantsSummary.style.cssText = 'display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px; font-size: 12px; color: var(--text-secondary);';
+
+            link.variants.forEach(function (v) {
+                const variantTag = document.createElement('span');
+                variantTag.className = 'variant-summary-tag';
+
+                const strongLabel = document.createElement('strong');
+                strongLabel.style.cssText = 'color: var(--accent-purple);';
+                strongLabel.textContent = v.label;
+                variantTag.appendChild(strongLabel);
+
+                variantTag.appendChild(document.createTextNode(' (' + v.weight + '%): '));
+
+                const urlSpan = document.createElement('span');
+                urlSpan.style.cssText = 'opacity: 0.8;';
+                urlSpan.textContent = v.url;
+                variantTag.appendChild(urlSpan);
+
+                variantsSummary.appendChild(variantTag);
+            });
+
+            linkContent.appendChild(variantsSummary);
+        } else {
+            // Original destination
+            const destination = document.createElement('div');
+            destination.className = 'link-destination';
+            destination.textContent = link.originalUrl;
+            linkContent.appendChild(destination);
+
+            // Notes
+            if (link.notes) {
+                const notesDiv = document.createElement('div');
+                notesDiv.className = 'link-notes';
+                notesDiv.style.cssText = 'margin-top: 8px; font-size: 13px; color: var(--text-secondary);';
+
+                const noteIcon = document.createElement('i');
+                noteIcon.className = 'fas fa-sticky-note';
+                notesDiv.appendChild(noteIcon);
+                notesDiv.appendChild(document.createTextNode(' ' + link.notes));
+
+                linkContent.appendChild(notesDiv);
+            }
+
+            // Tags
+            if (link.tags && link.tags.length) {
+                const tagsDiv = document.createElement('div');
+                tagsDiv.className = 'link-tags';
+                tagsDiv.style.cssText = 'margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;';
+
+                link.tags.forEach(function (tag) {
+                    const tagSpan = document.createElement('span');
+                    tagSpan.style.cssText = 'background: var(--accent-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;';
+                    tagSpan.textContent = tag;
+                    tagsDiv.appendChild(tagSpan);
+                });
+
+                linkContent.appendChild(tagsDiv);
+            }
+        }
+
+        // --- Link meta ---
+        const linkMeta = document.createElement('div');
+        linkMeta.className = 'link-meta';
+
+        // Health badge
+        const healthBadge = document.createElement('span');
+        healthBadge.className = 'health-badge health-' + (link.healthStatus || 'unknown');
+
+        const healthIcon = document.createElement('i');
+        healthIcon.className = 'fas fa-heartbeat';
+        healthBadge.appendChild(healthIcon);
+        healthBadge.appendChild(document.createTextNode(link.healthStatus || 'unknown'));
+
+        linkMeta.appendChild(healthBadge);
+
+        // Date
+        const dateSpanEl = document.createElement('span');
+        const dateIcon = document.createElement('i');
+        dateIcon.className = 'fas fa-calendar';
+        dateSpanEl.appendChild(dateIcon);
+        dateSpanEl.appendChild(document.createTextNode(' ' + window.formatDate(link.createdAt)));
+        linkMeta.appendChild(dateSpanEl);
+
+        // UTM enabled
+        if (link.utmParams && !link.splitTest) {
+            const utmSpan = document.createElement('span');
+            const utmIcon = document.createElement('i');
+            utmIcon.className = 'fas fa-tags';
+            utmSpan.appendChild(utmIcon);
+            utmSpan.appendChild(document.createTextNode(' UTM Enabled'));
+            linkMeta.appendChild(utmSpan);
+        }
+
+        // Delete countdown
+        if (isInactive && daysRemaining) {
+            const deleteCountdown = document.createElement('span');
+            deleteCountdown.style.cssText = 'color: var(--accent-red);';
+            const clockIcon = document.createElement('i');
+            clockIcon.className = 'fas fa-clock';
+            deleteCountdown.appendChild(clockIcon);
+            deleteCountdown.appendChild(document.createTextNode(' Deletes in ' + daysRemaining + ' days'));
+            linkMeta.appendChild(deleteCountdown);
+        }
+
+        linkContent.appendChild(linkMeta);
+        card.appendChild(linkContent);
+
+        // --- Link stats ---
+        const linkStats = document.createElement('div');
+        linkStats.className = 'link-stats';
+
+        const linkStat = document.createElement('div');
+        linkStat.className = 'link-stat';
+
+        const statValue = document.createElement('span');
+        statValue.className = 'link-stat-value';
+        statValue.textContent = link.clicks || 0;
+        linkStat.appendChild(statValue);
+
+        const statLabel = document.createElement('span');
+        statLabel.className = 'link-stat-label';
+        statLabel.textContent = 'Clicks';
+        linkStat.appendChild(statLabel);
+
+        linkStats.appendChild(linkStat);
+        card.appendChild(linkStats);
+
+        // --- Link actions ---
+        const linkActions = document.createElement('div');
+        linkActions.className = 'link-actions';
+
+        if (!isInactive) {
+            // Split test button
+            const splitTestBtn = document.createElement('button');
+            splitTestBtn.className = 'link-action-btn';
+            splitTestBtn.title = 'Split Test';
+            splitTestBtn.addEventListener('click', function () {
+                window.openSplitTestModal(link.shortCode);
+            });
+            const flaskIconAction = document.createElement('i');
+            flaskIconAction.className = 'fas fa-flask';
+            splitTestBtn.appendChild(flaskIconAction);
+            linkActions.appendChild(splitTestBtn);
+
+            // Analytics button
+            const analyticsBtn = document.createElement('button');
+            analyticsBtn.className = 'link-action-btn';
+            analyticsBtn.title = 'Analytics';
+            analyticsBtn.addEventListener('click', function () {
+                window.viewAnalytics(link.shortCode);
+            });
+            const chartIcon = document.createElement('i');
+            chartIcon.className = 'fas fa-chart-line';
+            analyticsBtn.appendChild(chartIcon);
+            linkActions.appendChild(analyticsBtn);
+
+            // QR Code button
+            const qrBtn = document.createElement('button');
+            qrBtn.className = 'link-action-btn';
+            qrBtn.title = 'QR Code';
+            qrBtn.addEventListener('click', function () {
+                window.showQRCode(link.shortUrl, link.shortCode);
+            });
+            const qrIcon = document.createElement('i');
+            qrIcon.className = 'fas fa-qrcode';
+            qrBtn.appendChild(qrIcon);
+            linkActions.appendChild(qrBtn);
+
+            // Share button
+            const shareBtn = document.createElement('button');
+            shareBtn.className = 'link-action-btn';
+            shareBtn.title = 'Share';
+            shareBtn.addEventListener('click', function () {
+                window.shareLink(link.shortUrl);
+            });
+            const shareIcon = document.createElement('i');
+            shareIcon.className = 'fas fa-share-alt';
+            shareBtn.appendChild(shareIcon);
+            linkActions.appendChild(shareBtn);
+
+            // Delete button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'link-action-btn delete';
+            deleteBtn.title = 'Deactivate';
+            deleteBtn.addEventListener('click', function () {
+                window.deleteLink(link.shortCode);
+            });
+            const deleteIcon = document.createElement('i');
+            deleteIcon.className = 'fas fa-trash';
+            deleteBtn.appendChild(deleteIcon);
+            linkActions.appendChild(deleteBtn);
+        } else {
+            // Reactivate button
+            const reactivateBtn = document.createElement('button');
+            reactivateBtn.className = 'link-action-btn';
+            reactivateBtn.title = 'Reactivate';
+            reactivateBtn.addEventListener('click', function () {
+                window.reactivateLink(link.shortCode);
+            });
+            const redoIcon = document.createElement('i');
+            redoIcon.className = 'fas fa-redo';
+            reactivateBtn.appendChild(redoIcon);
+            linkActions.appendChild(reactivateBtn);
+        }
+
+        card.appendChild(linkActions);
+
+        linksContainer.appendChild(card);
+    });
 }
 
 function updateStats(links) {

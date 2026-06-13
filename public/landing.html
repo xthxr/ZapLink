@@ -357,6 +357,11 @@
             themeToggleBtn.addEventListener('click', () => {
                 htmlElement.classList.toggle('dark');
                 const isDark = htmlElement.classList.contains('dark');
+                if (isDark) {
+                    htmlElement.classList.remove('light-theme');
+                } else {
+                    htmlElement.classList.add('light-theme');
+                }
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
                 applyThemeClasses(isDark);
             });

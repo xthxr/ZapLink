@@ -320,16 +320,20 @@
                 <!-- Charts -->
                 <div class="charts-grid">
                     <div class="chart-card">
-                        <div class="chart-header">
-                            <h3>Clicks Over Time</h3>
-                            <div class="chart-actions">
-                                <button class="btn-icon"><i class="fas fa-download"></i></button>
+                            <div class="chart-header">
+                                <h3>Clicks Over Time</h3>
+                                <div class="chart-actions">
+                                    <button class="date-range-btn active" data-days="7">7D</button>
+                                    <button class="date-range-btn" data-days="30">30D</button>
+                                    <button class="date-range-btn" data-days="90">90D</button>
+                                    <button class="date-range-btn" data-days="all">All</button>
+                                </div>
+                            </div>
+                            <!-- THIS WAS MISSING -->
+                            <div class="chart-body">
+                                <canvas id="clicksChart"></canvas>
                             </div>
                         </div>
-                        <div class="chart-body">
-                            <canvas id="clicksChart"></canvas>
-                        </div>
-                    </div>
 
                     <div class="chart-card">
                         <div class="chart-header">

@@ -241,4 +241,12 @@ function initializeEventListeners() {
 
     // Initialize custom styled selects
     initializeCustomSelects();
+
+    // Date range filter buttons for clicks chart
+    document.querySelectorAll('.date-range-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const days = btn.dataset.days === 'all' ? 'all' : parseInt(btn.dataset.days);
+            if (typeof filterClicksChart === 'function') filterClicksChart(days);
+        });
+    });
 }

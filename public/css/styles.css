@@ -91,6 +91,35 @@ html[data-theme="dark"] {
     
     --overlay: rgba(0, 0, 0, 0.8);
 }
+.date-range-btn {
+    background: transparent;
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition-fast);   /* ADD THIS */
+}
+
+
+.date-range-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--accent-purple);
+}
+
+.date-range-btn:focus,
+.date-range-btn:focus-visible {
+    outline: none;
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+}
+.date-range-btn.active {
+    background: var(--accent-purple);
+    color: white;
+    border-color: var(--accent-purple);
+}
 
 /* Light Theme - Clean */
 html[data-theme="light"] {
@@ -1517,6 +1546,12 @@ html[data-theme="light"] .filter-select:hover {
     border-radius: 16px;
     padding: 28px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.chart-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
 .chart-header {

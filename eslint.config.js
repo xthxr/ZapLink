@@ -119,7 +119,20 @@ export default [
         renderSplitTestAnalytics: "readonly",
         formatDate: "readonly",
         loadLinkAnalytics: "readonly",
-        currentPage: "writable"
+        currentPage: "writable",
+        // Initialization functions (defined in module files, called from app.js bootstrap)
+        initializeTheme: "readonly",
+        initializeAuth: "readonly",
+        initializeNavigation: "readonly",
+        initializeEventListeners: "readonly",
+        initializeSplitTestEventListeners: "readonly",
+        checkForURLParameter: "readonly",
+        showLoginModal: "readonly",
+        backendRuntimeStatus: "writable",
+        // Analytics functions
+        renderClicksChart: "readonly",
+        processClicksOverTime: "readonly",
+        filterClicksChart: "readonly"
       },
       ecmaVersion: "latest"
     },
