@@ -93,7 +93,7 @@ export default [
         initBioLink: "readonly",
         logoutBtn: "readonly",
         verifyUserBeforeAction: "readonly",
-        currentGeoView: "readonly",
+        currentGeoView: "writable",
         updateGlobeData: "readonly",
         navigateToPage: "readonly",
         escapeHtml: "readonly",
