@@ -282,16 +282,108 @@
         </div>
     </section>
 
-    <!-- 7. Bottom CTA -->
-    <section class="py-32 px-6 text-center relative overflow-hidden bg-white dark:bg-transparent border-t border-gray-200 dark:border-gray-900">
-        <div class="absolute inset-0 bg-accent/5 blur-[100px] rounded-full pointer-events-none"></div>
-        <div class="relative z-10">
-            <h2 class="text-4xl md:text-6xl font-bold mb-6 text-black dark:text-white">Ready to upgrade your links?</h2>
-            <p class="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">Join thousands of developers and creators taking control of their infrastructure today.</p>
-            
-           <button id="pricingGetStartedBtn" class="bg-accent text-white font-bold px-10 py-5 rounded-xl hover:bg-blue-600 transition-colors inline-block shadow-xl shadow-accent/20 transform hover:scale-105">
-                Create Your Free Account
-            </button>
+    <!-- 7. Pricing -->
+    <section id="pricing" class="py-32 px-6 bg-white dark:bg-surfaceDark/30 border-t border-gray-200 dark:border-gray-900">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4 text-black dark:text-white">Simple, transparent pricing</h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">Start for free, upgrade when you need more. No hidden fees.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Free Plan -->
+                <div class="bg-white dark:bg-surfaceDark border border-gray-200 dark:border-white/10 card-border rounded-3xl p-8 shadow-sm dark:shadow-none flex flex-col">
+                    <h3 class="text-2xl font-bold text-black dark:text-white mb-4">Free</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">For individuals getting started</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-extrabold text-black dark:text-white">$0</span>
+                        <span class="text-gray-500 dark:text-gray-400">/mo</span>
+                    </div>
+                    <ul class="flex flex-col gap-4 mb-8 flex-1">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">100 links per month</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Basic analytics</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Standard domains</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Community support</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-white dark:bg-surfaceDark border border-gray-200 dark:border-white/10 card-border text-gray-900 dark:text-white font-semibold px-6 py-4 rounded-xl hover:bg-gray-50 dark:hover:bg-surfaceHoverDark transition-colors">
+                        Get Started Free
+                    </button>
+                </div>
+
+                <!-- Pro Plan (Recommended) -->
+                <div class="bg-white dark:bg-surfaceDark border border-accent rounded-3xl p-8 shadow-lg dark:shadow-lg flex flex-col relative">
+                    <div class="bg-accent text-white text-sm font-bold px-4 py-1 rounded-full inline-block mb-6">Recommended</div>
+                    <h3 class="text-2xl font-bold text-black dark:text-white mb-4">Pro</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">For professionals and teams</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-extrabold text-black dark:text-white">$12</span>
+                        <span class="text-gray-500 dark:text-gray-400">/mo</span>
+                    </div>
+                    <ul class="flex flex-col gap-4 mb-8 flex-1">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Unlimited links</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Advanced analytics</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">5 custom domains</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Priority support</span>
+                        </li>
+                    </ul>
+                    <button id="pricingGetStartedBtn" class="w-full bg-accent text-white font-bold px-6 py-4 rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-accent/20">
+                        Start Free Trial
+                    </button>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="bg-white dark:bg-surfaceDark border border-gray-200 dark:border-white/10 card-border rounded-3xl p-8 shadow-sm dark:shadow-none flex flex-col">
+                    <h3 class="text-2xl font-bold text-black dark:text-white mb-4">Enterprise</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">For large scale deployments</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-extrabold text-black dark:text-white">Custom</span>
+                    </div>
+                    <ul class="flex flex-col gap-4 mb-8 flex-1">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Everything in Pro</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Unlimited custom domains</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Self-hosting option</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500 text-sm"></i>
+                            <span class="text-gray-600 dark:text-gray-400">Dedicated support &amp; SLA</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-white dark:bg-surfaceDark border border-gray-200 dark:border-white/10 card-border text-gray-900 dark:text-white font-semibold px-6 py-4 rounded-xl hover:bg-gray-50 dark:hover:bg-surfaceHoverDark transition-colors">
+                        Contact Sales
+                    </button>
+                </div>
+            </div>
         </div>
     </section>
 
