@@ -13,7 +13,7 @@ async function checkLinkHealth(url) {
         maxRedirects: 5,
         validateStatus: () => true,
       });
-    } catch (headError) {
+    } catch {
       // Fallback to GET request
       response = await axios.get(url, {
         timeout: 5000,
