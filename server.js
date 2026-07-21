@@ -354,15 +354,6 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
     return res.status(400).json({ error: 'Invalid URL' });
   }
 
-  // Block dangerous URL schemes
-  const blockedSchemes = ['javascript:', 'data:', 'vbscript:'];
-  const urlLower = url.toLowerCase();
-  for (const scheme of blockedSchemes) {
-    if (urlLower.startsWith(scheme)) {
-      return res.status(400).json({ error: 'Invalid URL: dangerous URL scheme blocked' });
-    }
-  }
-
   // Validate custom short code if provided
   let shortCode;
   if (customShortCode) {
