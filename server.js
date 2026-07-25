@@ -464,6 +464,21 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
     referrers: {}
   };
 
+  if (!db) {
+    // In-memory fallback (Firestore not available)
+    links.set(shortCode, linkData);
+    analytics.set(shortCode, analyticsData);
+    await redirectCache.set(shortCode, normalizeRedirectLink(linkData));
+
+    return res.json({
+      success: true,
+      shortUrl,
+      shortCode,
+      originalUrl: finalUrl,
+      isCustom: !!customShortCode
+    });
+  }
+
   try {
     // Convert shortCode to Firestore-safe ID (replace / with _)
     const firestoreId = toFirestoreId(shortCode);
@@ -500,11 +515,11 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
       originalUrl: finalUrl,
       isCustom: !!customShortCode
     });
-  } catch (error) {
-    console.error('Error saving to Firestore:', error);
-    
-    // Fallback to in-memory storagehealthStatus
-    links.set(shortCode, linkData);
+      } catch (error) {
+        console.error('Error saving to Firestore:', error);
+        
+        // Fallback to in-memory storage
+        links.set(shortCode, linkData);
     analytics.set(shortCode, analyticsData);
     await redirectCache.set(shortCode, normalizeRedirectLink(linkData));
     
@@ -1790,7 +1805,6 @@ async function trackClickAndEmit(shortCode, req, variantLabel = null) {
         
         // Build the update object
         const updateData = {
-          impressions: admin.firestore.FieldValue.increment(1),
           clicks: admin.firestore.FieldValue.increment(1),
           [`devices.${deviceType}`]: admin.firestore.FieldValue.increment(1),
           [`browsers.${browser}`]: admin.firestore.FieldValue.increment(1),
