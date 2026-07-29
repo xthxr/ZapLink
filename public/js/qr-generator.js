@@ -235,7 +235,7 @@ const QRGenerator = {
             if (e.key === 'Enter') this.generateQR();
         });
         this.qrSizeSlider?.addEventListener('input', (e) => {
-            this.currentSize = parseInt(e.target.value);
+            this.currentSize = parseInt(e.target.value, 10);
 
             if (this.qrSizeValue) {
                 this.qrSizeValue.textContent = `${this.currentSize}px`;
