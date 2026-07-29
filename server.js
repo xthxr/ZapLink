@@ -11,7 +11,7 @@ const admin = require('firebase-admin');
 // already been declared when Node.js parsed the file.
 const fetch = typeof globalThis.fetch === 'function'
   ? globalThis.fetch
-  : (...args) => import('node-fetch').then(({ default: fetchFn }) => fetchFn(...args));
+  : (...args) => import('node-fetch').then(({ default: fetchFn }).catch(err => console.error(err))=> fetchFn(...args));
 const checkLinkHealth = require('./src/utils/checkLinkHealth');
 const redisUtils = require('./src/utils/redis.utils');
 const redirectCache = require('./src/utils/redirect-cache.utils');
