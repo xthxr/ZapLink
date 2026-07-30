@@ -444,7 +444,7 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
   isCustom: !!customShortCode,
   isActive: true,
   expiresAt: expiresAt ? admin.firestore.Timestamp.fromDate(new Date(expiresAt)) : null,
-  maxClicks: maxClicks ? parseInt(maxClicks) : null,
+  maxClicks: maxClicks ? parseInt(maxClicks, 10) : null,
   clickCount: 0,
   notifiedExpiry: false,
   isExpired: false
