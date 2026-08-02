@@ -535,7 +535,7 @@ app.get('/api/user/analytics', verifyToken, async (req, res) => {
     });
 
     // Fetch analytics for each link
-    const analyticsPromises = linksData.map(async (link) => {
+    const analyticsPromises = (linksData ?? []).map(async (link) => {
       const firestoreId = toFirestoreId(link.shortCode);
       try {
         const analyticsDoc = await db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId).get();
