@@ -44,7 +44,7 @@ class GlobeVisualization {
       const data = await response.json();
       
       if (data.locations) {
-        this.locations = data.locations.map(loc => ({
+        this.locations = data.(locations ?? []).map(loc => ({
           lat: loc.lat,
           lng: loc.lng,
           city: loc.city,
