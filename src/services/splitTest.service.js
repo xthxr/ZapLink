@@ -134,7 +134,7 @@ function buildVariantClickFields(variantLabel) {
  * @returns {Array<{ label: string, url: string, weight: number }>}
  */
 function normaliseVariants(variants) {
-  return variants.map((v) => ({
+  return (variants ?? []).map((v) => ({
     label: v.label.trim(),
     url: v.url.trim(),
     weight: Math.round(v.weight),
