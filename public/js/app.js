@@ -1220,7 +1220,7 @@ async function loadLinks() {
         userLinks = data.links || [];
         console.log('Total links loaded:', userLinks.length);
         console.log('Active links:', userLinks.filter(l => l.isActive !== false).length);
-        console.log('Link details:', userLinks.map(l => ({ shortCode: l.shortCode, isActive: l.isActive })));
+        console.log('Link details:', (userLinks ?? []).map(l => ({ shortCode: l.shortCode, isActive: l.isActive })));
         
         if (userLinks.length > 0) {
             // Check which filter tab is active
