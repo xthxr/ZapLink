@@ -30,6 +30,7 @@
     "express-rate-limit": "^8.5.2",
     "firebase": "^12.4.0",
     "firebase-admin": "^13.6.0",
+    "geoip-lite": "^2.0.3",
     "globe.gl": "^2.45.0",
     "helmet": "^8.1.0",
     "isomorphic-dompurify": "^2.35.0",

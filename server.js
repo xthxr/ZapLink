@@ -17,6 +17,28 @@ const redisUtils = require('./src/utils/redis.utils');
 const redirectCache = require('./src/utils/redirect-cache.utils');
 const { securityHeaders, apiLimiter, bugReportLimiter } = require('./src/middleware/security.middleware');
 const splitTestService = require('./src/services/splitTest.service');
+const geoip = require('geoip-lite');
+
+/**
+ * Perform IP Geolocation lookup
+ * @param {string} ip - IP address to lookup
+ * @returns {object} Geolocation data containing country, city, region, and ll (latitude/longitude)
+ */
+function getGeoFromIP(ip) {
+  if (!ip) return { country: 'Unknown', city: 'Unknown', region: 'Unknown', ll: null };
+  const cleanIP = ip.replace('::ffff:', '');
+  if (cleanIP === '127.0.0.1' || cleanIP === '::1' || cleanIP === 'localhost') {
+    return { country: 'Local', city: 'Local', region: 'Loopback', ll: [0, 0] };
+  }
+  const geo = geoip.lookup(cleanIP);
+  if (!geo) return { country: 'Unknown', city: 'Unknown', region: 'Unknown', ll: null };
+  return {
+    country: geo.country || 'Unknown',
+    city: geo.city || 'Unknown',
+    region: geo.region || 'Unknown',
+    ll: geo.ll || null
+  };
+}
 require('dotenv').config();
 
 // Validate required environment variables on startup
@@ -1717,29 +1739,23 @@ function getReferrerSource(req) {
 
 // Fetch geolocation data
 async function fetchGeolocation(clientIP) {
-  let locationData = {
-    country: 'Unknown',
-    city: 'Unknown',
-    region: 'Unknown'
-  };
-  
   try {
-    const geoResponse = await fetch(`http://ip-api.com/json/${clientIP}?fields=status,country,regionName,city`);
-    if (geoResponse.ok) {
-      const geoData = await geoResponse.json();
-      if (geoData.status === 'success') {
-        locationData = {
-          country: geoData.country || 'Unknown',
-          city: geoData.city || 'Unknown',
-          region: geoData.regionName || 'Unknown'
-        };
-      }
-    }
+    const geo = getGeoFromIP(clientIP);
+    return {
+      country: geo.country,
+      city: geo.city,
+      region: geo.region,
+      ll: geo.ll
+    };
   } catch (geoError) {
     console.log('Geolocation lookup failed:', geoError.message);
+    return {
+      country: 'Unknown',
+      city: 'Unknown',
+      region: 'Unknown',
+      ll: null
+    };
   }
-  
-  return locationData;
 }
 
 // Core click-tracking and DB write function
