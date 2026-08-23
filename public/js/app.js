@@ -3148,6 +3148,70 @@ let filteredGeoClicks = [];
 let currentGeoFilter = 'all';
 let currentGeoSort = 'recent';
 
+// Socket.io initialization for real-time analytics updates
+let socket = null;
+
+function initializeRealTimeSocket() {
+    if (typeof io !== 'undefined') {
+        setupSocketListeners(io());
+    } else {
+        // Dynamically load Socket.IO client script if not loaded
+        const script = document.createElement('script');
+        script.src = '/socket.io/socket.io.js';
+        script.onload = () => {
+            if (typeof io !== 'undefined') {
+                setupSocketListeners(io());
+            }
+        };
+        script.onerror = () => {
+            console.log('Socket.IO client library not available (e.g. serverless runtime)');
+        };
+        document.head.appendChild(script);
+    }
+}
+
+function setupSocketListeners(socketInstance) {
+    socket = socketInstance;
+    socket.on('analyticsUpdate', (data) => {
+        if (!data || !data.shortCode || !data.click) return;
+        
+        // Check if we are currently looking at the relevant shortCode, or if filter is set to 'all'
+        const analyticsLinkSelect = document.getElementById('analyticsLinkSelect');
+        const linkFilter = analyticsLinkSelect ? analyticsLinkSelect.value : 'all';
+        
+        if (linkFilter === 'all' || linkFilter === data.shortCode) {
+            if (data.click.location) {
+                // Prevent duplicate entries
+                const exists = allGeoClicks.some(c => c.timestamp === data.click.timestamp && c.ipAddress === data.click.ipAddress);
+                if (!exists) {
+                    allGeoClicks.push({
+                        ...data.click,
+                        shortCode: data.shortCode,
+                        shortUrl: data.click.shortUrl || ''
+                    });
+                    
+                    // Sort by timestamp (most recent first)
+                    allGeoClicks.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    
+                    // Update summary stats
+                    updateGeoSummaryStats(allGeoClicks);
+                    
+                    // Apply current filter and render table
+                    filterGeoData(currentGeoFilter);
+                    
+                    // Update globe if in globe view
+                    if (typeof currentGeoView !== 'undefined' && currentGeoView === 'globe' && typeof updateGlobeData === 'function') {
+                        updateGlobeData();
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Call on startup
+initializeRealTimeSocket();
+
 function openDetailedGeographicView() {
     navigateToPage('geo-details');
 }
@@ -3227,7 +3291,7 @@ async function loadDetailedGeographicData() {
         filterGeoData('all');
         
         // Update globe if in globe view
-        if (currentGeoView === 'globe' && typeof updateGlobeData === 'function') {
+        if (typeof currentGeoView !== 'undefined' && currentGeoView === 'globe' && typeof updateGlobeData === 'function') {
             updateGlobeData();
         }
         

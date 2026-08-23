@@ -213,7 +213,7 @@ async function updateGlobeData() {
                 region: click.location.region,
                 country: click.location.country,
                 clicks: 0,
-                coords: null
+                ll: click.location.ll || click.ll || null
             };
         }
         
@@ -225,7 +225,12 @@ async function updateGlobeData() {
     const pointsData = [];
     
     for (const loc of locations) {
-        const coords = await getCoordinates(loc.city, loc.region, loc.country);
+        let coords;
+        if (loc.ll && Array.isArray(loc.ll) && loc.ll.length === 2) {
+            coords = { lat: loc.ll[0], lng: loc.ll[1] };
+        } else {
+            coords = await getCoordinates(loc.city, loc.region, loc.country);
+        }
         
         if (coords && coords.lat !== 0 && coords.lng !== 0) {
             pointsData.push({
