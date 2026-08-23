@@ -1526,7 +1526,7 @@ app.post('/api/bug-report', verifyToken, bugReportLimiter, async (req, res) => {
     issueBody += `- Timestamp: ${new Date().toISOString()}\n`;
     
     // Create GitHub issue using fetch
-    const response = await fetch('https://api.github.com/repos/xthxr/Link360/issues', {
+    const response = await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPO}/issues`, {
       method: 'POST',
       headers: {
         'Accept': 'application/vnd.github+json',
