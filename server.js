@@ -305,6 +305,7 @@ function normalizeRedirectLink(linkData) {
     title: linkData.title || '',
     splitTest: linkData.splitTest || false,
     variants: linkData.variants || [],
+    expiresAt: linkData.expiresAt ? (typeof linkData.expiresAt.toDate === 'function' ? linkData.expiresAt.toDate().toISOString() : linkData.expiresAt) : null,
   };
 }
 
@@ -1921,6 +1922,10 @@ app.get('/:username/:slug', async (req, res) => {
     return res.status(404).send('Link not found');
   }
 
+  if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
+    return res.status(410).send('Gone: This link has expired');
+  }
+
   let redirectUrl = link.originalUrl;
   let variantLabel = null;
 
@@ -1954,6 +1959,10 @@ app.get('/:shortCode', async (req, res) => {
   
   if (!link) {
     return res.status(404).send('Link not found');
+  }
+
+  if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
+    return res.status(410).send('Gone: This link has expired');
   }
 
   let redirectUrl = link.originalUrl;
