@@ -1073,7 +1073,11 @@ async function handleCreateLink() {
     
     // Validate URL
     try {
-        new URL(url);
+        const parsed = new URL(url);
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+            showToast('Only http and https URLs are allowed', 'error');
+            return;
+        }
     } catch (e) {
         showToast('Please enter a valid URL', 'error');
         return;
