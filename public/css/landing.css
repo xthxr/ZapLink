@@ -402,33 +402,8 @@ html.dark .dark\:hover\:bg-surfaceHoverDark:hover { background-color: var(--colo
 }
 
 /* ================================
-   LIGHT MODE PRICING CARD OVERRIDES
+   PRICING UTILITIES
    ================================ */
-/* Style pricing card container in light mode to have a light background and subtle border */
-html.light-theme .bg-black\/80 {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Ensure text inside the light-theme pricing card has high contrast */
-html.light-theme .bg-black\/80 .text-white {
-    color: var(--color-gray-900) !important;
-}
-html.light-theme .bg-black\/80 .text-gray-300 {
-    color: var(--color-gray-700) !important;
-}
-html.light-theme .bg-black\/80 .text-gray-400 {
-    color: var(--color-gray-500) !important;
-}
-
-/* Style the CTA button in light mode to have a dark background with white text */
-html.light-theme #pricingGetStartedBtn {
-    background-color: #111827 !important;
-    color: #ffffff !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
-}
-
-html.light-theme #pricingGetStartedBtn:hover {
-    background-color: #374151 !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
-}
+.text-green-500 { color: #10b981; }
+.border-accent { border-color: var(--color-accent); }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
