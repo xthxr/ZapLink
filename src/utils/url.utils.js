@@ -24,7 +24,7 @@ function parseUTMParams(url) {
       term: urlObj.searchParams.get('utm_term') || '',
       content: urlObj.searchParams.get('utm_content') || ''
     };
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -44,7 +44,7 @@ function addUTMParams(url, utmParams) {
     if (utmParams.term) urlObj.searchParams.set('utm_term', utmParams.term);
     if (utmParams.content) urlObj.searchParams.set('utm_content', utmParams.content);
     return urlObj.toString();
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -96,7 +96,7 @@ function isValidUrl(url) {
   try {
     new URL(url);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

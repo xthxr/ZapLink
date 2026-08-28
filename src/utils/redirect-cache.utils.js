@@ -40,7 +40,7 @@ async function getRedisValue(shortCode) {
     if (typeof value === 'string') {
       try {
         return JSON.parse(value);
-      } catch (error) {
+      } catch {
         return value;
       }
     }

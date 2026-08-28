@@ -90,7 +90,7 @@ firebaseState.reason = 'Firebase connected successfully';
 
   
   console.log('✅ Firebase Admin initialized');
-} catch (error) {
+} catch {
   console.log('⚠️ Firebase Admin not configured. Using in-memory storage.');
   console.log('   See FIREBASE_SETUP.md for setup instructions.');
 }
@@ -115,12 +115,6 @@ const io = isServerless
 // Firestore document IDs cannot contain '/' so we replace with '_'
 function toFirestoreId(shortCode) {
   return shortCode.replace(/\//g, '_');
-}
-
-// Helper function to convert Firestore ID back to shortCode
-function fromFirestoreId(firestoreId) {
-  // Keep as-is, shortCode field in the document has the original format
-  return firestoreId;
 }
 
 // Middleware
@@ -154,7 +148,7 @@ const COLLECTIONS = {
 // Helper to aggregate distributed analytics shards
 async function getAggregatedAnalytics(firestoreId) {
   const baseDoc = await db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId).get();
-  let data = baseDoc.exists ? baseDoc.data() : {};
+  const data = baseDoc.exists ? baseDoc.data() : {};
 
   try {
     const shardsSnapshot = await db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId).collection('shards').get();
@@ -242,7 +236,7 @@ function parseUTMParams(url) {
       term: urlObj.searchParams.get('utm_term') || '',
       content: urlObj.searchParams.get('utm_content') || ''
     };
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -257,7 +251,7 @@ function addUTMParams(url, utmParams) {
     if (utmParams.term) urlObj.searchParams.set('utm_term', utmParams.term);
     if (utmParams.content) urlObj.searchParams.set('utm_content', utmParams.content);
     return urlObj.toString();
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -372,7 +366,7 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
     if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
       return res.status(400).json({ error: 'Only http and https URLs are allowed' });
     }
-  } catch (e) {
+  } catch {
     return res.status(400).json({ error: 'Invalid URL' });
   }
 
@@ -444,7 +438,7 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
       finalUrl = urlWithUTM;
     }
   }
-  const healthData = await checkLinkHealth(finalUrl);
+  await checkLinkHealth(finalUrl);
   const baseUrl = getBaseUrl(req);
   const shortUrl = `${baseUrl}/${shortCode}`;
   
@@ -566,7 +560,7 @@ app.get('/api/user/analytics', verifyToken, async (req, res) => {
           linkData: link,
           analytics: analyticsDoc.exists ? analyticsDoc.data() : null
         };
-      } catch (err) {
+      } catch {
         return { shortCode: link.shortCode, linkData: link, analytics: null };
       }
     });
@@ -1496,7 +1490,6 @@ app.post('/api/track/impression/:shortCode', async (req, res) => {
 // Track share (deprecated - now tracked automatically via UTM parameters)
 // Keeping endpoint for backward compatibility but shares are counted on click with UTM
 app.post('/api/track/share/:shortCode', async (req, res) => {
-  const { shortCode } = req.params;
   // Shares are now tracked automatically when links with utm_source are clicked
   // No need to manually increment here
   res.json({ success: true, message: 'Shares tracked via UTM parameters' });
@@ -1715,7 +1708,7 @@ function getReferrerSource(req) {
       else if (hostname.includes('discord')) referrerSource = 'Discord';
       else if (hostname.includes('slack')) referrerSource = 'Slack';
       else referrerSource = hostname;
-    } catch (e) {
+    } catch {
       referrerSource = httpReferrer;
     }
   } else {
