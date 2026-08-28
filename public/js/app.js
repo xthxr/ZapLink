@@ -3767,7 +3767,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (suggestion) {
                 // Redirect to GitHub discussions with pre-filled title
-                const discussionUrl = `https://github.com/xthxr/Link360/discussions/new?category=ideas&title=${encodeURIComponent(suggestion)}`;
+                const discussionUrl = `https://github.com/xthxr/piik.me/discussions/new?category=ideas&title=${encodeURIComponent(suggestion)}`;
                 window.open(discussionUrl, '_blank');
                 
                 // Clear input

@@ -79,8 +79,9 @@ async function updateLinkInRedis(shortCode, updates) {
     // Merge updates
     const updated = { ...existing, ...updates };
     
-    // Store updated data (keep original TTL by re-storing with 1 year)
-    await client.setex(linkKey, 60 * 60 * 24 * 365, updated);
+    // Store updated data (preserve original TTL)
+    const ttl = await client.ttl(linkKey);
+    await client.setex(linkKey, ttl > 0 ? ttl : 60 * 60 * 24 * 365, updated);
     
     console.log(`✅ Updated link in Redis: ${shortCode}`);
     return true;
