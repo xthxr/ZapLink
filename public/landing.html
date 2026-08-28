@@ -38,10 +38,10 @@
             <a href="/" class="text-xl font-bold tracking-tight">PIIK.ME</a>
             
             <div class="hidden md:flex gap-8">
-                <a href="#how-it-works" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-white transition-colors uppercase tracking-wider">How it Works</a>
-                <a href="#features" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-white transition-colors uppercase tracking-wider">Features</a>
-                <a href="#testimonials" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-white transition-colors uppercase tracking-wider">Testimonials</a>
-                <a href="#faq" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-white transition-colors uppercase tracking-wider">FAQ</a>
+                <a href="/how-it-works" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-white transition-colors uppercase tracking-wider" onclick="scrollToSection('how-it-works')">How it Works</a>
+                <a href="/features" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-white transition-colors uppercase tracking-wider" onclick="scrollToSection('features')">Features</a>
+                <a href="/testimonials" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-white transition-colors uppercase tracking-wider" onclick="scrollToSection('testimonials')">Testimonials</a>
+                <a href="/faq" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-white transition-colors uppercase tracking-wider" onclick="scrollToSection('faq')">FAQ</a>
             </div>
 
             <div class="hidden md:flex gap-4 items-center">
@@ -304,16 +304,16 @@
             <div>
                 <h4 class="font-bold mb-6 text-gray-800 dark:text-gray-200">Product</h4>
                 <ul class="space-y-4 text-gray-500">
-                    <li><a href="#features" class="hover:text-accent transition-colors">Features</a></li>
-                    <li><a href="#how-it-works" class="hover:text-accent transition-colors">How it Works</a></li>
-                    <li><a href="#faq" class="hover:text-accent transition-colors">FAQ</a></li>
+                    <li><a href="/features" onclick="scrollToSection('features')" class="hover:text-accent transition-colors">Features</a></li>
+                    <li><a href="/how-it-works" onclick="scrollToSection('how-it-works')" class="hover:text-accent transition-colors">How it Works</a></li>
+                    <li><a href="/faq" onclick="scrollToSection('faq')" class="hover:text-accent transition-colors">FAQ</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="font-bold mb-6 text-gray-800 dark:text-gray-200">Community</h4>
                 <ul class="space-y-4 text-gray-500">
                     <li><a href="https://github.com/xthxr/piik.me" class="hover:text-accent transition-colors">GitHub</a></li>
-                    <li><a href="#" class="hover:text-accent transition-colors">Discord</a></li>
+                    <li><a href="javascript:void(0)" class="hover:text-accent transition-colors">Discord</a></li>
                     <li><a href="mailto:contact@piik.me" class="hover:text-accent transition-colors">Contact</a></li>
                 </ul>
             </div>
@@ -392,6 +392,43 @@
     
     <script src="js/firebase-config.js" defer></script>
     <script src="js/landing-auth.js" defer></script>
-    <script src="js/github-stars.js" defer></script>
+    <script>
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        // Enhance navigation links to use clean URLs without reloads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Attach click handlers to navigation links that start with '/'
+            document.querySelectorAll('a[href^="/"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    const section = href.startsWith('/') ? href.slice(1) : href;
+                    // Update URL without reloading
+                    history.pushState(null, '', href);
+                    // Scroll to target section
+                    scrollToSection(section);
+                });
+            });
+            // On initial load, if URL points to a section, scroll to it
+            const initialPath = location.pathname;
+            if (initialPath && initialPath !== '/' ) {
+                const section = initialPath.slice(1);
+                scrollToSection(section);
+            }
+        });
+        // Handle back/forward navigation
+        window.addEventListener('popstate', () => {
+            const path = location.pathname;
+            if (path && path !== '/') {
+                const section = path.slice(1);
+                scrollToSection(section);
+            }
+        });
+    </script>
+    
 </body>
 </html>
