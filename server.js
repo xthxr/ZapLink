@@ -376,15 +376,6 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
     return res.status(400).json({ error: 'Invalid URL' });
   }
 
-  // Block dangerous URL schemes
-  const blockedSchemes = ['javascript:', 'data:', 'vbscript:'];
-  const urlLower = url.toLowerCase();
-  for (const scheme of blockedSchemes) {
-    if (urlLower.startsWith(scheme)) {
-      return res.status(400).json({ error: 'Invalid URL: dangerous URL scheme blocked' });
-    }
-  }
-
   // Validate custom short code if provided
   let shortCode;
   if (customShortCode) {
@@ -1526,14 +1517,14 @@ app.post('/api/bug-report', verifyToken, bugReportLimiter, async (req, res) => {
     issueBody += `- Timestamp: ${new Date().toISOString()}\n`;
     
     // Create GitHub issue using fetch
-    const response = await fetch('https://api.github.com/repos/xthxr/Link360/issues', {
+    const response = await fetch('https://api.github.com/repos/xthxr/piik.me/issues', {
       method: 'POST',
       headers: {
         'Accept': 'application/vnd.github+json',
         'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
         'X-GitHub-Api-Version': '2022-11-28',
         'Content-Type': 'application/json',
-        'User-Agent': 'Link360-Bug-Reporter'
+        'User-Agent': 'piik.me-Bug-Reporter'
       },
       body: JSON.stringify({
         title: `[Bug Report] ${title}`,
