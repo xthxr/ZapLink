@@ -4,11 +4,14 @@
   "description": "Real-time link shortener with analytics tracking and QR code generation",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
-  },
+  "start": "node server.js",
+  "dev": "nodemon server.js",
+  "lint": "eslint .",
+  "lint:fix": "eslint --fix .",
+  "test": "jest",
+  "test:watch": "jest --watch",
+  "test:coverage": "jest --coverage"
+},
   "keywords": [
     "utm",
     "link-shortener",
