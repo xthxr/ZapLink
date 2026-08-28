@@ -153,6 +153,9 @@ const COLLECTIONS = {
 
 // Helper to aggregate distributed analytics shards
 async function getAggregatedAnalytics(firestoreId) {
+  if (!db) {
+    return { clicks: 0, impressions: 0, shares: 0, devices: {}, browsers: {}, referrers: {}, countries: {}, locations: {}, variantClicks: {} };
+  }
   const baseDoc = await db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId).get();
   let data = baseDoc.exists ? baseDoc.data() : {};
 
@@ -483,6 +486,21 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
     referrers: {}
   };
 
+  if (!db) {
+    // In-memory fallback (Firestore not available)
+    links.set(shortCode, linkData);
+    analytics.set(shortCode, analyticsData);
+    await redirectCache.set(shortCode, normalizeRedirectLink(linkData));
+
+    return res.json({
+      success: true,
+      shortUrl,
+      shortCode,
+      originalUrl: finalUrl,
+      isCustom: !!customShortCode
+    });
+  }
+
   try {
     // Convert shortCode to Firestore-safe ID (replace / with _)
     const firestoreId = toFirestoreId(shortCode);
@@ -519,11 +537,11 @@ app.post('/api/shorten', verifyToken, async (req, res) => {
       originalUrl: finalUrl,
       isCustom: !!customShortCode
     });
-  } catch (error) {
-    console.error('Error saving to Firestore:', error);
-    
-    // Fallback to in-memory storagehealthStatus
-    links.set(shortCode, linkData);
+      } catch (error) {
+        console.error('Error saving to Firestore:', error);
+        
+        // Fallback to in-memory storage
+        links.set(shortCode, linkData);
     analytics.set(shortCode, analyticsData);
     await redirectCache.set(shortCode, normalizeRedirectLink(linkData));
     
@@ -1639,25 +1657,27 @@ app.get(['/home', '/analytics', '/profile', '/qr-generator', '/bio-link', '/dash
 app.head('/:shortCode', async (req, res) => {
   let { shortCode } = req.params;
   shortCode = decodeURIComponent(shortCode);
-  
-  try {
-    const firestoreId = toFirestoreId(shortCode);
-    const analyticsRef = db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId);
-    const doc = await analyticsRef.get();
+
+  if (db) {
+    try {
+      const firestoreId = toFirestoreId(shortCode);
+      const analyticsRef = db.collection(COLLECTIONS.ANALYTICS).doc(firestoreId);
+      const doc = await analyticsRef.get();
     
     if (doc.exists) {
-      // Use distributed counter: write to a random shard
-      const NUM_SHARDS = 10;
-      const shardId = Math.floor(Math.random() * NUM_SHARDS).toString();
-      const shardRef = analyticsRef.collection('shards').doc(shardId);
-      await shardRef.set({
-        impressions: admin.firestore.FieldValue.increment(1)
-      }, { merge: true });
+        // Use distributed counter: write to a random shard
+        const NUM_SHARDS = 10;
+        const shardId = Math.floor(Math.random() * NUM_SHARDS).toString();
+        const shardRef = analyticsRef.collection('shards').doc(shardId);
+        await shardRef.set({
+          impressions: admin.firestore.FieldValue.increment(1)
+        }, { merge: true });
+      }
+    } catch (error) {
+      console.error('Error tracking impression:', error);
     }
-  } catch (error) {
-    console.error('Error tracking impression:', error);
   }
-  
+
   res.status(200).end();
 });
 
@@ -1801,7 +1821,6 @@ async function trackClickAndEmit(shortCode, req, variantLabel = null) {
         
         // Build the update object
         const updateData = {
-          impressions: admin.firestore.FieldValue.increment(1),
           clicks: admin.firestore.FieldValue.increment(1),
           [`devices.${deviceType}`]: admin.firestore.FieldValue.increment(1),
           [`browsers.${browser}`]: admin.firestore.FieldValue.increment(1),
