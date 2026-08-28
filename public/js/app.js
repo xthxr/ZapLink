@@ -228,6 +228,12 @@ function initializeNavigation() {
     // Load initial page based on URL
     const initialPath = window.location.pathname;
     const initialPage = initialPath.substring(1) || 'home';
+
+    if (initialPage === 'login' || initialPage === 'register') {
+        showLoginModal();
+        return;
+    }
+
     navigateToPage(initialPage, false);
 }
 
