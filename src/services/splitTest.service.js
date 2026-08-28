@@ -36,7 +36,7 @@ function validateVariants(variants) {
     const v = variants[i];
 
     // label ----------------------------------------------------------------
-    if (typeof v.label !== 'string' || v.label.trim() === '') {
+    if (typeof v.label !== 'string' || v.label.trim().length === 0) {
       return { valid: false, message: `Variant at index ${i}: \`label\` must be a non-empty string.` };
     }
     const label = v.label.trim();
@@ -46,7 +46,7 @@ function validateVariants(variants) {
     labels.add(label.toLowerCase());
 
     // url ------------------------------------------------------------------
-    if (typeof v.url !== 'string' || v.url.trim() === '') {
+    if (typeof v.url !== 'string' || v.url.trim().length === 0) {
       return { valid: false, message: `Variant "${label}": \`url\` must be a non-empty string.` };
     }
     try {
@@ -134,7 +134,7 @@ function buildVariantClickFields(variantLabel) {
  * @returns {Array<{ label: string, url: string, weight: number }>}
  */
 function normaliseVariants(variants) {
-  return variants.map((v) => ({
+  return (variants ?? []).map((v) => ({
     label: v.label.trim(),
     url: v.url.trim(),
     weight: Math.round(v.weight),
